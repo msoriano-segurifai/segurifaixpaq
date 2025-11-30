@@ -1,0 +1,5215 @@
+{
+  "info": {
+    "name": "SegurifAI x PAQ API",
+    "description": "Complete API collection for SegurifAI x PAQ - MAWDY Assistance Platform\n\n## Compliance\n- **ISO 27001:2022** - Information Security Management\n- **PCI-DSS v4.0** - Payment Card Industry Data Security Standard\n- **OWASP Top 10** - Web Application Security\n\n## Security Notes\n- All PAQ payment data uses tokenization (no raw card data)\n- CVV/PIN data is NEVER stored or transmitted\n- All API calls use TLS 1.2+\n- Audit logging enabled for all transactions\n\n## Authentication\nUse PAQ SSO or JWT tokens for authentication.\n\n## Environment Variables Required\n- `base_url`: API base URL\n- `access_token`: JWT access token\n- `refresh_token`: JWT refresh token\n- `user_id`: Current user ID\n- `request_id`: Current assistance request ID\n\n## Rate Limits\n- ADMIN: 1000 req/min\n- MAWDY_ADMIN: 500 req/min\n- PROVIDER: 300 req/min\n- USER: 100 req/min\n- ANONYMOUS: 30 req/min",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "segurifai"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8888/api"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "description": "System health check endpoints for load balancers and monitoring.\n\nNo authentication required.",
+      "item": [
+        {
+          "name": "Full Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('System is healthy', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('healthy');",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "console.log('System Status:', jsonData.status);",
+                  "console.log('Database:', jsonData.checks.database.status);",
+                  "console.log('Cache:', jsonData.checks.cache.status);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                ""
+              ]
+            },
+            "description": "Full system health check including database and cache.\n\nReturns:\n- status: healthy/unhealthy\n- timestamp: ISO 8601 timestamp\n- version: API version\n- checks: Component status (database, cache)"
+          }
+        },
+        {
+          "name": "Simple Ping",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns ok status', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('ok');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health/ping/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "ping",
+                ""
+              ]
+            },
+            "description": "Simple ping endpoint for basic load balancer probes.\n\nReturns: {\"status\": \"ok\"}"
+          }
+        },
+        {
+          "name": "Readiness Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health/ready/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "ready",
+                ""
+              ]
+            },
+            "description": "Kubernetes-style readiness probe.\n\nChecks if the service is ready to receive traffic."
+          }
+        },
+        {
+          "name": "Liveness Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health/live/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "live",
+                ""
+              ]
+            },
+            "description": "Kubernetes-style liveness probe.\n\nIndicates if the service is running."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth - JWT",
+      "item": [
+        {
+          "name": "Get Token (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.test('Login successful', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                "refresh",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"{{access_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/verify/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                "verify",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login as SegurifAI Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('current_role', 'SEGURIFAI_ADMIN');",
+                  "    pm.test('SegurifAI Admin login successful', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as SegurifAI Admin - Full platform analytics');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_admin_email}}\",\n    \"password\": \"{{test_admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login as MAWDY Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('current_role', 'MAWDY_ADMIN');",
+                  "    pm.test('MAWDY Admin login successful', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as MAWDY Admin - Provider analytics');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{mawdy_admin_email}}\",\n    \"password\": \"{{mawdy_admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login as MAWDY Provider",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('provider_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('current_role', 'MAWDY_PROVIDER');",
+                  "    pm.test('MAWDY Provider login successful', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as MAWDY Provider - Company account');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_provider_email}}\",\n    \"password\": \"{{test_provider_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login as MAWDY Assistant (Field Tech)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('provider_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('current_role', 'MAWDY_ASSISTANT');",
+                  "    pm.environment.set('provider_latitude', '14.6200');",
+                  "    pm.environment.set('provider_longitude', '-90.5100');",
+                  "    pm.test('MAWDY Assistant login successful', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as MAWDY Assistant - Field technician');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_assistant_email}}\",\n    \"password\": \"{{test_assistant_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('user_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"Juan Carlos\",\n    \"phone_number\": \"+50298765432\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Full Profile (E-Learning + Subscription)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Profile has e_learning section', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.e_learning).to.exist;",
+                  "    pm.expect(jsonData.e_learning.points).to.exist;",
+                  "    pm.expect(jsonData.e_learning.modules).to.exist;",
+                  "    pm.expect(jsonData.e_learning.achievements).to.be.an('array');",
+                  "});",
+                  "pm.test('Profile has subscription section', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.subscription).to.exist;",
+                  "    pm.expect(jsonData.subscription.active_subscriptions).to.be.an('array');",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "console.log('User:', jsonData.user.email);",
+                  "console.log('Points:', jsonData.e_learning.points.total_points, '| Level:', jsonData.e_learning.points.level_display);",
+                  "console.log('Modules completed:', jsonData.e_learning.modules.completed, '/', jsonData.e_learning.modules.total_available);",
+                  "console.log('Active subscriptions:', jsonData.subscription.total_subscriptions);",
+                  "if (jsonData.subscription.renewal_countdown) {",
+                  "    console.log('Renewal:', jsonData.subscription.renewal_countdown.message);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/users/full-profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "full-profile",
+                ""
+              ]
+            },
+            "description": "Get comprehensive user profile with e-learning gamification and subscription renewal countdown.\n\nReturns:\n- user: Basic user info\n- e_learning: Points, modules, achievements, credits\n- subscription: Active subscriptions with renewal countdown"
+          }
+        }
+      ]
+    },
+    {
+      "name": "MAWDY Plans",
+      "item": [
+        {
+          "name": "Get All Plans (GTQ Pricing)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "mawdy",
+                "plans",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Plan Services",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/DRIVE/services/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "mawdy",
+                "plans",
+                "DRIVE",
+                "services",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Usage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/DRIVE/my-usage/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "mawdy",
+                "plans",
+                "DRIVE",
+                "my-usage",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check Vehicle Eligibility",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"vehicle_year\": 2020,\n    \"vehicle_type\": \"CAR\",\n    \"plan_type\": \"DRIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/check-vehicle/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "mawdy",
+                "check-vehicle",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Contact Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/contact/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "mawdy",
+                "contact",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services & Subscriptions",
+      "item": [
+        {
+          "name": "0. Login as Test User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    console.log('Logged in as test user');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Service Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "categories",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Service Plans",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/plans/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "plans",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Subscriptions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/user-services/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "user-services",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Renewals",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/renewal/my/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "my",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Renewal Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns renewal status', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.subscription_id).to.exist;",
+                  "    pm.expect(jsonData.pricing).to.exist;",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Days remaining:', jsonData.days_remaining);",
+                  "    console.log('Available credits:', jsonData.pricing.available_credits);",
+                  "    console.log('Final price after credits:', jsonData.pricing.final_price);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/renewal/{{subscription_id}}/status/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "{{subscription_id}}",
+                "status",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Toggle Auto-Renew",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Auto-renew toggled', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"auto_renew\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/services/renewal/{{subscription_id}}/auto-renew/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "{{subscription_id}}",
+                "auto-renew",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Initiate Renewal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Renewal response:', JSON.stringify(jsonData));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/services/renewal/{{subscription_id}}/renew/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "{{subscription_id}}",
+                "renew",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Login for Admin Endpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    console.log('Logged in as admin');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_admin_email}}\",\n    \"password\": \"{{test_admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Expiring Subscriptions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns expiring list', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.subscriptions).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/services/renewal/expiring/?days=7",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "expiring",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Run Renewal Tasks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Tasks executed', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/services/renewal/run-tasks/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services",
+                "renewal",
+                "run-tasks",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assistance Requests",
+      "item": [
+        {
+          "name": "List My Requests",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/requests/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "requests",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real-Time Tracking",
+      "description": "Delivery-app style real-time tracking endpoints for assistance requests.\n\n## Tracking Flow\n1. User creates assistance request\n2. Provider is assigned (status: ASSIGNED)\n3. Provider updates location as they travel (EN_ROUTE)\n4. Provider marks arrived (ARRIVED)\n5. Provider starts service (IN_SERVICE)\n6. Provider completes service (COMPLETED)",
+      "item": [
+        {
+          "name": "Get Active Tracking (My Active Requests)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Returns request list', function() {",
+                  "        pm.expect(jsonData.requests).to.be.an('array');",
+                  "    });",
+                  "    if (jsonData.requests.length > 0) {",
+                  "        pm.environment.set('request_id', jsonData.requests[0].request_id);",
+                  "        console.log('Active requests:', jsonData.count);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/active/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "active",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Calculate ETA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('ETA calculated', function() {",
+                  "        pm.expect(jsonData.eta_minutes).to.exist;",
+                  "        pm.expect(jsonData.distance_km).to.exist;",
+                  "    });",
+                  "    console.log('ETA:', jsonData.eta_minutes, 'min');",
+                  "    console.log('Distance:', jsonData.distance_km, 'km');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"from_latitude\": {{provider_latitude}},\n    \"from_longitude\": {{provider_longitude}},\n    \"to_latitude\": {{user_latitude}},\n    \"to_longitude\": {{user_longitude}},\n    \"traffic_condition\": \"city\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/calculate-eta/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "calculate-eta",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Route History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Route history returned', function() {",
+                  "        pm.expect(jsonData.route).to.be.an('array');",
+                  "    });",
+                  "    console.log('Total route points:', jsonData.total_points);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/{{request_id}}/route/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "{{request_id}}",
+                "route",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Provider] Update Location",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Location updated', function() {",
+                  "        pm.expect(jsonData.success || jsonData.latitude).to.exist;",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{provider_token}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": {{provider_latitude}},\n    \"longitude\": {{provider_longitude}},\n    \"heading\": 45.0,\n    \"speed\": 30.5,\n    \"accuracy\": 10.0,\n    \"request_id\": {{tracking_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Live Tracking (Food Delivery Style)",
+          "description": "Get real-time live tracking data for a request.\nPoll this endpoint every 3-5 seconds for live updates.\nReturns provider location, ETA, distance, and timeline.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 404', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 404]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Live tracking data returned', function() {",
+                  "        pm.expect(jsonData.status).to.exist;",
+                  "        pm.expect(jsonData.location).to.exist;",
+                  "    });",
+                  "    console.log('Status:', jsonData.status.message);",
+                  "    console.log('ETA:', jsonData.eta.minutes, 'min');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/live/{{request_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "live",
+                "{{request_id}}",
+                ""
+              ]
+            },
+            "description": "Get live tracking data for a specific assistance request.\n\nResponse includes:\n- provider.location (lat/lng)\n- eta.minutes\n- location.distance_km\n- status.code (searching, en_route, arrived, in_service, completed)\n- timeline (step-by-step progress)\n- meta.poll_interval_ms (recommended poll interval)"
+          }
+        },
+        {
+          "name": "Live Route History",
+          "description": "Get the full route history for drawing on the map.\nShows the provider's path traveled.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 404', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 404]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Route history returned', function() {",
+                  "        pm.expect(jsonData.route).to.be.an('array');",
+                  "    });",
+                  "    console.log('Total route points:', jsonData.points_count);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/live/{{request_id}}/route/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "live",
+                "{{request_id}}",
+                "route",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Public Live Tracking (No Auth)",
+          "description": "Public tracking endpoint for PAQ users without accounts.\nUses request_number as the tracking token.\nNo authentication required.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 404', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 404]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Public tracking data returned', function() {",
+                  "        pm.expect(jsonData.status).to.exist;",
+                  "    });",
+                  "    console.log('Status:', jsonData.status.message);",
+                  "    console.log('ETA:', jsonData.eta_minutes, 'min');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/live/public/{{request_number}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "live",
+                "public",
+                "{{request_number}}",
+                ""
+              ]
+            },
+            "description": "Public tracking endpoint for users without authentication.\n\nUse the request_number as the tracking token.\nThis allows PAQ users to track their assistance without logging in."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tracking Flow Test (Full Scenario)",
+      "description": "Complete end-to-end test of the delivery-app style tracking system.\n\nRun these requests IN ORDER to simulate a complete assistance flow:\n1. Login as User\n2. Create assistance request\n3. Login as Provider (MAWDY)\n4. Simulate provider approaching (multiple location updates)\n5. Mark arrived\n6. Start service\n7. Complete service\n8. Login as User to verify completion",
+      "item": [
+        {
+          "name": "1. [User] Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('current_role', 'USER');",
+                  "    pm.test('User logged in', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as TEST USER');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. [Provider] Login as MAWDY",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('provider_token', jsonData.access);",
+                  "    pm.environment.set('current_role', 'PROVIDER');",
+                  "    pm.environment.set('provider_latitude', '14.6000');",
+                  "    pm.environment.set('provider_longitude', '-90.5200');",
+                  "    pm.test('Provider logged in', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as MAWDY Provider');",
+                  "    console.log('Provider starting location: Zona 13');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_provider_email}}\",\n    \"password\": \"{{test_provider_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. [Provider] Initial Location Update (Far)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set('provider_latitude', '14.6000');",
+                  "pm.environment.set('provider_longitude', '-90.5200');",
+                  "console.log('Provider location: Zona 13 (Starting point)');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "console.log('Provider en route from Zona 13');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": 14.6000,\n    \"longitude\": -90.5200,\n    \"heading\": 45.0,\n    \"speed\": 0,\n    \"accuracy\": 10.0,\n    \"request_id\": {{request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. [Provider] Location Update (Approaching)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set('provider_latitude', '14.6175');",
+                  "pm.environment.set('provider_longitude', '-90.5135');",
+                  "console.log('Provider approaching: Near Zona 9/10 border');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "console.log('Provider approaching user location');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": 14.6175,\n    \"longitude\": -90.5135,\n    \"heading\": 30.0,\n    \"speed\": 35.0,\n    \"accuracy\": 8.0,\n    \"request_id\": {{request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. [Provider] Location Update (Almost There)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set('provider_latitude', '14.6320');",
+                  "pm.environment.set('provider_longitude', '-90.5080');",
+                  "console.log('Provider almost at destination: Zona 10');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "console.log('Provider is 1-2 minutes away');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": 14.6320,\n    \"longitude\": -90.5080,\n    \"heading\": 15.0,\n    \"speed\": 20.0,\n    \"accuracy\": 5.0,\n    \"request_id\": {{request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. [Provider] Location Update (At User Location)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set('provider_latitude', '14.6349');",
+                  "pm.environment.set('provider_longitude', '-90.5069');",
+                  "console.log('Provider at user location!');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "console.log('Provider has arrived at user location');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": 14.6349,\n    \"longitude\": -90.5069,\n    \"heading\": 0,\n    \"speed\": 0,\n    \"accuracy\": 5.0,\n    \"request_id\": {{request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "12. [User] Login to Verify",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('current_role', 'USER');",
+                  "    console.log('Switched back to USER');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MAWDY Dispatch (Assistants)",
+      "description": "Dispatch endpoints for MAWDY assistants (field technicians like grua drivers, mechanics, ambulance).\n\n## Dispatch Flow (Like Food Delivery)\n1. Assistant logs in\n2. Views available jobs assigned to their provider\n3. Accepts a job\n4. Marks departure from HQ (starts EN_ROUTE)\n5. Updates location during travel\n6. Marks arrived\n7. Starts and completes service\n\nUse 'Login as MAWDY Assistant (Field Tech)' from Auth folder first.",
+      "item": [
+        {
+          "name": "1. Login as Assistant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('provider_token', jsonData.access);",
+                  "    pm.environment.set('current_role', 'MAWDY_ASSISTANT');",
+                  "    pm.test('Assistant logged in', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "    console.log('Logged in as MAWDY Assistant (Field Technician)');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_assistant_email}}\",\n    \"password\": \"{{test_assistant_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. Get Available Jobs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Jobs list returned', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.jobs).to.be.an('array');",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "console.log('Provider:', jsonData.provider);",
+                  "console.log('Available jobs:', jsonData.count);",
+                  "if (jsonData.jobs && jsonData.jobs.length > 0) {",
+                  "    pm.environment.set('dispatch_request_id', jsonData.jobs[0].request_id);",
+                  "    pm.environment.set('request_number', jsonData.jobs[0].request_number);",
+                  "    console.log('First job:', jsonData.jobs[0].title);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/available/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "dispatch",
+                "available",
+                ""
+              ]
+            },
+            "description": "Get jobs assigned to assistant's provider that are pending pickup.\n\nReturns:\n- Provider name\n- List of available jobs with:\n  - Request details\n  - User info and phone\n  - Location and address\n  - ETA from provider HQ\n  - Estimated cost"
+          }
+        },
+        {
+          "name": "5. Get My Active Jobs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Active jobs returned', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.jobs).to.be.an('array');",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "console.log('Assistant:', jsonData.assistant);",
+                  "console.log('Active jobs:', jsonData.count);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/my-jobs/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "dispatch",
+                "my-jobs",
+                ""
+              ]
+            },
+            "description": "Get assistant's currently active jobs.\n\nReturns jobs that are:\n- Assigned (waiting to depart)\n- In Progress (en route or at location)"
+          }
+        },
+        {
+          "name": "6. Update Location (En Route)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.eta) {",
+                  "    console.log('ETA:', jsonData.eta.eta_minutes, 'min');",
+                  "    console.log('Distance:', jsonData.eta.distance_km, 'km');",
+                  "}",
+                  "console.log('Tracking status:', jsonData.tracking_status);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": 14.6250,\n    \"longitude\": -90.5090,\n    \"heading\": 30.0,\n    \"speed\": 35.0,\n    \"accuracy\": 8.0,\n    \"request_id\": {{dispatch_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "tracking",
+                "update-location",
+                ""
+              ]
+            },
+            "description": "Update location while traveling.\n\nShould be called every 5-10 seconds during active travel.\nUser sees real-time location updates."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Get Document Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/types/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assistance",
+                "docs",
+                "types",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "PAQ Wallet",
+      "item": [
+        {
+          "name": "Check Token Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"{{payment_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/wallet/check-token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wallet",
+                "check-token",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Webhook Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/wallet/webhook/health/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wallet",
+                "webhook",
+                "health",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gamification - Education",
+      "item": [
+        {
+          "name": "List Modules",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/modulos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "modulos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Module Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/modulos/{{module_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "modulos",
+                "{{module_id}}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Progress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/mi-progreso/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "mi-progreso",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Leaderboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/leaderboard/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "leaderboard",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Achievements",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/logros/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "logros",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Credits",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns credit balance', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.saldo_disponible).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/creditos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "creditos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Credit History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns transactions array', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.transacciones).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/creditos/historial/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "creditos",
+                "historial",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Credit Summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns summary data', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.saldo_disponible).to.exist;",
+                  "    pm.expect(jsonData.modulos_completados).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/creditos/resumen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "creditos",
+                "resumen",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Start Module",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Module started successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/educacion/modulos/{{module_id}}/iniciar/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "modulos",
+                "{{module_id}}",
+                "iniciar",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Quiz",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Quiz submitted successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "    pm.expect(jsonData.resultado).to.exist;",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Correct answers:', jsonData.resultado.correctas, '/', jsonData.resultado.total);",
+                  "    console.log('Points earned:', jsonData.resultado.puntos_obtenidos);",
+                  "    console.log('Credits earned:', jsonData.resultado.creditos_ganados);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"respuestas\": [\n        {\"pregunta_id\": 1, \"respuesta\": \"A\"},\n        {\"pregunta_id\": 2, \"respuesta\": \"B\"},\n        {\"pregunta_id\": 3, \"respuesta\": \"C\"}\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/educacion/modulos/{{module_id}}/enviar_quiz/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "modulos",
+                "{{module_id}}",
+                "enviar_quiz",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rewards",
+      "item": [
+        {
+          "name": "Get My Rewards",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/rewards/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "rewards",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Claim Available Rewards",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/educacion/rewards/claim/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "rewards",
+                "claim",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Reward Tiers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/educacion/rewards/tiers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "educacion",
+                "rewards",
+                "tiers",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "Validate Promo Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"APRENDIZ5\",\n    \"amount\": 100.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/promotions/validate/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "promotions",
+                "validate",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Available Promos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/promotions/available/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "promotions",
+                "available",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Promo Usage History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/promotions/my-usage/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "promotions",
+                "my-usage",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Providers",
+      "item": [
+        {
+          "name": "List Providers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Provider Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "providers",
+                "reviews",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Admin dashboard endpoints. Requires ADMIN role authentication.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Login as admin before running admin dashboard tests",
+              "const loginRequest = {",
+              "    url: pm.environment.get('base_url') + '/auth/token/',",
+              "    method: 'POST',",
+              "    header: { 'Content-Type': 'application/json' },",
+              "    body: {",
+              "        mode: 'raw',",
+              "        raw: JSON.stringify({",
+              "            email: pm.environment.get('test_admin_email'),",
+              "            password: pm.environment.get('test_admin_password')",
+              "        })",
+              "    }",
+              "};",
+              "",
+              "pm.sendRequest(loginRequest, function (err, response) {",
+              "    if (!err && response.code === 200) {",
+              "        const jsonData = response.json();",
+              "        pm.environment.set('access_token', jsonData.access);",
+              "        console.log('Admin login successful');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "item": [
+        {
+          "name": "Dashboard Overview",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/overview/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "overview",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recent Activity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/activity/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "activity",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Revenue Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/revenue/?period=month",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "revenue",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "month"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assistance Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/assistance/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "assistance",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Provider Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/providers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "providers",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Full Dashboard (SegurifAI Admin)",
+          "description": "Complete SegurifAI Admin dashboard with ALL data from MAWDY and PAQ systems.\nRequires ADMIN or SEGURIFAI_TEAM role.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has all dashboard sections', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('overview');",
+                  "    pm.expect(jsonData).to.have.property('paq');",
+                  "    pm.expect(jsonData).to.have.property('mawdy');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/full/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "full",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Live Provider Map",
+          "description": "Real-time map showing all active providers and their current locations.\nUseful for dispatch coordination and monitoring.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has map data', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('providers');",
+                  "    pm.expect(jsonData).to.have.property('requests');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/providers/map/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "providers",
+                "map",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "PAQ Admin Overview",
+          "description": "PAQ Admin dashboard with payment/transaction overview.\nAccessible to ADMIN, PAQ_ADMIN roles.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has PAQ metrics', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('overview');",
+                  "    pm.expect(jsonData).to.have.property('revenue');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/paq/overview/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "paq",
+                "overview",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "PAQ Transaction History",
+          "description": "Detailed transaction history for PAQ Admin.\nSupports pagination and filters.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has transaction list', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('transactions');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/paq/transactions/?page=1&per_page=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "paq",
+                "transactions",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "MAWDY Admin Overview",
+          "description": "MAWDY Admin dashboard with dispatch and technician metrics.\nAccessible to ADMIN, MAWDY_ADMIN roles.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has MAWDY metrics', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('technicians');",
+                  "    pm.expect(jsonData).to.have.property('jobs');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/mawdy/overview/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "mawdy",
+                "overview",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "MAWDY Technicians List",
+          "description": "List of all MAWDY field technicians with their status, ratings, and availability.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has technicians list', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('technicians');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/mawdy/technicians/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "mawdy",
+                "technicians",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "MAWDY Job History",
+          "description": "History of all MAWDY dispatch jobs with filters.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Response has jobs list', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('jobs');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/mawdy/jobs/?page=1&per_page=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "mawdy",
+                "jobs",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MAWDY Field Tech (Dispatch)",
+      "description": "Endpoints for MAWDY field technicians/assistants web app",
+      "item": [
+        {
+          "name": "0. Login as Field Tech",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.environment.set('provider_token', jsonData.access);",
+                  "    pm.test('Field Tech logged in', function() {",
+                  "        pm.expect(jsonData.access).to.exist;",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_assistant_email}}\",\n    \"password\": \"{{test_assistant_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "1. Get My Full Profile (Work History)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Profile has required sections', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.profile).to.exist;",
+                  "    pm.expect(jsonData.performance).to.exist;",
+                  "    pm.expect(jsonData.earnings).to.exist;",
+                  "    pm.expect(jsonData.work_history).to.be.an('array');",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "console.log('Tech:', jsonData.profile.user.email);",
+                  "console.log('Rating:', jsonData.performance.rating, '| Jobs completed:', jsonData.performance.total_jobs_completed);",
+                  "console.log('Total earnings:', 'Q' + jsonData.earnings.total);",
+                  "console.log('Work history count:', jsonData.work_history_count);",
+                  "if (jsonData.current_shift) {",
+                  "    console.log('Current shift duration:', jsonData.current_shift.duration_hours, 'hrs');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/dispatch/my-profile/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "dispatch", "my-profile", ""]
+            },
+            "description": "Get comprehensive field tech profile with work history.\n\nReturns:\n- profile: Personal info, vehicle details\n- performance: Rating, jobs completed, acceptance rate\n- earnings: Daily, weekly, total\n- work_history: List of completed jobs\n- current_shift: Active shift info if any\n- active_job: Current job if any"
+          }
+        },
+        {
+          "name": "Get Available Jobs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns job list', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.jobs).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/available/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "dispatch", "available", ""]
+            }
+          }
+        },
+        {
+          "name": "Get My Active Jobs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns active jobs', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.jobs).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/my-jobs/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "dispatch", "my-jobs", ""]
+            }
+          }
+        },
+        {
+          "name": "Accept Job",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Job accepted', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/{{dispatch_request_id}}/accept/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "dispatch", "{{dispatch_request_id}}", "accept", ""]
+            }
+          }
+        },
+        {
+          "name": "Depart for Job (Start En Route)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Departure registered', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "    pm.expect(jsonData.tracking_status).to.equal('EN_ROUTE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": {{provider_latitude}},\n    \"longitude\": {{provider_longitude}},\n    \"vehicle_info\": \"Grua #1\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/dispatch/{{dispatch_request_id}}/depart/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "dispatch", "{{dispatch_request_id}}", "depart", ""]
+            }
+          }
+        },
+        {
+          "name": "Update My Location",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Location updated', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"latitude\": {{provider_latitude}},\n    \"longitude\": {{provider_longitude}},\n    \"heading\": 45.0,\n    \"speed\": 30.5,\n    \"accuracy\": 10.0,\n    \"request_id\": {{tracking_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/update-location/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "update-location", ""]
+            }
+          }
+        },
+        {
+          "name": "Mark Arrived",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Arrival marked', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/{{tracking_request_id}}/arrived/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "{{tracking_request_id}}", "arrived", ""]
+            }
+          }
+        },
+        {
+          "name": "Start Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Service started', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{provider_token}}", "type": "string"}]
+            },
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/{{tracking_request_id}}/start/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "{{tracking_request_id}}", "start", ""]
+            }
+          }
+        },
+        {
+          "name": "Complete Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Service completed', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"actual_cost\": 150.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/{{tracking_request_id}}/completed/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "{{tracking_request_id}}", "completed", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "PAQ SSO Authentication",
+      "description": "PAQ Wallet single sign-on endpoints for Guatemala users.",
+      "item": [
+        {
+          "name": "Request OTP (PAQ SSO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.transaction_id) {",
+                  "        pm.environment.set('paq_transaction_id', jsonData.transaction_id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"30082653\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/auth/paq/request-otp/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "auth", "paq", "request-otp", ""]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP (PAQ SSO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.tokens) {",
+                  "        pm.environment.set('paq_access_token', jsonData.tokens.access);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"30082653\",\n    \"otp\": \"123456\",\n    \"transaction_id\": \"{{paq_transaction_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/auth/paq/verify-otp/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "auth", "paq", "verify-otp", ""]
+            }
+          }
+        },
+        {
+          "name": "Quick Login (PAQ - Debug Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.tokens) {",
+                  "        pm.environment.set('paq_access_token', jsonData.tokens.access);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"30082653\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/auth/paq/quick-login/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "auth", "paq", "quick-login", ""]
+            }
+          }
+        },
+        {
+          "name": "Link PAQ Wallet Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\",\n    \"paq_phone\": \"99887766\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/auth/paq/link/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "auth", "paq", "link", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "description": "User profile management endpoints",
+      "item": [
+        {
+          "name": "0. Login as Test User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns user data', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.email).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me", ""]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\",\n    \"phone_number\": \"{{test_phone}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me", ""]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Password changed', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"old_password\": \"{{test_user_password}}\",\n    \"new_password\": \"{{test_user_password}}\",\n    \"new_password2\": \"{{test_user_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/change-password/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "change-password", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MAWDY Services",
+      "description": "MAWDY roadside assistance service endpoints",
+      "item": [
+        {
+          "name": "Get MAWDY Plans",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "plans", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Plan Services",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/DRIVE/services/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "plans", "DRIVE", "services", ""]
+            }
+          }
+        },
+        {
+          "name": "Get My Usage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/plans/DRIVE/my-usage/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "plans", "DRIVE", "my-usage", ""]
+            }
+          }
+        },
+        {
+          "name": "Check Vehicle Eligibility",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"plate_number\": \"P123ABC\",\n    \"vehicle_type\": \"CAR\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/check-vehicle/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "check-vehicle", ""]
+            }
+          }
+        },
+        {
+          "name": "Check Service Availability",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"plan_type\": \"DRIVE\",\n    \"service_code\": \"GRUA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/check-service/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "check-service", ""]
+            }
+          }
+        },
+        {
+          "name": "Request MAWDY Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"plan_type\": \"DRIVE\",\n    \"service_code\": \"CERRAJERIA\",\n    \"location\": {\n        \"address\": \"6a Avenida 9-45, Zona 10, Guatemala\",\n        \"city\": \"Guatemala\",\n        \"latitude\": {{user_latitude}},\n        \"longitude\": {{user_longitude}}\n    },\n    \"description\": \"Llaves perdidas\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/request-service/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "request-service", ""]
+            }
+          }
+        },
+        {
+          "name": "Get MAWDY Contact Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/contact/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "contact", ""]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Login for Business Rules",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_admin_email}}\",\n    \"password\": \"{{test_admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Business Rules",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/providers/mawdy/business-rules/",
+              "host": ["{{base_url}}"],
+              "path": ["providers", "mawdy", "business-rules", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Tracking",
+      "description": "Public tracking endpoints (no auth required)",
+      "item": [
+        {
+          "name": "Track Request (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/public/{{request_number}}/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "public", "{{request_number}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Route History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/{{request_id}}/route/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "{{request_id}}", "route", ""]
+            }
+          }
+        },
+        {
+          "name": "Calculate ETA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns ETA data', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.eta_minutes).to.exist;",
+                  "    pm.expect(jsonData.distance_km).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"from_latitude\": {{provider_latitude}},\n    \"from_longitude\": {{provider_longitude}},\n    \"to_latitude\": {{user_latitude}},\n    \"to_longitude\": {{user_longitude}},\n    \"traffic_condition\": \"city\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assistance/tracking/calculate-eta/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "tracking", "calculate-eta", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Document Upload",
+      "description": "Document upload and AI review endpoints",
+      "item": [
+        {
+          "name": "Get Document Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/types/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "docs", "types", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Request Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/{{request_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "docs", "{{request_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Required Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/{{request_id}}/required/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "docs", "{{request_id}}", "required", ""]
+            }
+          }
+        },
+        {
+          "name": "Check Documents Complete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/{{request_id}}/status/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "docs", "{{request_id}}", "status", ""]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Login for Pending Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{test_admin_email}}\",\n    \"password\": \"{{test_admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Pending Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/assistance/docs/pending/",
+              "host": ["{{base_url}}"],
+              "path": ["assistance", "docs", "pending", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Team Management",
+      "description": "Admin endpoints for managing team accounts across organizations.\n\n- **SegurifAI Admin**: Can manage all accounts, view all reports\n- **MAWDY Admin**: Can create MAWDY field tech and admin accounts\n- **PAQ Admin**: Can create PAQ admin accounts",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Login as SegurifAI admin for team management",
+              "const loginRequest = {",
+              "    url: pm.environment.get('base_url') + '/auth/token/',",
+              "    method: 'POST',",
+              "    header: { 'Content-Type': 'application/json' },",
+              "    body: {",
+              "        mode: 'raw',",
+              "        raw: JSON.stringify({",
+              "            email: pm.environment.get('test_admin_email'),",
+              "            password: pm.environment.get('test_admin_password')",
+              "        })",
+              "    }",
+              "};",
+              "",
+              "pm.sendRequest(loginRequest, function (err, response) {",
+              "    if (!err && response.code === 200) {",
+              "        const jsonData = response.json();",
+              "        pm.environment.set('access_token', jsonData.access);",
+              "        console.log('SegurifAI Admin login successful for team management');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "item": [
+        {
+          "name": "[SegurifAI] List Team",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns team array', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('team');",
+                  "    pm.expect(jsonData).to.have.property('count');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/segurifai/team/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "segurifai", "team", ""]
+            }
+          }
+        },
+        {
+          "name": "[SegurifAI] Create Team Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('User created successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"team_test_{{$timestamp}}@segurifai.gt\",\n    \"password\": \"TestPassword123!\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"Team Member\",\n    \"role\": \"SEGURIFAI_TEAM\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/segurifai/team/create/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "segurifai", "team", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "[SegurifAI] List All Admins",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns admins array', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('admins');",
+                  "    pm.expect(jsonData).to.have.property('count');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/segurifai/all-admins/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "segurifai", "all-admins", ""]
+            }
+          }
+        },
+        {
+          "name": "[MAWDY] List Team",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns team array', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('team');",
+                  "    pm.expect(jsonData).to.have.property('count');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/mawdy/team/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "mawdy", "team", ""]
+            }
+          }
+        },
+        {
+          "name": "[MAWDY] Create Field Tech",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('User created successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user.role).to.equal('MAWDY_FIELD_TECH');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"fieldtech_{{$timestamp}}@mawdy.gt\",\n    \"password\": \"TestPassword123!\",\n    \"first_name\": \"Field\",\n    \"last_name\": \"Technician\",\n    \"role\": \"MAWDY_FIELD_TECH\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/mawdy/team/create/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "mawdy", "team", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "[MAWDY] Create Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('User created successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user.role).to.equal('MAWDY_ADMIN');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"mawdyadmin_{{$timestamp}}@mawdy.gt\",\n    \"password\": \"TestPassword123!\",\n    \"first_name\": \"MAWDY\",\n    \"last_name\": \"Admin\",\n    \"role\": \"MAWDY_ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/mawdy/team/create/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "mawdy", "team", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "[PAQ] List Team",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns team array', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('team');",
+                  "    pm.expect(jsonData).to.have.property('count');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/paq/team/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "paq", "team", ""]
+            }
+          }
+        },
+        {
+          "name": "[PAQ] Create Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('User created successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user.role).to.equal('PAQ_ADMIN');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"paqadmin_{{$timestamp}}@paq.gt\",\n    \"password\": \"TestPassword123!\",\n    \"first_name\": \"PAQ\",\n    \"last_name\": \"Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/paq/team/create/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "paq", "team", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Toggle User Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Status toggled successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/{{user_id}}/toggle-status/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", "{{user_id}}", "toggle-status", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Google Maps",
+      "description": "Google Maps location service endpoints for tracking and navigation.",
+      "item": [
+        {
+          "name": "Geocode Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns coordinates', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('lat');",
+                  "    pm.expect(jsonData).to.have.property('lng');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/geocode/?address=Zona 10, Guatemala City",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "geocode", ""],
+              "query": [{"key": "address", "value": "Zona 10, Guatemala City"}]
+            },
+            "description": "Convert address to GPS coordinates.\n\nParameters:\n- address: The address to geocode"
+          }
+        },
+        {
+          "name": "Reverse Geocode",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns address', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('formatted_address');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/reverse-geocode/?lat={{user_latitude}}&lng={{user_longitude}}",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "reverse-geocode", ""],
+              "query": [
+                {"key": "lat", "value": "{{user_latitude}}"},
+                {"key": "lng", "value": "{{user_longitude}}"}
+              ]
+            },
+            "description": "Convert GPS coordinates to address."
+          }
+        },
+        {
+          "name": "Get Directions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns route info', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('distance_km');",
+                  "    pm.expect(jsonData).to.have.property('duration_minutes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/directions/?origin_lat={{provider_latitude}}&origin_lng={{provider_longitude}}&dest_lat={{user_latitude}}&dest_lng={{user_longitude}}",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "directions", ""],
+              "query": [
+                {"key": "origin_lat", "value": "{{provider_latitude}}"},
+                {"key": "origin_lng", "value": "{{provider_longitude}}"},
+                {"key": "dest_lat", "value": "{{user_latitude}}"},
+                {"key": "dest_lng", "value": "{{user_longitude}}"}
+              ]
+            },
+            "description": "Get directions between two points with polyline and steps."
+          }
+        },
+        {
+          "name": "Calculate ETA (Maps)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns ETA', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('eta_minutes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/eta/?provider_lat={{provider_latitude}}&provider_lng={{provider_longitude}}&user_lat={{user_latitude}}&user_lng={{user_longitude}}",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "eta", ""],
+              "query": [
+                {"key": "provider_lat", "value": "{{provider_latitude}}"},
+                {"key": "provider_lng", "value": "{{provider_longitude}}"},
+                {"key": "user_lat", "value": "{{user_latitude}}"},
+                {"key": "user_lng", "value": "{{user_longitude}}"}
+              ]
+            },
+            "description": "Calculate ETA from provider to user location using Google Maps."
+          }
+        },
+        {
+          "name": "Address Autocomplete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns suggestions', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('suggestions');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/autocomplete/?query=zona 10",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "autocomplete", ""],
+              "query": [{"key": "query", "value": "zona 10"}]
+            },
+            "description": "Get address autocomplete suggestions for input fields."
+          }
+        },
+        {
+          "name": "Haversine Distance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                  "});",
+                  "pm.test('Returns distance', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('distance_km');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/maps/distance/?lat1={{provider_latitude}}&lng1={{provider_longitude}}&lat2={{user_latitude}}&lng2={{user_longitude}}",
+              "host": ["{{base_url}}"],
+              "path": ["maps", "distance", ""],
+              "query": [
+                {"key": "lat1", "value": "{{provider_latitude}}"},
+                {"key": "lng1", "value": "{{provider_longitude}}"},
+                {"key": "lat2", "value": "{{user_latitude}}"},
+                {"key": "lng2", "value": "{{user_longitude}}"}
+              ]
+            },
+            "description": "Calculate straight-line distance (Haversine formula).\n\nNo Google API needed - pure calculation."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dispatch Monitoring (Admin)",
+      "description": "Real-time dispatch monitoring and audit logs.\n\nAccessible by: SegurifAI Admin, MAWDY Admin, PAQ Admin",
+      "item": [
+        {
+          "name": "Active Dispatch (Real-Time)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 403', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 403]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Returns dispatch data', function() {",
+                  "        pm.expect(jsonData).to.have.property('active_dispatches');",
+                  "        pm.expect(jsonData).to.have.property('summary');",
+                  "    });",
+                  "    console.log('Active dispatches:', jsonData.summary.active_count);",
+                  "    console.log('Pending requests:', jsonData.summary.pending_count);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/dispatch/active/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard", "dispatch", "active", ""]
+            },
+            "description": "Get real-time active dispatch data.\n\nReturns:\n- Active dispatch jobs with tech locations and ETA\n- Pending requests waiting for dispatch\n- Available technicians count\n\nRequires admin authentication."
+          }
+        },
+        {
+          "name": "Dispatch Audit Logs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 403', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 403]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test('Returns logs', function() {",
+                  "        pm.expect(jsonData).to.have.property('logs');",
+                  "        pm.expect(jsonData).to.have.property('count');",
+                  "    });",
+                  "    console.log('Log entries:', jsonData.count);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/dispatch/logs/?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard", "dispatch", "logs", ""],
+              "query": [
+                {"key": "limit", "value": "50"}
+              ]
+            },
+            "description": "Get dispatch action audit logs.\n\nQuery params:\n- action: Filter by action type\n- tech_id: Filter by technician\n- request_id: Filter by assistance request\n- limit: Max results (default 100)\n\nLogs all dispatch actions for compliance and auditing."
+          }
+        },
+        {
+          "name": "Live Provider Map",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 403', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 403]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Online providers:', jsonData.summary.online_techs);",
+                  "    console.log('Pending requests:', jsonData.summary.pending_requests);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/providers/map/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard", "providers", "map", ""]
+            },
+            "description": "Get all active providers with locations for real-time map.\n\nSegurifAI Admin only."
+          }
+        },
+        {
+          "name": "MAWDY Admin Overview",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 403', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 403]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Total techs:', jsonData.technicians.total);",
+                  "    console.log('Online:', jsonData.technicians.online);",
+                  "    console.log('Jobs today:', jsonData.jobs.today);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/mawdy/overview/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard", "mawdy", "overview", ""]
+            },
+            "description": "MAWDY Admin dashboard with dispatch statistics.\n\nMAWDY Admin or SegurifAI Admin only."
+          }
+        },
+        {
+          "name": "MAWDY Job History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200/201/204 or 403', function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 403]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('Jobs returned:', jsonData.count);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/mawdy/jobs/?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard", "mawdy", "jobs", ""],
+              "query": [
+                {"key": "limit", "value": "50"}
+              ]
+            },
+            "description": "Get MAWDY job history.\n\nQuery params:\n- status: Filter by job status\n- tech_id: Filter by technician\n- limit: Max results"
+          }
+        }
+      ]
+    }
+  ]
+}

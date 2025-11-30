@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(DB_ENGINE=django.db.backends.sqlite3 DB_NAME=db.sqlite3 ./venv/Scripts/python.exe:*)",
+      "Bash(dir /s \"c:\\Users\\escog\\OneDrive\\Documents\\SegurifAI x PAQ\\apps\")",
+      "Bash(./venv/Scripts/python.exe manage.py shell -c \"\nimport requests\nfrom apps.users.models import User\nfrom rest_framework_simplejwt.tokens import RefreshToken\n\nuser = User.objects.get(email=''admin@segurifai.gt'')\ntoken = str(RefreshToken.for_user(user).access_token)\n\nr = requests.get(''http://localhost:8888/api/admin/dashboard/full/'', headers={''Authorization'': f''Bearer {token}''})\nprint(''Keys:'', list(r.json().keys()))\n\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
