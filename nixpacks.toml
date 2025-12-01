@@ -1,0 +1,24 @@
+# Nixpacks Configuration for Railway
+# This tells Railway how to build the application
+
+[phases.setup]
+nixPkgs = ["python311", "nodejs-18_x", "postgresql"]
+
+[phases.install]
+cmds = [
+    "pip install -r requirements.txt",
+    "cd frontend && npm ci"
+]
+
+[phases.build]
+cmds = [
+    "cd frontend && npm run build",
+    "python manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "python manage.py migrate && gunicorn segurifai_paq.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+NODE_ENV = "production"

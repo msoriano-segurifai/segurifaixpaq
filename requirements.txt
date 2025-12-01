@@ -9,6 +9,10 @@ PyJWT==2.8.0
 
 # Database
 psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+
+# Supabase (optional - for direct Supabase API access)
+supabase==2.3.4
 
 # API Documentation
 drf-spectacular==0.27.1
