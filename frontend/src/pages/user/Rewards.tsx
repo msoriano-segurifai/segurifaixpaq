@@ -372,7 +372,7 @@ export const Rewards: React.FC = () => {
             >
               <tab.icon size={18} />
               {tab.label}
-              {tab.badge && tab.badge > 0 && (
+              {tab.badge !== undefined && tab.badge > 0 && (
                 <span className="ml-1 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full font-bold">
                   {tab.badge}
                 </span>

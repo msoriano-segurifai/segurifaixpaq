@@ -568,6 +568,18 @@ def reset_gamification(request):
     except UserDiscountCredits.DoesNotExist:
         pass
 
+    # Reset UserReward (earned promo codes from gamification)
+    from .models import UserReward
+    rewards_deleted = UserReward.objects.filter(user=target_user).delete()[0]
+
+    # Reset promo code usage for this user (from promotions app)
+    promo_usage_deleted = 0
+    try:
+        from apps.promotions.models import PromoCodeUsage
+        promo_usage_deleted = PromoCodeUsage.objects.filter(user=target_user).delete()[0]
+    except Exception:
+        pass  # Promotions app might not be available
+
     return Response({
         'success': True,
         'message': f'Gamificacion reseteada para usuario {target_user.phone_number or target_user.email}',
@@ -579,6 +591,8 @@ def reset_gamification(request):
             'streak': 0,
             'progress_deleted': progress_deleted,
             'achievements_deleted': achievements_deleted,
-            'credits_reset': credits_reset
+            'credits_reset': credits_reset,
+            'rewards_deleted': rewards_deleted,
+            'promo_usage_deleted': promo_usage_deleted
         }
     })

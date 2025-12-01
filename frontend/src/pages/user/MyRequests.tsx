@@ -391,6 +391,7 @@ export const MyRequests: React.FC = () => {
                             lng: tracking.location.provider.longitude || -90.5069
                           }}
                           techName={tracking.provider?.name || 'Tecnico'}
+                          serviceType={selectedRequest.title}
                           eta={tracking.eta?.minutes}
                           autoRefresh={!['COMPLETED', 'CANCELLED'].includes(selectedRequest.status)}
                           onRefresh={() => loadTracking(selectedRequest, true)}

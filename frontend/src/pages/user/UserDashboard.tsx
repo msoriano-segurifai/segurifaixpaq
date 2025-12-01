@@ -277,21 +277,27 @@ export const UserDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Level Progress Bar */}
-            {elearning?.points?.next_level && (
+            {/* E-Learning Module Progress Bar */}
+            {elearning?.modules && (
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600 font-medium">Progreso al siguiente nivel</span>
-                  <span className="font-bold text-blue-600">{elearning.points.next_level.progress_percentage}%</span>
+                  <span className="text-gray-600 font-medium">Progreso E-Learning</span>
+                  <span className="font-bold text-blue-600">
+                    {elearning.modules.total_available > 0
+                      ? Math.round((elearning.modules.completed / elearning.modules.total_available) * 100)
+                      : 0}%
+                  </span>
                 </div>
                 <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
-                    style={{ width: `${elearning.points.next_level.progress_percentage}%` }}
+                    style={{ width: `${elearning.modules.total_available > 0
+                      ? (elearning.modules.completed / elearning.modules.total_available) * 100
+                      : 0}%` }}
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  <span className="font-medium text-purple-600">{elearning.points.next_level.points_remaining} puntos</span> para alcanzar {elearning.points.next_level.level}
+                  <span className="font-medium text-purple-600">{elearning.modules.completed}</span> de <span className="font-medium">{elearning.modules.total_available}</span> módulos completados
                 </p>
               </div>
             )}

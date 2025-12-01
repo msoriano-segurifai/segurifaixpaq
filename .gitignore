@@ -40,6 +40,8 @@ staticfiles/
 credentials.json
 secrets.yaml
 secrets.json
+token.txt
+*.token
 
 # IDE
 .vscode/

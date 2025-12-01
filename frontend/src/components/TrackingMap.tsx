@@ -138,10 +138,59 @@ declare namespace google.maps {
   }
 }
 
+// Service type configuration for proper display
+const SERVICE_TYPE_CONFIG: Record<string, { label: string; labelEnRoute: string; icon: string; color: string }> = {
+  // DRIVE/Vial services
+  'Grúa del Vehículo': { label: 'Grúa', labelEnRoute: 'Grúa en camino', icon: '🚛', color: '#FF9800' },
+  'Grua del Vehiculo': { label: 'Grúa', labelEnRoute: 'Grúa en camino', icon: '🚛', color: '#FF9800' },
+  'Abasto de Combustible': { label: 'Combustible', labelEnRoute: 'Combustible en camino', icon: '⛽', color: '#795548' },
+  'Cambio de Neumáticos': { label: 'Técnico Llantas', labelEnRoute: 'Técnico en camino', icon: '🛞', color: '#4CAF50' },
+  'Cambio de Neumaticos': { label: 'Técnico Llantas', labelEnRoute: 'Técnico en camino', icon: '🛞', color: '#4CAF50' },
+  'Paso de Corriente': { label: 'Técnico Batería', labelEnRoute: 'Técnico en camino', icon: '🔋', color: '#FFC107' },
+  'Cerrajería Vehicular': { label: 'Cerrajero', labelEnRoute: 'Cerrajero en camino', icon: '🔑', color: '#9C27B0' },
+  'Cerrajeria Vehicular': { label: 'Cerrajero', labelEnRoute: 'Cerrajero en camino', icon: '🔑', color: '#9C27B0' },
+  'Ambulancia (Plan Vial)': { label: 'Ambulancia', labelEnRoute: 'Ambulancia en camino', icon: '🚑', color: '#E53935' },
+  'Ambulancia (Plan Salud)': { label: 'Ambulancia', labelEnRoute: 'Ambulancia en camino', icon: '🚑', color: '#E53935' },
+  'Ambulancia': { label: 'Ambulancia', labelEnRoute: 'Ambulancia en camino', icon: '🚑', color: '#E53935' },
+  // HEALTH/Salud services
+  'Médico a Domicilio': { label: 'Médico', labelEnRoute: 'Médico en camino', icon: '👨‍⚕️', color: '#00BCD4' },
+  'Medico a Domicilio': { label: 'Médico', labelEnRoute: 'Médico en camino', icon: '👨‍⚕️', color: '#00BCD4' },
+  'Medicamentos a Domicilio': { label: 'Entrega', labelEnRoute: 'Pedido en camino', icon: '💊', color: '#E91E63' },
+  'Mensajería Hospitalización': { label: 'Mensajero', labelEnRoute: 'Mensajero en camino', icon: '📦', color: '#FF9800' },
+  'Mensajeria Hospitalizacion': { label: 'Mensajero', labelEnRoute: 'Mensajero en camino', icon: '📦', color: '#FF9800' },
+  'Taxi para Familiar': { label: 'Taxi', labelEnRoute: 'Taxi en camino', icon: '🚕', color: '#FFC107' },
+  'Taxi Post-Alta': { label: 'Taxi', labelEnRoute: 'Taxi en camino', icon: '🚕', color: '#4CAF50' },
+  'Taxi al Aeropuerto': { label: 'Taxi', labelEnRoute: 'Taxi en camino', icon: '✈️', color: '#2196F3' },
+  'Conductor Profesional': { label: 'Conductor', labelEnRoute: 'Conductor en camino', icon: '🚗', color: '#3F51B5' },
+  // Cuidados y enfermería
+  'Cuidados Post-Operatorios': { label: 'Enfermera', labelEnRoute: 'Enfermera en camino', icon: '👩‍⚕️', color: '#E91E63' },
+  // Generic fallback
+  'default': { label: 'Técnico', labelEnRoute: 'Técnico en camino', icon: '🔧', color: '#2196F3' }
+};
+
+// Helper to get service config - handles both exact and prefixed service names
+const getServiceConfig = (serviceType?: string) => {
+  if (!serviceType) return SERVICE_TYPE_CONFIG['default'];
+
+  // Try exact match first
+  if (SERVICE_TYPE_CONFIG[serviceType]) {
+    return SERVICE_TYPE_CONFIG[serviceType];
+  }
+
+  // Handle backward compatibility: strip "Asistencia: " prefix if present
+  const cleanedType = serviceType.replace(/^Asistencia:\s*/i, '');
+  if (SERVICE_TYPE_CONFIG[cleanedType]) {
+    return SERVICE_TYPE_CONFIG[cleanedType];
+  }
+
+  return SERVICE_TYPE_CONFIG['default'];
+};
+
 interface TrackingMapProps {
   userLocation: { lat: number; lng: number };
   techLocation: { lat: number; lng: number };
   techName?: string;
+  serviceType?: string; // The service/assistance type (e.g., "Grúa del Vehículo", "Ambulancia")
   eta?: number; // ETA in minutes
   autoRefresh?: boolean; // Auto-refresh location every 10 seconds
   onRefresh?: () => void;
@@ -151,10 +200,13 @@ export const TrackingMap: React.FC<TrackingMapProps> = ({
   userLocation,
   techLocation,
   techName = 'Tecnico',
+  serviceType,
   eta,
   autoRefresh = false,
   onRefresh
 }) => {
+  // Get service-specific configuration
+  const serviceConfig = getServiceConfig(serviceType);
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userMarker, setUserMarker] = useState<google.maps.Marker | null>(null);
@@ -371,9 +423,10 @@ export const TrackingMap: React.FC<TrackingMapProps> = ({
             </div>
             <div className="p-3 bg-white rounded-lg">
               <div className="flex items-center gap-2 mb-1">
-                <Navigation className="text-green-500" size={16} />
+                <span className="text-lg">{serviceConfig.icon}</span>
                 <span className="font-medium">{techName}</span>
               </div>
+              <p className="text-xs text-gray-500">{serviceConfig.labelEnRoute}</p>
               <p className="text-xs text-gray-600">
                 {techLocation.lat.toFixed(6)}, {techLocation.lng.toFixed(6)}
               </p>
@@ -413,13 +466,13 @@ export const TrackingMap: React.FC<TrackingMapProps> = ({
         </div>
       )}
 
-      {/* Tech Info Badge */}
+      {/* Tech Info Badge - Shows service-specific icon and label */}
       {!isLoading && (
         <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg px-4 py-2 z-10">
           <div className="flex items-center gap-2">
-            <Navigation className="text-green-500" size={20} />
+            <span className="text-2xl">{serviceConfig.icon}</span>
             <div>
-              <p className="text-xs text-gray-600">Tecnico en camino</p>
+              <p className="text-xs text-gray-600">{serviceConfig.labelEnRoute}</p>
               <p className="font-bold text-gray-900">{techName}</p>
             </div>
           </div>

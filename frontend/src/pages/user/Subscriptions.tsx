@@ -6,7 +6,7 @@ import {
   ChevronLeft, ChevronRight, Phone, MapPin,
   Ambulance, Home, Scale, Car, Fuel, Key,
   Users, FileText, Zap, Loader2, X, AlertCircle, Table2, Minus, Tag, Gift,
-  Sparkles, Send, MessageSquare, Lock
+  Sparkles, Send, MessageSquare, Lock, BarChart3
 } from 'lucide-react';
 
 // Helper to normalize Guatemala phone numbers to 8 digits
@@ -224,15 +224,30 @@ export const Subscriptions: React.FC = () => {
   const [hasCompletedFirstModule, setHasCompletedFirstModule] = useState(false);
   const [elearningChecked, setElearningChecked] = useState(false);
 
-  // AI Plan Suggestion State
+  // AI Plan Suggestion State - supports both recommendations and comparisons
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<{
-    recommended_plan: string;
-    confidence: string;
-    reason: string;
-    key_services: string[];
+    // Common fields
+    is_comparison?: boolean;
     message: string;
+    // Recommendation fields
+    recommended_plan?: string;
+    confidence?: string;
+    reason?: string;
+    key_services?: string[];
+    price_monthly?: string;
+    price_yearly?: string;
+    // Comparison fields
+    compared_plans?: string[];
+    comparison_details?: Array<{
+      aspect: string;
+      plan1: string;
+      plan2: string;
+      winner: string;
+    }>;
+    recommendation?: string;
+    key_differences?: string[];
   } | null>(null);
   const [aiError, setAiError] = useState('');
 
@@ -1169,63 +1184,151 @@ export const Subscriptions: React.FC = () => {
                   </div>
                 )}
 
-                {/* AI Suggestion Result */}
+                {/* AI Suggestion Result - Handles both recommendations and comparisons */}
                 {aiSuggestion && (
                   <div className="bg-white border-2 border-green-200 rounded-xl p-5 shadow-lg">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        aiSuggestion.recommended_plan === 'Drive' ? 'bg-blue-100' :
-                        aiSuggestion.recommended_plan === 'Health' ? 'bg-pink-100' : 'bg-purple-100'
-                      }`}>
-                        {aiSuggestion.recommended_plan === 'Drive' ? (
-                          <Car className="text-blue-600" size={28} />
-                        ) : aiSuggestion.recommended_plan === 'Health' ? (
-                          <Heart className="text-pink-600" size={28} />
-                        ) : (
-                          <Shield className="text-purple-600" size={28} />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h5 className="font-bold text-gray-900 text-lg">Plan Recomendado: {aiSuggestion.recommended_plan}</h5>
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            aiSuggestion.confidence === 'high' ? 'bg-green-100 text-green-700' :
-                            aiSuggestion.confidence === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-                          }`}>
-                            {aiSuggestion.confidence === 'high' ? 'Alta confianza' :
-                             aiSuggestion.confidence === 'medium' ? 'Confianza media' : 'Sugerencia'}
-                          </span>
+                    {/* COMPARISON VIEW */}
+                    {aiSuggestion.is_comparison ? (
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-pink-100 flex items-center justify-center">
+                            <BarChart3 className="text-purple-600" size={24} />
+                          </div>
+                          <div>
+                            <h5 className="font-bold text-gray-900 text-lg">Comparación de Planes</h5>
+                            <p className="text-sm text-gray-500">
+                              {aiSuggestion.compared_plans?.join(' vs ')}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-gray-700 mb-3">{aiSuggestion.message}</p>
-                        {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-600 mb-2">Servicios clave para ti:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {aiSuggestion.key_services.map((service, idx) => (
-                                <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                                  <Check size={14} />
-                                  {service}
-                                </span>
-                              ))}
-                            </div>
+
+                        {/* Comparison Table */}
+                        {aiSuggestion.comparison_details && aiSuggestion.comparison_details.length > 0 && (
+                          <div className="overflow-x-auto mb-4">
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="bg-gray-100">
+                                  <th className="text-left p-3 font-semibold text-gray-700 rounded-tl-lg">Aspecto</th>
+                                  <th className="text-center p-3 font-semibold text-blue-700 bg-blue-50">
+                                    {aiSuggestion.compared_plans?.[0]}
+                                  </th>
+                                  <th className="text-center p-3 font-semibold text-pink-700 bg-pink-50 rounded-tr-lg">
+                                    {aiSuggestion.compared_plans?.[1]}
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {aiSuggestion.comparison_details.map((detail, idx) => (
+                                  <tr key={idx} className="border-b border-gray-200">
+                                    <td className="p-3 font-medium text-gray-700">{detail.aspect}</td>
+                                    <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[0] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                                      {detail.plan1}
+                                      {detail.winner === aiSuggestion.compared_plans?.[0] && <Check size={14} className="inline ml-1 text-green-600" />}
+                                    </td>
+                                    <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[1] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                                      {detail.plan2}
+                                      {detail.winner === aiSuggestion.compared_plans?.[1] && <Check size={14} className="inline ml-1 text-green-600" />}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
                         )}
-                        <p className="text-sm text-gray-500 italic">{aiSuggestion.reason}</p>
+
+                        {/* Key Differences */}
+                        {aiSuggestion.key_differences && aiSuggestion.key_differences.length > 0 && (
+                          <div className="mb-4 bg-purple-50 rounded-lg p-4">
+                            <p className="text-sm font-semibold text-purple-800 mb-2">Diferencias Clave:</p>
+                            <ul className="space-y-1">
+                              {aiSuggestion.key_differences.map((diff, idx) => (
+                                <li key={idx} className="text-sm text-purple-700 flex items-start gap-2">
+                                  <span className="text-purple-500 mt-1">•</span>
+                                  {diff}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* AI Message */}
+                        <p className="text-gray-700 mb-3">{aiSuggestion.message}</p>
+
+                        {/* Recommendation from comparison */}
+                        {aiSuggestion.recommendation && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                            <p className="text-sm text-green-800">
+                              <span className="font-semibold">💡 Recomendación:</span> {aiSuggestion.recommendation}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
-                      <button
-                        onClick={() => setShowComparisonModal(false)}
-                        className={`px-6 py-2 font-bold rounded-lg transition-all flex items-center gap-2 ${
-                          aiSuggestion.recommended_plan === 'Drive' ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                          aiSuggestion.recommended_plan === 'Health' ? 'bg-pink-600 hover:bg-pink-700 text-white' :
-                          'bg-purple-600 hover:bg-purple-700 text-white'
-                        }`}
-                      >
-                        Ver Plan {aiSuggestion.recommended_plan}
-                        <ChevronRight size={18} />
-                      </button>
-                    </div>
+                    ) : (
+                      /* RECOMMENDATION VIEW */
+                      <div>
+                        <div className="flex items-start gap-4">
+                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
+                            aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' : 'bg-purple-100'
+                          }`}>
+                            {aiSuggestion.recommended_plan?.includes('Drive') ? (
+                              <Car className="text-blue-600" size={28} />
+                            ) : aiSuggestion.recommended_plan?.includes('Health') ? (
+                              <Heart className="text-pink-600" size={28} />
+                            ) : (
+                              <Shield className="text-purple-600" size={28} />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2 flex-wrap">
+                              <h5 className="font-bold text-gray-900 text-lg">Plan Recomendado: {aiSuggestion.recommended_plan}</h5>
+                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                                aiSuggestion.confidence === 'alta' ? 'bg-green-100 text-green-700' :
+                                aiSuggestion.confidence === 'media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
+                              }`}>
+                                {aiSuggestion.confidence === 'alta' ? 'Alta confianza' :
+                                 aiSuggestion.confidence === 'media' ? 'Confianza media' : 'Sugerencia'}
+                              </span>
+                            </div>
+                            {/* Price display */}
+                            {aiSuggestion.price_monthly && (
+                              <p className="text-lg font-bold text-green-600 mb-2">
+                                {aiSuggestion.price_monthly}/mes
+                                {aiSuggestion.price_yearly && <span className="text-sm font-normal text-gray-500 ml-2">({aiSuggestion.price_yearly}/año)</span>}
+                              </p>
+                            )}
+                            <p className="text-gray-700 mb-3">{aiSuggestion.message}</p>
+                            {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-sm font-medium text-gray-600 mb-2">Servicios clave para ti:</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {aiSuggestion.key_services.map((service, idx) => (
+                                    <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                                      <Check size={14} />
+                                      {service}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <p className="text-sm text-gray-500 italic">{aiSuggestion.reason}</p>
+                          </div>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+                          <button
+                            onClick={() => setShowComparisonModal(false)}
+                            className={`px-6 py-2 font-bold rounded-lg transition-all flex items-center gap-2 ${
+                              aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
+                              aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
+                              'bg-purple-600 hover:bg-purple-700 text-white'
+                            }`}
+                          >
+                            Ver Planes
+                            <ChevronRight size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1233,17 +1336,33 @@ export const Subscriptions: React.FC = () => {
                 {!aiSuggestion && !aiLoading && (
                   <div className="mt-4">
                     <p className="text-xs text-gray-500 mb-2">Ejemplos de lo que puedes preguntar:</p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-3">
                       {[
                         'Manejo mucho y mi carro es viejo',
                         'Tengo hijos pequeños y quiero consultas médicas',
-                        'Quiero protección completa para mi familia',
-                        'Viajo seguido y necesito asistencia vial'
+                        'Quiero protección completa para mi familia'
                       ].map((example, idx) => (
                         <button
                           key={idx}
                           onClick={() => setAiPrompt(example)}
                           className="text-xs bg-white border border-purple-200 text-purple-700 px-3 py-1.5 rounded-full hover:bg-purple-50 transition-colors"
+                        >
+                          "{example}"
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 mb-2">O compara planes específicos:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'Compara Drive Inclusión vs Drive Opcional',
+                        'Diferencia entre Health Inclusión y Opcional',
+                        'Compara Plan Drive vs Plan Health',
+                        '¿Qué incluye el Plan Combo?'
+                      ].map((example, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setAiPrompt(example)}
+                          className="text-xs bg-white border border-blue-200 text-blue-700 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors"
                         >
                           "{example}"
                         </button>
@@ -1280,9 +1399,10 @@ export const Subscriptions: React.FC = () => {
                 </div>
               </div>
 
-              {/* Detailed Feature Comparison Table - Using ALL_SERVICES from PDF */}
+              {/* Detailed Feature Comparison Table - ALL MAWDY Plans */}
               <div className="bg-gray-50 rounded-2xl p-6">
-                <h4 className="font-bold text-gray-900 mb-4 text-center text-xl">Comparacion Detallada de Servicios</h4>
+                <h4 className="font-bold text-gray-900 mb-4 text-center text-xl">Comparación de Todos los Planes MAWDY</h4>
+                <p className="text-center text-gray-500 text-sm mb-6">Compara los servicios incluidos en cada plan</p>
 
                 {/* Filter Buttons */}
                 <div className="flex justify-center gap-2 mb-6">
@@ -1294,7 +1414,7 @@ export const Subscriptions: React.FC = () => {
                         : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
                     }`}
                   >
-                    Todos
+                    Todos los Servicios
                   </button>
                   <button
                     onClick={() => setServiceFilter('vial')}
@@ -1305,7 +1425,7 @@ export const Subscriptions: React.FC = () => {
                     }`}
                   >
                     <Car size={18} />
-                    Vial (Drive)
+                    Servicios Viales
                   </button>
                   <button
                     onClick={() => setServiceFilter('salud')}
@@ -1316,7 +1436,7 @@ export const Subscriptions: React.FC = () => {
                     }`}
                   >
                     <Heart size={18} />
-                    Salud (Health)
+                    Servicios de Salud
                   </button>
                 </div>
 
@@ -1324,36 +1444,36 @@ export const Subscriptions: React.FC = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b-2 border-gray-300">
-                        <th className="text-left p-4 font-semibold text-gray-700 bg-gray-100 rounded-tl-lg min-w-[280px]">Servicio</th>
-                        <th className="text-center p-4 font-bold bg-blue-100 text-blue-900 min-w-[120px]">
+                        <th className="text-left p-3 font-semibold text-gray-700 bg-gray-100 rounded-tl-lg min-w-[220px] sticky left-0 z-10">
+                          Servicio
+                        </th>
+                        {/* Dynamic columns for ALL database plans */}
+                        {plans.map((plan) => {
+                          const isVial = plan.category_type === 'ROADSIDE';
+                          return (
+                            <th
+                              key={plan.id}
+                              className={`text-center p-3 font-bold min-w-[140px] ${
+                                isVial ? 'bg-blue-100 text-blue-900' : 'bg-pink-100 text-pink-900'
+                              } ${plan.is_featured ? 'ring-2 ring-yellow-400' : ''}`}
+                            >
+                              <div className="flex flex-col items-center">
+                                {isVial ? <Car size={18} className="mb-1" /> : <Heart size={18} className="mb-1" />}
+                                <span className="text-xs leading-tight">{plan.name}</span>
+                                {plan.is_featured && (
+                                  <span className="text-[10px] bg-yellow-400 text-yellow-900 px-1 rounded mt-1">⭐</span>
+                                )}
+                              </div>
+                            </th>
+                          );
+                        })}
+                        {/* Combo Plan Column */}
+                        <th className="text-center p-3 font-bold bg-purple-100 text-purple-900 min-w-[140px] rounded-tr-lg">
                           <div className="flex flex-col items-center">
-                            <Car size={20} className="mb-1" />
-                            <span>Plan Drive</span>
-                            <span className="text-xs font-normal text-blue-700">Limite</span>
+                            <Shield size={18} className="mb-1" />
+                            <span className="text-xs leading-tight">Plan Combo</span>
+                            <span className="text-[10px] bg-green-500 text-white px-1 rounded mt-1">Ahorra</span>
                           </div>
-                        </th>
-                        <th className="text-center p-4 font-bold bg-blue-50 text-blue-800 min-w-[80px]">
-                          <span className="text-xs">Valor</span>
-                        </th>
-                        <th className="text-center p-4 font-bold bg-pink-100 text-pink-900 min-w-[120px]">
-                          <div className="flex flex-col items-center">
-                            <Heart size={20} className="mb-1" />
-                            <span>Plan Health</span>
-                            <span className="text-xs font-normal text-pink-700">Limite</span>
-                          </div>
-                        </th>
-                        <th className="text-center p-4 font-bold bg-pink-50 text-pink-800 min-w-[80px]">
-                          <span className="text-xs">Valor</span>
-                        </th>
-                        <th className="text-center p-4 font-bold bg-purple-100 text-purple-900 min-w-[120px]">
-                          <div className="flex flex-col items-center">
-                            <Shield size={20} className="mb-1" />
-                            <span>Plan Combo</span>
-                            <span className="text-xs font-normal text-purple-700">Limite</span>
-                          </div>
-                        </th>
-                        <th className="text-center p-4 font-bold bg-purple-50 text-purple-800 rounded-tr-lg min-w-[80px]">
-                          <span className="text-xs">Valor</span>
                         </th>
                       </tr>
                     </thead>
@@ -1365,65 +1485,97 @@ export const Subscriptions: React.FC = () => {
                           key={service.id}
                           className={`border-b border-gray-200 ${
                             service.category === 'vial'
-                              ? 'bg-blue-50/50 hover:bg-blue-100/50'
-                              : 'bg-pink-50/50 hover:bg-pink-100/50'
+                              ? 'bg-blue-50/30 hover:bg-blue-100/50'
+                              : 'bg-pink-50/30 hover:bg-pink-100/50'
                           }`}
                         >
-                          <td className="p-4 text-gray-700 font-medium">
+                          <td className="p-3 text-gray-700 font-medium bg-white sticky left-0 z-10 border-r border-gray-200">
                             <div className="flex items-center gap-2">
-                              <span className={`w-2 h-2 rounded-full ${service.category === 'vial' ? 'bg-blue-500' : 'bg-pink-500'}`}></span>
-                              {service.name}
+                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${service.category === 'vial' ? 'bg-blue-500' : 'bg-pink-500'}`}></span>
+                              <span className="text-xs">{service.name}</span>
                             </div>
                           </td>
-                          <td className={`p-4 text-center font-medium ${service.driveLimit !== '-' ? 'text-blue-700' : 'text-gray-400'}`}>
-                            {service.driveLimit !== '-' ? (
-                              <span className="bg-blue-100 px-2 py-1 rounded-full text-xs">{service.driveLimit}</span>
-                            ) : (
-                              <Minus className="mx-auto" size={16} />
-                            )}
-                          </td>
-                          <td className={`p-4 text-center ${service.driveValue !== '-' ? 'text-blue-800 font-semibold' : 'text-gray-400'}`}>
-                            {service.driveValue !== '-' ? service.driveValue : <Minus className="mx-auto" size={16} />}
-                          </td>
-                          <td className={`p-4 text-center font-medium ${service.healthLimit !== '-' ? 'text-pink-700' : 'text-gray-400'}`}>
-                            {service.healthLimit !== '-' ? (
-                              <span className="bg-pink-100 px-2 py-1 rounded-full text-xs">{service.healthLimit}</span>
-                            ) : (
-                              <Minus className="mx-auto" size={16} />
-                            )}
-                          </td>
-                          <td className={`p-4 text-center ${service.healthValue !== '-' ? 'text-pink-800 font-semibold' : 'text-gray-400'}`}>
-                            {service.healthValue !== '-' ? service.healthValue : <Minus className="mx-auto" size={16} />}
-                          </td>
-                          {/* Combo Plan Columns */}
-                          <td className={`p-4 text-center font-medium ${service.comboLimit !== '-' ? 'text-purple-700' : 'text-gray-400'}`}>
+                          {/* Dynamic cells for each database plan */}
+                          {plans.map((plan) => {
+                            const isVial = plan.category_type === 'ROADSIDE';
+                            const hasService = (isVial && service.category === 'vial') || (!isVial && service.category === 'salud');
+                            const limit = isVial ? service.driveLimit : service.healthLimit;
+                            const value = isVial ? service.driveValue : service.healthValue;
+                            return (
+                              <td key={plan.id} className={`p-2 text-center ${hasService ? (isVial ? 'text-blue-700' : 'text-pink-700') : 'text-gray-300'}`}>
+                                {hasService && limit !== '-' ? (
+                                  <div className="flex flex-col items-center">
+                                    <Check size={16} className={isVial ? 'text-blue-600' : 'text-pink-600'} />
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full mt-0.5 ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
+                                      {limit}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <Minus className="mx-auto text-gray-300" size={14} />
+                                )}
+                              </td>
+                            );
+                          })}
+                          {/* Combo Plan Cell */}
+                          <td className={`p-2 text-center ${service.comboLimit !== '-' ? 'text-purple-700' : 'text-gray-300'}`}>
                             {service.comboLimit !== '-' ? (
-                              <span className="bg-purple-100 px-2 py-1 rounded-full text-xs">{service.comboLimit}</span>
+                              <div className="flex flex-col items-center">
+                                <Check size={16} className="text-purple-600" />
+                                <span className="text-[10px] bg-purple-100 px-1.5 py-0.5 rounded-full mt-0.5">
+                                  {service.comboLimit}
+                                </span>
+                              </div>
                             ) : (
-                              <Minus className="mx-auto" size={16} />
+                              <Minus className="mx-auto text-gray-300" size={14} />
                             )}
-                          </td>
-                          <td className={`p-4 text-center ${service.comboValue !== '-' ? 'text-purple-800 font-semibold' : 'text-gray-400'}`}>
-                            {service.comboValue !== '-' ? service.comboValue : <Minus className="mx-auto" size={16} />}
                           </td>
                         </tr>
                       ))}
                       {/* Price Row */}
-                      <tr className="bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100 font-bold border-t-2 border-gray-300">
-                        <td className="p-4 text-gray-900 rounded-bl-lg">Precio {billingCycle === 'monthly' ? 'Mensual' : 'Anual'}</td>
-                        <td colSpan={2} className="p-4 text-center text-xl text-blue-700">
-                          Q{billingCycle === 'monthly' ? '24.41' : '292.86'}
+                      <tr className="bg-gradient-to-r from-gray-100 to-gray-200 font-bold border-t-2 border-gray-400">
+                        <td className="p-3 text-gray-900 rounded-bl-lg sticky left-0 bg-gray-100 border-r border-gray-300">
+                          Precio {billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
                         </td>
-                        <td colSpan={2} className="p-4 text-center text-xl text-pink-700">
-                          Q{billingCycle === 'monthly' ? '22.48' : '269.70'}
-                        </td>
-                        <td colSpan={2} className="p-4 text-center text-xl text-purple-700 rounded-br-lg">
+                        {plans.map((plan) => {
+                          const isVial = plan.category_type === 'ROADSIDE';
+                          const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
+                          return (
+                            <td key={plan.id} className={`p-3 text-center ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>
+                              <div className="flex flex-col items-center">
+                                <span className="text-lg font-bold">Q{price}</span>
+                                <span className="text-[10px] text-gray-500">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
+                              </div>
+                            </td>
+                          );
+                        })}
+                        <td className="p-3 text-center text-purple-700 rounded-br-lg">
                           <div className="flex flex-col items-center">
-                            <span>Q{billingCycle === 'monthly' ? '42.89' : '514.68'}</span>
-                            <span className="text-xs font-normal text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1">
-                              Ahorra Q{billingCycle === 'monthly' ? '4.00' : '47.88'}
+                            <span className="text-lg font-bold">Q{billingCycle === 'monthly' ? '42.89' : '514.68'}</span>
+                            <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                              Ahorra Q{billingCycle === 'monthly' ? '4' : '48'}
                             </span>
                           </div>
+                        </td>
+                      </tr>
+                      {/* Service Count Row */}
+                      <tr className="bg-gray-50">
+                        <td className="p-3 text-gray-700 font-medium sticky left-0 bg-gray-50 border-r border-gray-200">
+                          Total Servicios Incluidos
+                        </td>
+                        {plans.map((plan) => {
+                          const isVial = plan.category_type === 'ROADSIDE';
+                          const serviceCount = ALL_SERVICES.filter(s =>
+                            (isVial && s.category === 'vial' && s.driveLimit !== '-') ||
+                            (!isVial && s.category === 'salud' && s.healthLimit !== '-')
+                          ).length;
+                          return (
+                            <td key={plan.id} className={`p-3 text-center font-bold ${isVial ? 'text-blue-600' : 'text-pink-600'}`}>
+                              {serviceCount} servicios
+                            </td>
+                          );
+                        })}
+                        <td className="p-3 text-center font-bold text-purple-600">
+                          {ALL_SERVICES.filter(s => s.comboLimit !== '-').length} servicios
                         </td>
                       </tr>
                     </tbody>

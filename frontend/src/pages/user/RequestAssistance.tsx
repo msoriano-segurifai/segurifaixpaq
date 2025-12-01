@@ -514,7 +514,7 @@ export const RequestAssistance: React.FC = () => {
     description: '',
     phone: '',
     location_address: '',
-    location_city: 'Guatemala City',
+    location_city: '',
     location_state: 'Guatemala',
     location_latitude: 0,
     location_longitude: 0,
@@ -1303,7 +1303,8 @@ export const RequestAssistance: React.FC = () => {
                       key={service.id}
                       onClick={() => {
                         setSelectedService(service);
-                        setFormData(prev => ({ ...prev, title: `Asistencia: ${service.name}` }));
+                        // Use the exact service name for tracking display (no prefix)
+                        setFormData(prev => ({ ...prev, title: service.name }));
                         // Also set the category based on plan type for backend compatibility
                         const matchingCat = categories.find(c =>
                           selectedPlanType === 'DRIVE'
@@ -1414,6 +1415,7 @@ export const RequestAssistance: React.FC = () => {
                   value={formData.location_city}
                   onChange={(e) => setFormData(prev => ({ ...prev, location_city: e.target.value }))}
                   className="input"
+                  placeholder="Ej: Guatemala, Mixco, Villa Nueva"
                 />
               </div>
             </div>
