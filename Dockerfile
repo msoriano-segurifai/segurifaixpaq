@@ -37,12 +37,9 @@ COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
-# Copy and prepare startup script (convert Windows CRLF to Unix LF)
-COPY start.sh /app/start.sh
-RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
-
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Start command using script
-CMD ["/app/start.sh"]
+# Start command - inline to avoid script issues
+ENTRYPOINT ["/bin/sh", "-c"]
+CMD ["echo '=== Starting ===' && echo \"PORT=$PORT\" && python manage.py migrate --noinput && echo '=== Starting Gunicorn ===' && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info"]
