@@ -500,9 +500,14 @@ class RateLimitMiddleware(MiddlewareMixin):
         Returns:
             HttpResponse: Response or 429 Too Many Requests
         """
-        # Skip rate limiting for exempt paths
+        # Skip rate limiting for exempt paths (exact match or prefix match)
         if request.path in self._exempt_paths:
             return self.get_response(request)
+
+        # Check for prefix matches (e.g., /static/, /api/docs/)
+        for exempt_path in self._exempt_paths:
+            if exempt_path.endswith('/') and request.path.startswith(exempt_path):
+                return self.get_response(request)
 
         # Get client identifier (IP for anonymous, user ID for authenticated)
         client_id = self._get_client_identifier(request)

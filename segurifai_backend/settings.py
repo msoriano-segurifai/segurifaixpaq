@@ -34,7 +34,7 @@ SECRET_KEY = config('SECRET_KEY')
 # Changed default to False for security
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.railway.app,paq.segurifai.shop', cast=Csv())
 
 
 # Application definition
@@ -230,9 +230,13 @@ SIMPLE_JWT = {
 # CORS Settings
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://localhost:5173,https://paq-seguro-verde.lovable.app',
+    default='http://localhost:3000,http://localhost:5173,https://paq.segurifai.shop',
     cast=Csv()
 )
+# Allow all Railway subdomains
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.railway\.app$",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # DRF Spectacular Settings
@@ -275,6 +279,12 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
+# CSRF Trusted Origins for production
+CSRF_TRUSTED_ORIGINS = [
+    'https://paq.segurifai.shop',
+    'https://*.railway.app',
+]
+
 # Database Connection Settings
 if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
     DATABASES['default']['CONN_MAX_AGE'] = 600  # 10 minutes
@@ -310,9 +320,20 @@ else:
         'ADMIN': 1000,
         'MAWDY_ADMIN': 500,
         'PROVIDER': 300,
-        'USER': 100,
-        'ANONYMOUS': 30,
+        'USER': 200,
+        'ANONYMOUS': 120,  # Increased for testing - can reduce later
     }
+
+# Paths exempt from rate limiting (static files, health checks, etc.)
+RATE_LIMIT_EXEMPT_PATHS = {
+    '/',
+    '/api/health/',
+    '/api/docs/',
+    '/api/schema/',
+    '/api/redoc/',
+    '/static/',
+    '/favicon.ico',
+}
 
 # Security Headers Configuration
 SECURITY_HEADERS = {
