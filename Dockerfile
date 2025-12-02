@@ -37,8 +37,12 @@ COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
+# Copy and prepare startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Start command - Railway sets $PORT environment variable
-CMD sh -c "python manage.py migrate --noinput && echo 'Starting gunicorn on port ${PORT:-8000}' && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"
+# Start command using script
+CMD ["/app/start.sh"]
