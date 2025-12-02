@@ -1,8 +1,9 @@
 # Railway Configuration for SegurifAI x PAQ
-# Uses nixpacks.toml for build configuration
+# Uses Dockerfile for build
 
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
 restartPolicyType = "on_failure"
