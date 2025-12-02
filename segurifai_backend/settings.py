@@ -107,30 +107,40 @@ WSGI_APPLICATION = 'segurifai_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+import dj_database_url
 
-# Get database engine from environment, default to PostgreSQL
-DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
+# Check for DATABASE_URL first (Railway/Heroku style)
+DATABASE_URL = config('DATABASE_URL', default='')
 
-if DB_ENGINE == 'django.db.backends.sqlite3':
-    # SQLite configuration for development
+if DATABASE_URL:
+    # Use DATABASE_URL if provided (production - Railway/Supabase)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / config('DB_NAME', default='db.sqlite3'),
-        }
+        'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
-    # PostgreSQL configuration for production
-    DATABASES = {
-        'default': {
-            'ENGINE': DB_ENGINE,
-            'NAME': config('DB_NAME', default='segurifai_db'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
+    # Fallback to individual variables (local development)
+    DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
+
+    if DB_ENGINE == 'django.db.backends.sqlite3':
+        # SQLite configuration for development
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / config('DB_NAME', default='db.sqlite3'),
+            }
         }
-    }
+    else:
+        # PostgreSQL configuration
+        DATABASES = {
+            'default': {
+                'ENGINE': DB_ENGINE,
+                'NAME': config('DB_NAME', default='segurifai_db'),
+                'USER': config('DB_USER', default='postgres'),
+                'PASSWORD': config('DB_PASSWORD', default=''),
+                'HOST': config('DB_HOST', default='localhost'),
+                'PORT': config('DB_PORT', default='5432'),
+            }
+        }
 
 
 # Password Hashers (Argon2 preferred for PCI-DSS compliance)
