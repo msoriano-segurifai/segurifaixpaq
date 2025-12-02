@@ -2,6 +2,10 @@
 GPS Tracking Simulation Script
 Simulates a technician driving towards the user's location.
 Run this script to move the tech closer every 3 seconds.
+
+IMPORTANT: This simulation ONLY works for test user 30082653.
+For all other users, real tracking is provided by MAPFRE field techs
+through the integrated dispatch system.
 """
 import os
 import sys
@@ -18,14 +22,19 @@ django.setup()
 from apps.providers.models import Provider, ProviderLocation
 from apps.assistance.models import AssistanceRequest
 
-# Get the active request (ASSIGNED or EN_ROUTE)
+# TEST USER PHONE - Simulation only works for this user
+TEST_USER_PHONE = '30082653'
+
+# Get the active request (ASSIGNED or EN_ROUTE) - ONLY for test user
 request = AssistanceRequest.objects.filter(
-    status__in=['ASSIGNED', 'EN_ROUTE']
+    status__in=['ASSIGNED', 'EN_ROUTE'],
+    user__phone_number__icontains=TEST_USER_PHONE
 ).order_by('-created_at').first()
 
 if not request:
-    print("No active ASSIGNED or EN_ROUTE request found!")
-    print("Create a new request or assign a provider to an existing one.")
+    print(f"No active ASSIGNED or EN_ROUTE request found for test user {TEST_USER_PHONE}!")
+    print("Simulation only works for test user. For production users, tracking")
+    print("is provided by MAPFRE field technicians through the dispatch system.")
     exit(1)
 
 print(f"Simulating tracking for request: {request.request_number}")

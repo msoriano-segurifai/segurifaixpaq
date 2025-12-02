@@ -23,92 +23,86 @@ logger = logging.getLogger(__name__)
 # AI PLAN SUGGESTION ENDPOINT
 # =============================================================================
 
-# MAWDY Plan Information for AI Context - All Plan Variants
+# MAPFRE Plan Information for AI Context - PAQ Wallet Integration
 MAWDY_PLANS_CONTEXT = """
-MAWDY ofrece planes de asistencia en Guatemala con diferentes variantes:
+MAPFRE ofrece planes de asistencia en Guatemala a través de PAQ Wallet con las siguientes opciones:
 
-=== PLANES DE ASISTENCIA VIAL (DRIVE) ===
+=== PLAN ASISTENCIA VIAL ===
 
-## Plan Drive-1 (Inclusión) - Q25.20/mes (Q302.40/año)
-Incluido automáticamente para clientes con productos MAWDY existentes.
-Ideal para propietarios de vehículos que ya tienen productos MAWDY.
+## Plan Asistencia Vial (Inclusión PAQ) - Q36.88/mes (Q442.56/año)
+Plan preferencial para usuarios de PAQ Wallet.
+Incluye seguro de Muerte Accidental: Q3,000
 
-## Plan Drive-1 (Opcional) - Q30.00/mes (Q360.00/año)
-Plan independiente para cualquier persona que desee asistencia vial.
-Ideal para quienes no tienen otros productos MAWDY pero necesitan cobertura vial.
+## Plan Asistencia Vial (Opcional) - Q38.93/mes (Q467.16/año)
+Plan independiente para cualquier persona.
+Incluye seguro de Muerte Accidental: Q3,000
 
-SERVICIOS DE AMBOS PLANES DRIVE (mismos servicios, diferente precio):
-- Grúa del Vehículo (3/año, hasta Q1,200) - Por accidente o falla mecánica
-- Abasto de Combustible (Ilimitado) - 1 galón de emergencia
-- Cambio de Neumáticos (3/año, hasta Q1,200) - Instalación de llanta de repuesto
-- Paso de Corriente (Ilimitado) - Servicio de arranque de batería
-- Cerrajería Vehicular (Ilimitado) - Apertura de vehículo 24/7
-- Ambulancia por Accidente (1/año, Q775) - Traslado médico de emergencia vial
-- Conductor Profesional (1/año, Q465) - Por enfermedad o embriaguez
-- Taxi al Aeropuerto (1/año, Q465) - Por viaje al extranjero
-- Asistencia Legal Telefónica (1/año, Q1,550) - Asesoría legal por accidente
-- Apoyo Económico Emergencia (1/año, hasta Q8,000) - Pago directo al hospital
-- Rayos X (1/año, hasta Q2,400) - Servicio de radiografía
+SERVICIOS DEL PLAN ASISTENCIA VIAL:
+- Grúa del Vehículo (3/año, límite $150 USD) - Por accidente o falla mecánica
+- Abasto de Combustible (3/año, límite combinado $150) - 1 galón de emergencia
+- Cambio de Neumáticos (3/año, límite combinado $150) - Instalación de llanta
+- Paso de Corriente (3/año, límite combinado $150) - Arranque de batería
+- Cerrajería Vehicular (3/año, límite combinado $150) - Apertura de vehículo 24/7
+- Ambulancia por Accidente (1/año, $100 USD) - Traslado médico de emergencia
+- Conductor Profesional (1/año, $60 USD) - Por enfermedad o embriaguez
+- Taxi al Aeropuerto (1/año, $60 USD) - Por viaje al extranjero
+- Asistencia Legal Telefónica (1/año, $200 USD) - Asesoría legal por accidente
+- Apoyo Económico Emergencia Hospital (1/año, $1,000 USD) - Pago directo
+- Rayos X (1/año, $300 USD) - Servicio de radiografía
 - Descuentos en Red de Proveedores (Hasta 20%)
-- Asistente Cotización de Repuestos
-- Asistente Referencias Médicas por accidente
+- Asistentes Telefónicos Incluidos (Cotización repuestos, referencias médicas)
 
-DIFERENCIA CLAVE ENTRE PLANES DRIVE:
-- Inclusión (Q25.20/mes): Precio preferencial para clientes MAWDY existentes
-- Opcional (Q30.00/mes): Plan independiente sin requisitos previos
+=== PLAN ASISTENCIA MÉDICA ===
 
-=== PLANES DE ASISTENCIA MÉDICA (HEALTH) ===
+## Plan Asistencia Médica (Inclusión PAQ) - Q34.26/mes (Q411.12/año)
+Plan preferencial para usuarios de PAQ Wallet.
+Incluye seguro de Muerte Accidental: Q3,000
 
-## Plan Health (Inclusión) - Q23.20/mes (Q278.40/año)
-Incluido automáticamente para clientes con productos MAWDY existentes.
-Ideal para familias que ya tienen productos MAWDY.
+## Plan Asistencia Médica (Opcional) - Q36.31/mes (Q435.72/año)
+Plan independiente para cualquier persona.
+Incluye seguro de Muerte Accidental: Q3,000
 
-## Plan Health (Opcional) - Q27.60/mes (Q331.20/año)
-Plan independiente para cualquier persona que desee asistencia médica.
-Ideal para quienes buscan cobertura de salud sin otros productos MAWDY.
-
-SERVICIOS DE AMBOS PLANES HEALTH (mismos servicios, diferente precio):
+SERVICIOS DEL PLAN ASISTENCIA MÉDICA:
 - Orientación Médica Telefónica (Ilimitado) - Consulta médica 24/7
 - Conexión con Especialistas (Ilimitado) - Referencias a médicos de la red
-- Consulta Presencial (3/año, hasta Q1,200) - Médico general, ginecólogo o pediatra
-- Medicamentos a Domicilio (Ilimitado) - Coordinación de envío
-- Cuidados Post-Operatorios (1/año, Q775) - Enfermera a domicilio
-- Artículos de Aseo (1/año, Q775) - Por hospitalización
-- Exámenes de Laboratorio Básicos (2/año, Q775) - Heces, orina, hematología
-- Exámenes Especializados (2/año, Q775) - Papanicolau, mamografía, antígeno prostático
-- Nutricionista Video (4/año, hasta Q1,163) - Video consulta para grupo familiar
-- Psicología Video (4/año, hasta Q1,163) - Video consulta para núcleo familiar
-- Mensajería Hospitalización (2/año, Q465) - Por emergencia
-- Taxi Familiar (2/año, Q775) - Por hospitalización del titular (15km)
-- Ambulancia por Accidente (2/año, hasta Q1,163) - Traslado del titular
-- Taxi Post-Alta (1/año, Q775) - Traslado al domicilio tras hospitalización
+- Coordinación de Medicamentos (Ilimitado) - Entrega a domicilio
+- Consulta Presencial (3/año, $150 USD) - Médico general, ginecólogo o pediatra
+- Cuidados Post-Operatorios Enfermera (1/año, $100 USD) - A domicilio
+- Artículos de Aseo (1/año, $100 USD) - Por hospitalización
+- Exámenes de Laboratorio Básicos (2/año, $100 USD) - Heces, orina, hematología
+- Exámenes Especializados (2/año, $100 USD) - Papanicolau, mamografía, antígeno
+- Nutricionista Video Consulta (4/año, $150 USD) - Para grupo familiar
+- Psicología Video Consulta (4/año, $150 USD) - Para núcleo familiar
+- Mensajería Hospitalización (2/año, $60 USD) - Por emergencia
+- Taxi Familiar Hospitalización (2/año, $100 USD) - Por hospitalización del titular
+- Ambulancia por Accidente (2/año, $150 USD) - Traslado del titular
+- Taxi Post-Alta (1/año, $100 USD) - Traslado al domicilio tras hospitalización
 
-DIFERENCIA CLAVE ENTRE PLANES HEALTH:
-- Inclusión (Q23.20/mes): Precio preferencial para clientes MAWDY existentes
-- Opcional (Q27.60/mes): Plan independiente sin requisitos previos
+=== PLAN COMBO (VIAL + MÉDICA) ===
 
-=== PLAN COMBO (DRIVE + HEALTH) ===
-
-## Plan Combo - Q42.89/mes (Q514.68/año)
-Combina TODOS los servicios de Drive y Health con beneficios mejorados:
-- Ambulancia: 3/año (combinado) en lugar de 1+2
-- Consultas: 6/año (combinado) en lugar de 3
-- Video consultas nutrición/psicología: 8/año (combinado) en lugar de 4
-- Ahorro de Q4/mes comparado con comprar ambos planes por separado
+## Plan Combo - Q65.00/mes (Q780.00/año)
+Combina TODOS los servicios de Vial y Médica con beneficios mejorados:
+- Muerte Accidental: Q6,000 (doble cobertura)
+- Ambulancia: 3/año (combinado)
+- Consultas médicas: 6/año (combinado)
+- Video consultas nutrición/psicología: 8/año (combinado)
+- Ahorro aproximado de Q6/mes vs comprar ambos por separado
 
 === RESUMEN DE PRECIOS ===
-| Plan                    | Mensual  | Anual    |
-|-------------------------|----------|----------|
-| Drive-1 (Inclusión)     | Q25.20   | Q302.40  |
-| Drive-1 (Opcional)      | Q30.00   | Q360.00  |
-| Health (Inclusión)      | Q23.20   | Q278.40  |
-| Health (Opcional)       | Q27.60   | Q331.20  |
-| Combo (Drive + Health)  | Q42.89   | Q514.68  |
+| Plan                           | Mensual  | Anual     |
+|--------------------------------|----------|-----------|
+| Asistencia Vial (Inclusión)    | Q36.88   | Q442.56   |
+| Asistencia Vial (Opcional)     | Q38.93   | Q467.16   |
+| Asistencia Médica (Inclusión)  | Q34.26   | Q411.12   |
+| Asistencia Médica (Opcional)   | Q36.31   | Q435.72   |
+| Combo (Vial + Médica)          | Q65.00   | Q780.00   |
 
 NOTA IMPORTANTE:
-- "Inclusión" = precio preferencial para clientes con otros productos MAWDY
-- "Opcional" = precio estándar para nuevos clientes independientes
-- Los servicios son IDÉNTICOS entre variantes del mismo tipo (solo cambia el precio)
+- "Inclusión PAQ" = precio preferencial para usuarios de PAQ Wallet
+- "Opcional" = precio estándar para compra independiente
+- Todos los planes incluyen seguro de Muerte Accidental
+- Proveedor de servicios: MAPFRE Guatemala
+- Todos los límites en USD se aplican por evento/uso
 """
 
 
@@ -136,14 +130,14 @@ def ai_plan_suggestion(request):
         )
 
         # Build the AI prompt
-        system_prompt = f"""Eres un asistente experto de MAWDY, la empresa líder de asistencia vial y de salud en Guatemala.
+        system_prompt = f"""Eres un asistente experto de MAPFRE Guatemala, proveedor de asistencia vial y de salud a través de PAQ Wallet.
 Tu trabajo es analizar las necesidades del usuario, recomendar planes Y comparar planes cuando se solicite.
 
 {MAWDY_PLANS_CONTEXT}
 
 INSTRUCCIONES:
 1. Analiza la consulta del usuario
-2. Si el usuario pide COMPARAR planes (ej: "compara Drive vs Health", "diferencia entre Inclusión y Opcional"):
+2. Si el usuario pide COMPARAR planes (ej: "compara Vial vs Médica", "diferencia entre Inclusión y Opcional"):
    - Proporciona una comparación detallada
    - Usa el campo "is_comparison" = true
    - Incluye los planes comparados en "compared_plans"
@@ -161,9 +155,9 @@ Para COMPARACIONES:
     "is_comparison": true,
     "compared_plans": ["Plan 1", "Plan 2"],
     "comparison_details": [
-        {{"aspect": "Precio", "plan1": "Q25.20/mes", "plan2": "Q30.00/mes", "winner": "Plan 1"}},
-        {{"aspect": "Servicios", "plan1": "14 servicios", "plan2": "14 servicios", "winner": "Empate"}},
-        {{"aspect": "Requisitos", "plan1": "Requiere producto MAWDY", "plan2": "Sin requisitos", "winner": "Depende"}}
+        {{"aspect": "Precio", "plan1": "Q36.88/mes", "plan2": "Q38.93/mes", "winner": "Plan 1"}},
+        {{"aspect": "Servicios", "plan1": "13 servicios", "plan2": "13 servicios", "winner": "Empate"}},
+        {{"aspect": "Requisitos", "plan1": "Usuario PAQ Wallet", "plan2": "Sin requisitos", "winner": "Depende"}}
     ],
     "recommendation": "Plan recomendado basado en la comparación",
     "message": "Resumen de la comparación en lenguaje amigable",
@@ -173,13 +167,13 @@ Para COMPARACIONES:
 Para RECOMENDACIONES:
 {{
     "is_comparison": false,
-    "recommended_plan": "Drive-1 (Inclusión)" | "Drive-1 (Opcional)" | "Health (Inclusión)" | "Health (Opcional)" | "Combo",
+    "recommended_plan": "Asistencia Vial (Inclusión)" | "Asistencia Vial (Opcional)" | "Asistencia Médica (Inclusión)" | "Asistencia Médica (Opcional)" | "Combo",
     "confidence": "alta" | "media" | "baja",
     "reason": "Explicación breve de por qué este plan es ideal",
     "key_services": ["Servicio 1", "Servicio 2", "Servicio 3"],
     "message": "Mensaje amigable para el usuario explicando la recomendación",
-    "price_monthly": "Q25.20",
-    "price_yearly": "Q302.40"
+    "price_monthly": "Q36.88",
+    "price_yearly": "Q442.56"
 }}"""
 
         user_message = f"Necesidades del usuario: {prompt}"

@@ -2,6 +2,10 @@
 Live GPS Tracking Simulation - Uber Eats Style
 Simulates a technician driving towards the user with continuous updates.
 Creates a new request if needed, assigns a provider, and moves the tech.
+
+IMPORTANT: This simulation ONLY works for test user 30082653.
+For all production users, real-time tracking is provided by MAPFRE
+field technicians through the integrated dispatch system.
 """
 import os
 import django

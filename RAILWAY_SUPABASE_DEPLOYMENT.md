@@ -2,6 +2,20 @@
 
 This guide walks you through deploying SegurifAI x PAQ to Railway with Supabase as the database.
 
+## Service Provider: MAPFRE Guatemala
+
+The platform offers the following MAPFRE insurance plans:
+
+| Plan | Monthly Price | Annual Price |
+|------|---------------|--------------|
+| Asistencia Vial (Inclusión PAQ) | Q36.88 | Q442.56 |
+| Asistencia Vial (Opcional) | Q38.93 | Q467.16 |
+| Asistencia Médica (Inclusión PAQ) | Q34.26 | Q411.12 |
+| Asistencia Médica (Opcional) | Q36.31 | Q435.72 |
+| Combo (Vial + Médica) | Q65.00 | Q780.00 |
+
+All plans include Accidental Death Insurance (Q3,000 per plan, Q6,000 for Combo).
+
 ## Prerequisites
 
 - GitHub account (repository: https://github.com/msoriano-segurifai/segurifaixpaq)
@@ -210,6 +224,14 @@ railway logs
 │  │  (Static) │  │────▶│   Google Maps   │
 │  └───────────┘  │     │   (Tracking)    │
 │                 │     └─────────────────┘
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│  MAPFRE Field   │
+│  Tech App       │
+│  (Real-time     │
+│   GPS Tracking) │
 └─────────────────┘
 ```
 

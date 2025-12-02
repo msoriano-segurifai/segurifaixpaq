@@ -44,7 +44,7 @@ interface MAWDYService {
 }
 
 const MAWDY_SERVICES: MAWDYService[] = [
-  // === PLAN DRIVE (VIAL) SERVICES - $3.15/month ===
+  // === PLAN ASISTENCIA VIAL (MAPFRE) - Q36.88-38.93/mes ===
   // IMMEDIATE SERVICES - Real-time tracking (food delivery style)
   {
     id: 'tow_truck',
@@ -192,7 +192,7 @@ const MAWDY_SERVICES: MAWDYService[] = [
   {
     id: 'network_discounts',
     name: 'Descuentos en Red',
-    description: '20% de descuento en servicios de la red MAWDY',
+    description: '20% de descuento en servicios de la red MAPFRE',
     icon: <CheckCircle className="text-green-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: null,
@@ -213,7 +213,7 @@ const MAWDY_SERVICES: MAWDYService[] = [
     followUpQuestions: ['¿Qué tipo de especialista necesita?', '¿Tiene diagnóstico previo?']
   },
 
-  // === PLAN HEALTH (SALUD) SERVICES - $2.90/month ===
+  // === PLAN ASISTENCIA MEDICA (MAPFRE) - Q34.26-36.31/mes ===
   // CALLBACK SERVICES
   {
     id: 'medical_orientation',
