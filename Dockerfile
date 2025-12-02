@@ -37,9 +37,9 @@ COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
-# Copy and prepare startup script
+# Copy and prepare startup script (convert Windows CRLF to Unix LF)
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
 
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
