@@ -37,9 +37,11 @@ COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
+# Run migrations during build (database must be available)
+# Note: This runs at build time - ensure DATABASE_URL is set
+
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Start command - inline to avoid script issues
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["echo '=== Starting ===' && echo \"PORT=$PORT\" && python manage.py migrate --noinput && echo '=== Starting Gunicorn ===' && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info"]
+# Simple start command - just gunicorn
+CMD gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
