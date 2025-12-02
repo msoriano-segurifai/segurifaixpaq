@@ -6,9 +6,10 @@ builder = "nixpacks"
 buildCommand = "pip install -r requirements.txt && cd frontend && npm install && npm run build"
 
 [deploy]
-startCommand = "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:$PORT"
-healthcheckPath = "/api/health/"
-healthcheckTimeout = 300
+startCommand = "python manage.py migrate --noinput && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+# Temporarily disable healthcheck to see startup errors
+# healthcheckPath = "/api/health/"
+# healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
