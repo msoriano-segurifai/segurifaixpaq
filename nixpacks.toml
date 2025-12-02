@@ -2,22 +2,24 @@
 # Simplified config - let nixpacks auto-detect most settings
 
 [phases.setup]
-nixPkgs = ["python311", "nodejs-18_x", "postgresql"]
+nixPkgs = ["python311", "python311Packages.pip", "nodejs-18_x", "postgresql"]
 
 [phases.install]
 cmds = [
-    "python -m pip install -r requirements.txt",
+    "python3 -m ensurepip --upgrade || true",
+    "python3 -m pip install --upgrade pip",
+    "python3 -m pip install -r requirements.txt",
     "cd frontend && npm install"
 ]
 
 [phases.build]
 cmds = [
     "cd frontend && npm run build",
-    "python manage.py collectstatic --noinput || true"
+    "python3 manage.py collectstatic --noinput || true"
 ]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+cmd = "python3 manage.py migrate --noinput && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
 
 [variables]
 PYTHONUNBUFFERED = "1"
