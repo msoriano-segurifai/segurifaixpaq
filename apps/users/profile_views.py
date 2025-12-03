@@ -213,9 +213,12 @@ def _get_subscription_data(user):
     for sub in subscriptions:
         days_remaining = (sub.end_date - today).days if sub.end_date else 0
 
-        # Get category name safely
+        # Get category type safely (ROADSIDE, HEALTH, INSURANCE)
+        category_type = None
         category_name = None
         if sub.plan and hasattr(sub.plan, 'category') and sub.plan.category:
+            if hasattr(sub.plan.category, 'category_type'):
+                category_type = sub.plan.category.category_type
             if hasattr(sub.plan.category, 'name'):
                 category_name = sub.plan.category.name
             else:
@@ -224,7 +227,8 @@ def _get_subscription_data(user):
         sub_info = {
             'id': sub.id,
             'plan_name': sub.plan.name if sub.plan else None,
-            'plan_category': category_name,
+            'plan_category': category_type,  # ROADSIDE, HEALTH, INSURANCE
+            'category_name': category_name,  # Human readable name
             'status': sub.status,
             'start_date': sub.start_date.isoformat() if sub.start_date else None,
             'end_date': sub.end_date.isoformat() if sub.end_date else None,

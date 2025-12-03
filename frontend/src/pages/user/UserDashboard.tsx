@@ -326,29 +326,38 @@ export const UserDashboard: React.FC = () => {
               </Link>
             </div>
 
-            {subscription?.active_plans?.length > 0 ? (
+            {subscription?.active_subscriptions?.length > 0 ? (
               <div className="space-y-4">
-                {subscription.active_plans.map((plan: any, index: number) => (
+                {subscription.active_subscriptions.filter((sub: any) => sub.status === 'ACTIVE').map((sub: any, index: number) => (
                   <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      plan.category?.toLowerCase().includes('drive') || plan.category?.toLowerCase().includes('road')
-                        ? 'bg-red-100'
-                        : plan.category?.toLowerCase().includes('health')
-                        ? 'bg-pink-100'
-                        : 'bg-blue-100'
+                      sub.plan_category === 'ROADSIDE'
+                        ? 'bg-blue-100'
+                        : sub.plan_category === 'INSURANCE'
+                        ? 'bg-purple-100'
+                        : 'bg-pink-100'
                     }`}>
-                      {plan.category?.toLowerCase().includes('drive') || plan.category?.toLowerCase().includes('road')
-                        ? <Car className="text-red-600" size={24} />
-                        : plan.category?.toLowerCase().includes('health')
-                        ? <Heart className="text-pink-600" size={24} />
-                        : <Shield className="text-blue-600" size={24} />
+                      {sub.plan_category === 'ROADSIDE'
+                        ? <Car className="text-blue-600" size={24} />
+                        : sub.plan_category === 'INSURANCE'
+                        ? <Shield className="text-purple-600" size={24} />
+                        : <Heart className="text-pink-600" size={24} />
                       }
                     </div>
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">{plan.name}</p>
-                      <p className="text-sm text-gray-500">
-                        Vence: {new Date(plan.end_date).toLocaleDateString('es-GT')}
+                      <p className="font-bold text-gray-900">
+                        {sub.plan_name}
+                        <span className="text-blue-600 font-semibold ml-1">MAPFRE</span>
                       </p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className={`font-medium ${sub.days_remaining <= 7 ? 'text-orange-600' : 'text-green-600'}`}>
+                          {sub.days_remaining} días restantes
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-500">
+                          Vence: {new Date(sub.end_date).toLocaleDateString('es-GT')}
+                        </span>
+                      </div>
                     </div>
                     <CheckCircle className="text-green-500" size={20} />
                   </div>
