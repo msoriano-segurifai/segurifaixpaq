@@ -69,15 +69,16 @@ class PAQAuthService:
         return {'success': True, 'verified': True}
 
     @classmethod
-    def authenticate_by_phone(cls, phone_number: str) -> Dict[str, Any]:
+    def authenticate_by_phone(cls, phone_number: str, name: str = None) -> Dict[str, Any]:
         """
-        Authenticate PAQ user with just phone number (no OTP).
+        Authenticate PAQ user with phone number and optional name.
 
         Used when SegurifAI is embedded in PAQ Wallet app, where user
         is already authenticated by PAQ.
 
         Args:
             phone_number: 8-digit Guatemala phone number
+            name: Optional full name of the user
 
         Returns:
             Dictionary with success status, user data, and JWT tokens
@@ -100,7 +101,7 @@ class PAQAuthService:
         paq_user_data = {
             'paq_wallet_id': f'PAQ-{phone}',
             'phone': phone,
-            'name': None,
+            'name': name.strip() if name else None,
             'email': None,
             'verified': True
         }
@@ -374,6 +375,14 @@ class PAQAuthService:
             # Mark phone as verified since PAQ verified it
             if not user.is_phone_verified:
                 user.is_phone_verified = True
+                user.save()
+
+            # Update name if provided and user doesn't have one
+            if paq_user_data.get('name') and (not user.first_name or user.first_name == ''):
+                names = paq_user_data['name'].split(' ', 1)
+                user.first_name = names[0]
+                if len(names) > 1:
+                    user.last_name = names[1]
                 user.save()
 
             is_new_user = False

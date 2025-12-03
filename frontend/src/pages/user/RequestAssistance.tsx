@@ -1907,11 +1907,11 @@ export const RequestAssistance: React.FC = () => {
                           {healthValidation.urgency_level === 'CRITICAL' && (
                             <div className="mt-3 p-3 bg-red-100 rounded-lg">
                               <p className="text-sm text-red-800 font-medium">
-                                📞 Si la situación empeora, llama directamente:
+                                🚨 Emergencia crítica detectada
                               </p>
-                              <a href="tel:+50212345678" className="text-lg font-bold text-red-900 hover:underline">
-                                +502 1234-5678
-                              </a>
+                              <p className="text-lg font-bold text-red-900">
+                                Un agente te contactará de inmediato
+                              </p>
                             </div>
                           )}
                           <p className={`text-xs mt-2 ${
@@ -4179,10 +4179,10 @@ export const RequestAssistance: React.FC = () => {
 
         {/* Emergency Contact */}
         <div className="text-center text-sm text-gray-500">
-          <p>¿Emergencia inmediata? Llama al</p>
-          <a href="tel:+50212345678" className="text-red-600 font-bold text-lg">
-            +502 1234 5678
-          </a>
+          <p>¿Emergencia inmediata?</p>
+          <p className="text-red-600 font-bold text-lg">
+            Completa el formulario para asistencia 24/7
+          </p>
         </div>
       </div>
     </Layout>

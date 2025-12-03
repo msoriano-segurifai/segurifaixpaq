@@ -10,6 +10,7 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPAQLogin, setShowPAQLogin] = useState(false);
   const [paqPhone, setPaqPhone] = useState('');
+  const [paqName, setPaqName] = useState('');
 
   const { login, loginWithPAQToken, isAuthenticated, isPAQUser } = useAuth();
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export const Login: React.FC = () => {
       const response = await fetch('/api/users/auth/paq/phone-login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: paqPhone })
+        body: JSON.stringify({ phone: paqPhone, name: paqName })
       });
       const data = await response.json();
       if (response.ok && data.success) {
@@ -162,21 +163,41 @@ export const Login: React.FC = () => {
               )}
 
               <p className="text-sm text-gray-600 mb-4">
-                Ingresa tu número de teléfono registrado en PAQ Wallet
+                Ingresa tus datos para acceder con PAQ Wallet
               </p>
-              <input
-                type="tel"
-                value={paqPhone}
-                onChange={(e) => setPaqPhone(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4"
-                placeholder="+502 3008 2653"
-              />
+              <div className="space-y-3 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre Completo
+                  </label>
+                  <input
+                    type="text"
+                    value={paqName}
+                    onChange={(e) => setPaqName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                    placeholder="Juan Pérez"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Número de Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    value={paqPhone}
+                    onChange={(e) => setPaqPhone(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                    placeholder="+502 3008 2653"
+                  />
+                </div>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => {
                     setShowPAQLogin(false);
                     setError('');
                     setPaqPhone('');
+                    setPaqName('');
                   }}
                   className="btn btn-outline flex-1"
                 >
@@ -184,7 +205,7 @@ export const Login: React.FC = () => {
                 </button>
                 <button
                   onClick={handlePAQLogin}
-                  disabled={loading || !paqPhone}
+                  disabled={loading || !paqPhone || !paqName}
                   className="btn btn-primary flex-1"
                 >
                   {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}

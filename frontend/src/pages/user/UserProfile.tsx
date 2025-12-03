@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   User, Mail, Phone, MapPin, Calendar, Shield, Star, Edit2,
   Camera, CheckCircle, Clock, Award, RefreshCw, Bell, Lock, X, Plus, Navigation, Loader2,
-  CreditCard, XCircle, ChevronRight, Truck, Heart
+  CreditCard, XCircle, ChevronRight, Car, Heart
 } from 'lucide-react';
 
 interface UserProfileData {
@@ -468,7 +468,7 @@ export const UserProfile: React.FC = () => {
                         sub.plan_category === 'ROADSIDE' ? 'bg-blue-100' : 'bg-pink-100'
                       }`}>
                         {sub.plan_category === 'ROADSIDE' ? (
-                          <Truck className="text-blue-600" size={20} />
+                          <Car className="text-blue-600" size={20} />
                         ) : (
                           <Heart className="text-pink-600" size={20} />
                         )}

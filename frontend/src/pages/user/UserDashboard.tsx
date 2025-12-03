@@ -85,7 +85,9 @@ export const UserDashboard: React.FC = () => {
                   <span>{greeting.text}</span>
                 </div>
                 <h1 className="text-3xl font-bold">
-                  {profile?.user?.first_name || 'Usuario'}!
+                  {profile?.user?.first_name
+                    ? `${profile.user.first_name}${profile.user.last_name ? ' ' + profile.user.last_name : ''}`
+                    : 'Usuario'}!
                 </h1>
                 <p className="text-blue-200 mt-2 max-w-md">
                   Tu asistencia MAWDY está activa las 24 horas del día, los 7 días de la semana.
@@ -336,7 +338,7 @@ export const UserDashboard: React.FC = () => {
                         : 'bg-blue-100'
                     }`}>
                       {plan.category?.toLowerCase().includes('drive') || plan.category?.toLowerCase().includes('road')
-                        ? <Truck className="text-red-600" size={24} />
+                        ? <Car className="text-red-600" size={24} />
                         : plan.category?.toLowerCase().includes('health')
                         ? <Heart className="text-pink-600" size={24} />
                         : <Shield className="text-blue-600" size={24} />
@@ -412,9 +414,9 @@ export const UserDashboard: React.FC = () => {
         <div className="card bg-gray-50 text-center">
           <p className="text-gray-600 mb-2">¿Necesitas ayuda?</p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a href="tel:+50212345678" className="flex items-center gap-2 text-blue-600 hover:underline">
-              <Phone size={16} /> +502 1234-5678
-            </a>
+            <Link to="/app/request" className="flex items-center gap-2 text-blue-600 hover:underline">
+              <Phone size={16} /> Solicitar Asistencia
+            </Link>
             <span className="text-gray-300">|</span>
             <Link to="/app/profile" className="flex items-center gap-2 text-blue-600 hover:underline">
               <Users size={16} /> Mi Perfil

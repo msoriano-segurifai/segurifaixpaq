@@ -673,10 +673,8 @@ export const EvidenceSubmission: React.FC = () => {
 
         {/* Help Text */}
         <div className="text-center text-sm text-gray-500">
-          <p>¿Necesitas ayuda? Contactanos al</p>
-          <a href="tel:+50212345678" className="text-blue-600 font-medium">
-            +502 1234 5678
-          </a>
+          <p>¿Necesitas ayuda? Usa el botón de asistencia</p>
+          <p className="text-blue-600 font-medium">Soporte disponible 24/7</p>
         </div>
       </div>
     </Layout>

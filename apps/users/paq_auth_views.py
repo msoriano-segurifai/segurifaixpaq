@@ -293,14 +293,15 @@ def paq_phone_login(request):
     PAQ Phone-Only Login - For embedded SegurifAI in PAQ Wallet app.
 
     When SegurifAI is accessed from within PAQ Wallet app, the user is
-    already authenticated by PAQ. This endpoint allows login with just
-    the phone number.
+    already authenticated by PAQ. This endpoint allows login with
+    phone number and name.
 
     POST /api/users/auth/paq/phone-login/
 
     Body:
     {
-        "phone": "30082653"
+        "phone": "30082653",
+        "name": "Juan Pérez"
     }
 
     Returns:
@@ -321,6 +322,7 @@ def paq_phone_login(request):
     }
     """
     phone = request.data.get('phone')
+    name = request.data.get('name', '').strip()
 
     if not phone:
         return Response(
@@ -328,8 +330,8 @@ def paq_phone_login(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Authenticate by phone only
-    result = PAQAuthService.authenticate_by_phone(phone)
+    # Authenticate by phone with optional name
+    result = PAQAuthService.authenticate_by_phone(phone, name=name)
 
     if result.get('success'):
         return Response(result)
