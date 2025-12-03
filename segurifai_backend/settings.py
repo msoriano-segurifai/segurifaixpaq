@@ -242,12 +242,13 @@ SIMPLE_JWT = {
 # CORS Settings
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://localhost:5173,https://paq.segurifai.shop',
+    default='http://localhost:3000,http://localhost:5173,https://paq.segurifai.shop,https://web-production-14c11.up.railway.app',
     cast=Csv()
 )
 # Allow all Railway subdomains
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.railway\.app$",
+    r"^https://.*\.up\.railway\.app$",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -297,6 +298,7 @@ if not DEBUG:
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = [
     'https://paq.segurifai.shop',
+    'https://web-production-14c11.up.railway.app',
     'https://*.railway.app',
 ]
 
