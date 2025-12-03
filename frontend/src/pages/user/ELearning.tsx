@@ -3,7 +3,7 @@ import { Layout } from '../../components/shared/Layout';
 import { elearningAPI } from '../../services/api';
 import {
   BookOpen, Award, Star, CheckCircle, Play, Trophy, Gift,
-  Brain, Heart, Car, Shield, XCircle,
+  Brain, Heart, Car, Shield, XCircle, Lock,
   Zap, ArrowRight, ArrowLeft, Target, TrendingUp, Sparkles, ChevronRight, ChevronLeft,
   Lightbulb, AlertTriangle, Info, Clock, HelpCircle, Bookmark
 } from 'lucide-react';
@@ -441,7 +441,7 @@ export const ELearning: React.FC = () => {
                     <button
                       onClick={() => !isLocked && startModule(module)}
                       disabled={loadingModule || isLocked}
-                      className={`w-full btn flex items-center justify-center gap-2 font-semibold transition-all ${
+                      className={`w-full btn flex items-center justify-center gap-2 font-semibold transition-all py-3 px-4 text-sm md:text-base min-h-[48px] ${
                         isCompleted
                           ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600'
                           : isInProgress
@@ -454,27 +454,33 @@ export const ELearning: React.FC = () => {
                       {loadingModule ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                          Cargando...
+                          <span className="hidden sm:inline">Cargando...</span>
                         </>
                       ) : isLocked ? (
-                        <>🔒 Completa el módulo anterior</>
+                        <>
+                          <Lock size={18} className="flex-shrink-0" />
+                          <span>Completar Módulo Anterior</span>
+                        </>
                       ) : isCompleted ? (
                         <>
-                          <CheckCircle size={20} />
-                          Revisar Módulo
-                          <ArrowRight size={18} />
+                          <CheckCircle size={20} className="flex-shrink-0" />
+                          <span className="hidden sm:inline">Revisar Módulo</span>
+                          <span className="sm:hidden">Revisar</span>
+                          <ArrowRight size={18} className="flex-shrink-0" />
                         </>
                       ) : isInProgress ? (
                         <>
-                          <Play size={20} />
-                          Continuar Módulo
-                          <ArrowRight size={18} />
+                          <Play size={20} className="flex-shrink-0" />
+                          <span className="hidden sm:inline">Continuar Módulo</span>
+                          <span className="sm:hidden">Continuar</span>
+                          <ArrowRight size={18} className="flex-shrink-0" />
                         </>
                       ) : (
                         <>
-                          <Play size={20} />
-                          Comenzar Módulo
-                          <ArrowRight size={18} />
+                          <Play size={20} className="flex-shrink-0" />
+                          <span className="hidden sm:inline">Comenzar Módulo</span>
+                          <span className="sm:hidden">Comenzar</span>
+                          <ArrowRight size={18} className="flex-shrink-0" />
                         </>
                       )}
                     </button>

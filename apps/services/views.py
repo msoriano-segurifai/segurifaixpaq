@@ -357,6 +357,8 @@ class UserServiceViewSet(viewsets.ModelViewSet):
                 'plan_name': sub.plan.name,
                 'plan_id': sub.plan.id,
                 'category': sub.plan.category.name,
+                'plan_category': sub.plan.category.category_type,
+                'plan_price': float(sub.plan.price_monthly),
                 'status': sub.status,
                 'start_date': sub.start_date,
                 'end_date': sub.end_date,
