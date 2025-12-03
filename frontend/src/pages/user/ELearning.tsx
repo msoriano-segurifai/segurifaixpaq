@@ -212,7 +212,7 @@ export const ELearning: React.FC = () => {
     if (cat?.includes('SALUD')) return <Heart className="text-pink-500" size={28} />;
     if (cat?.includes('PREVENCION')) return <Shield className="text-blue-500" size={28} />;
     if (cat?.includes('AHORRO') || cat?.includes('FINANZAS')) return <Gift className="text-green-500" size={28} />;
-    if (cat?.includes('MAWDY')) return <Car className="text-orange-500" size={28} />;
+    if (cat?.includes('SEGURIFAI')) return <Car className="text-orange-500" size={28} />;
     return <BookOpen className="text-gray-500" size={28} />;
   };
 

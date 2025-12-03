@@ -32,7 +32,7 @@ interface Plan {
   category_name: string;
 }
 
-// MAWDY Benefits Data - Based on official MAWDY PAQ Wallet document (Oct 2025)
+// SegurifAI Benefits Data - Based on official SegurifAI PAQ Wallet document (Oct 2025)
 // Prices in GTQ (Quetzales guatemaltecos)
 // Plan Drive: Q24.41/month (Q292.86/year) | Plan Health: Q22.48/month (Q269.70/year)
 
@@ -51,7 +51,7 @@ interface ServiceItem {
 }
 
 const ALL_SERVICES: ServiceItem[] = [
-  // VIAL SERVICES (Plan Asistencia Vial MAPFRE) - Values in USD
+  // VIAL SERVICES (Plan Asistencia Vial) - Values in USD
   // Combo plan includes ALL Vial services
   { id: 'muerte_vial', name: 'Seguro Muerte Accidental', category: 'vial', driveLimit: 'Incluido', driveValue: 'Q3,000', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Q6,000' },
   { id: 'grua', name: 'Grua del Vehiculo (Accidente o falla mecanica)', category: 'vial', driveLimit: '3/año', driveValue: '$150 USD', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: '$150 USD' },
@@ -68,7 +68,7 @@ const ALL_SERVICES: ServiceItem[] = [
   { id: 'descuentos', name: 'Descuentos en Red de Proveedores', category: 'vial', driveLimit: 'Incluido', driveValue: 'Hasta 20%', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Hasta 20%' },
   { id: 'asistentes', name: 'Asistentes Telefonicos (Cotizacion, Referencias)', category: 'vial', driveLimit: 'Incluido', driveValue: 'Incluido', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Incluido' },
 
-  // SALUD SERVICES (Plan Asistencia Medica MAPFRE) - Values in USD
+  // SALUD SERVICES (Plan Asistencia Medica) - Values in USD
   // Combo plan includes ALL Medica services with enhanced limits
   { id: 'muerte_medica', name: 'Seguro Muerte Accidental', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Incluido', healthValue: 'Q3,000', comboLimit: 'Incluido', comboValue: 'Q6,000' },
   { id: 'orientacion_medica', name: 'Orientacion Medica Telefonica 24/7', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Ilimitado', healthValue: 'Incluido', comboLimit: 'Ilimitado', comboValue: 'Incluido' },
@@ -87,7 +87,7 @@ const ALL_SERVICES: ServiceItem[] = [
   { id: 'taxi_alta', name: 'Taxi Post-Alta (al domicilio)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '1/año', healthValue: '$100 USD', comboLimit: '1/año', comboValue: '$100 USD' },
 ];
 
-const MAWDY_BENEFITS: Record<string, {
+const SEGURIFAI_BENEFITS: Record<string, {
   serviciosIncluidos: Array<{ icon: React.ReactNode; title: string; description: string; limit?: string }>;
   beneficiosPremium: Array<{ icon: React.ReactNode; title: string; description: string }>;
   coberturaKm: number;
@@ -95,7 +95,7 @@ const MAWDY_BENEFITS: Record<string, {
   tiempoRespuesta: string;
   planType: 'vial' | 'salud';
 }> = {
-  // Plan Asistencia Vial MAPFRE (Q36.88/mes Inclusion, Q38.93/mes Opcional)
+  // Plan Asistencia Vial (Q36.88/mes Inclusion, Q38.93/mes Opcional)
   'Drive': {
     planType: 'vial',
     serviciosIncluidos: [
@@ -122,7 +122,7 @@ const MAWDY_BENEFITS: Record<string, {
     eventosAnuales: '14+',
     tiempoRespuesta: '30 min'
   },
-  // Plan Asistencia Medica MAPFRE (Q34.26/mes Inclusion, Q36.31/mes Opcional)
+  // Plan Asistencia Medica (Q34.26/mes Inclusion, Q36.31/mes Opcional)
   'Health': {
     planType: 'salud',
     serviciosIncluidos: [
@@ -152,38 +152,11 @@ const MAWDY_BENEFITS: Record<string, {
     eventosAnuales: '15+',
     tiempoRespuesta: '24hrs'
   },
-  // Plan Combo - Vial + Medica MAPFRE
-  'Combo': {
-    planType: 'vial',
-    serviciosIncluidos: [
-      { icon: <Shield size={20} />, title: 'Seguro Muerte Accidental', description: 'Doble cobertura combinada', limit: 'Q6,000' },
-      { icon: <Truck size={20} />, title: 'Grua del Vehiculo', description: 'Por accidente o falla mecanica', limit: '3/año - $150 USD' },
-      { icon: <Fuel size={20} />, title: 'Abasto de Combustible', description: '1 galon de emergencia', limit: '3/año - $150 comb.' },
-      { icon: <Car size={20} />, title: 'Cambio de Neumaticos', description: 'Instalacion de llanta', limit: '3/año - $150 comb.' },
-      { icon: <Zap size={20} />, title: 'Paso de Corriente', description: 'Arranque de bateria', limit: '3/año - $150 comb.' },
-      { icon: <Key size={20} />, title: 'Cerrajeria Vehicular', description: 'Apertura de vehiculo', limit: '3/año - $150 comb.' },
-      { icon: <Ambulance size={20} />, title: 'Ambulancia', description: 'Por accidente vial o medico', limit: '3/año - $250 USD' },
-      { icon: <Heart size={20} />, title: 'Consultas Medicas', description: 'Presencial y video (grupo familiar)', limit: '6/año - $300 USD' },
-      { icon: <Scale size={20} />, title: 'Asistencia Legal', description: 'Asesoria telefonica', limit: '1/año - $200 USD' },
-      { icon: <Heart size={20} />, title: 'Apoyo Hospitalario', description: 'Pago directo al hospital', limit: '1/año - $1,000 USD' },
-      { icon: <Users size={20} />, title: 'Psicologia y Nutricion', description: 'Video consultas familiares', limit: '8/año - Q2,325' },
-    ],
-    beneficiosPremium: [
-      { icon: <Star size={20} />, title: 'Mejor Valor', description: 'Ahorra combinando ambos planes' },
-      { icon: <Users size={20} />, title: 'Cobertura Familiar Completa', description: 'Vial + Salud para toda la familia' },
-      { icon: <Clock size={20} />, title: '24/7/365', description: 'Asistencia permanente' },
-      { icon: <Shield size={20} />, title: 'Proteccion Integral', description: 'Vehiculo y salud en un solo plan' },
-    ],
-    coberturaKm: 150,
-    eventosAnuales: '25+',
-    tiempoRespuesta: '30 min'
-  }
 };
 
-// Map plan names to benefit keys based on MAWDY products
+// Map plan names to benefit keys based on SegurifAI products
 const getPlanBenefitKey = (planName: string): string => {
   const name = planName.toLowerCase();
-  if (name.includes('combo') || name.includes('completo') || name.includes('integral')) return 'Combo';
   if (name.includes('health') || name.includes('salud') || name.includes('médic')) return 'Health';
   if (name.includes('drive') || name.includes('vial') || name.includes('vehicul') || name.includes('road')) return 'Drive';
   // Default to Drive for roadside plans
@@ -556,7 +529,7 @@ export const Subscriptions: React.FC = () => {
 
   const currentPlan = plans[currentPlanIndex];
   const benefitKey = currentPlan ? getPlanBenefitKey(currentPlan.name) : 'Basico';
-  const currentBenefits = MAWDY_BENEFITS[benefitKey];
+  const currentBenefits = SEGURIFAI_BENEFITS[benefitKey];
   const yearlyDiscount = 20;
 
   if (loading) {
@@ -1403,13 +1376,15 @@ export const Subscriptions: React.FC = () => {
                 </div>
               </div>
 
-              {/* Detailed Feature Comparison Table - ALL MAWDY Plans */}
+              {/* Detailed Feature Comparison Table - ALL SegurifAI Plans */}
               <div className="bg-gray-50 rounded-2xl p-6">
-                <h4 className="font-bold text-gray-900 mb-4 text-center text-xl">Comparación de Todos los Planes SegurifAI</h4>
-                <p className="text-center text-gray-500 text-sm mb-6">Compara los servicios incluidos en cada plan</p>
+                {/* Sticky Header for Comparison Table */}
+                <div className="sticky top-0 z-30 bg-gray-50 pb-4 -mt-2 pt-2">
+                  <h4 className="font-bold text-gray-900 mb-2 text-center text-xl">Compara Nuestros Planes SegurifAI</h4>
+                  <p className="text-center text-gray-500 text-sm mb-4">Encuentra el plan perfecto para tus necesidades</p>
 
-                {/* Filter Buttons */}
-                <div className="flex justify-center gap-2 mb-6">
+                  {/* Filter Buttons */}
+                  <div className="flex justify-center gap-2">
                   <button
                     onClick={() => setServiceFilter('all')}
                     className={`px-6 py-2 rounded-lg font-semibold transition-all ${
@@ -1442,6 +1417,7 @@ export const Subscriptions: React.FC = () => {
                     <Heart size={18} />
                     Servicios de Salud
                   </button>
+                  </div>
                 </div>
 
                 {/* Mobile scroll hint */}
@@ -1451,12 +1427,12 @@ export const Subscriptions: React.FC = () => {
                   <span className="animate-pulse">👉</span>
                 </div>
 
-                <div className="relative">
+                <div className="relative border border-gray-200 rounded-xl overflow-hidden">
                   {/* Scroll shadow indicators */}
                   <div className="absolute left-[220px] top-0 bottom-0 w-4 bg-gradient-to-r from-gray-200/80 to-transparent pointer-events-none z-20 md:hidden"></div>
 
                   <div
-                    className="overflow-x-auto scroll-smooth"
+                    className="overflow-auto scroll-smooth max-h-[500px]"
                     style={{
                       WebkitOverflowScrolling: 'touch',
                       scrollbarWidth: 'thin',
@@ -1464,9 +1440,9 @@ export const Subscriptions: React.FC = () => {
                     }}
                   >
                   <table className="w-full text-sm">
-                    <thead>
+                    <thead className="sticky top-0 z-20">
                       <tr className="border-b-2 border-gray-300">
-                        <th className="text-left p-3 font-semibold text-gray-700 bg-gray-100 rounded-tl-lg min-w-[220px] sticky left-0 z-10">
+                        <th className="text-left p-3 font-semibold text-gray-700 bg-gray-100 rounded-tl-lg min-w-[220px] sticky left-0 z-30">
                           Servicio
                         </th>
                         {/* Dynamic columns for ALL database plans */}
@@ -1489,14 +1465,6 @@ export const Subscriptions: React.FC = () => {
                             </th>
                           );
                         })}
-                        {/* Combo Plan Column */}
-                        <th className="text-center p-3 font-bold bg-purple-100 text-purple-900 min-w-[140px] rounded-tr-lg">
-                          <div className="flex flex-col items-center">
-                            <Shield size={18} className="mb-1" />
-                            <span className="text-xs leading-tight">Plan Combo</span>
-                            <span className="text-[10px] bg-green-500 text-white px-1 rounded mt-1">Ahorra</span>
-                          </div>
-                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1538,19 +1506,6 @@ export const Subscriptions: React.FC = () => {
                               </td>
                             );
                           })}
-                          {/* Combo Plan Cell */}
-                          <td className={`p-2 text-center ${service.comboLimit !== '-' ? 'text-purple-700' : 'text-gray-300'}`}>
-                            {service.comboLimit !== '-' ? (
-                              <div className="flex flex-col items-center">
-                                <Check size={16} className="text-purple-600" />
-                                <span className="text-[10px] bg-purple-100 px-1.5 py-0.5 rounded-full mt-0.5">
-                                  {service.comboLimit}
-                                </span>
-                              </div>
-                            ) : (
-                              <Minus className="mx-auto text-gray-300" size={14} />
-                            )}
-                          </td>
                         </tr>
                       ))}
                       {/* Price Row */}
@@ -1570,14 +1525,6 @@ export const Subscriptions: React.FC = () => {
                             </td>
                           );
                         })}
-                        <td className="p-3 text-center text-purple-700 rounded-br-lg">
-                          <div className="flex flex-col items-center">
-                            <span className="text-lg font-bold">Q{billingCycle === 'monthly' ? '42.89' : '514.68'}</span>
-                            <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
-                              Ahorra Q{billingCycle === 'monthly' ? '4' : '48'}
-                            </span>
-                          </div>
-                        </td>
                       </tr>
                       {/* Service Count Row */}
                       <tr className="bg-gray-50">
@@ -1596,9 +1543,6 @@ export const Subscriptions: React.FC = () => {
                             </td>
                           );
                         })}
-                        <td className="p-3 text-center font-bold text-purple-600">
-                          {ALL_SERVICES.filter(s => s.comboLimit !== '-').length} servicios
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -1609,15 +1553,11 @@ export const Subscriptions: React.FC = () => {
                 <div className="mt-4 flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                    <span className="text-gray-600">Servicios Viales (Plan Drive)</span>
+                    <span className="text-gray-600">Servicios Viales (Plan Asistencia Vial)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-pink-500"></span>
-                    <span className="text-gray-600">Servicios de Salud (Plan Health)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-                    <span className="text-gray-600">Plan Combo (Drive + Health)</span>
+                    <span className="text-gray-600">Servicios de Salud (Plan Asistencia Medica)</span>
                   </div>
                 </div>
               </div>

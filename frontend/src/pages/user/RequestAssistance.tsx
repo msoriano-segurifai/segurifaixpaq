@@ -24,8 +24,8 @@ interface ServiceCategory {
 // Service flow types
 type ServiceFlowType = 'IMMEDIATE' | 'SCHEDULED' | 'CLAIM' | 'CALLBACK';
 
-// MAWDY Service Types - Complete catalog from PDF specifications
-interface MAWDYService {
+// SegurifAI Service Types - Complete catalog from PDF specifications
+interface SegurifAIService {
   id: string;
   name: string;
   description: string;
@@ -43,8 +43,8 @@ interface MAWDYService {
   followUpQuestions?: string[];
 }
 
-const MAWDY_SERVICES: MAWDYService[] = [
-  // === PLAN ASISTENCIA VIAL (MAPFRE) - Q36.88-38.93/mes ===
+const SEGURIFAI_SERVICES: SegurifAIService[] = [
+  // === PLAN ASISTENCIA VIAL (SegurifAI) - Q36.88-38.93/mes ===
   // IMMEDIATE SERVICES - Real-time tracking (food delivery style)
   {
     id: 'tow_truck',
@@ -213,7 +213,7 @@ const MAWDY_SERVICES: MAWDYService[] = [
     followUpQuestions: ['¿Qué tipo de especialista necesita?', '¿Tiene diagnóstico previo?']
   },
 
-  // === PLAN ASISTENCIA MEDICA (MAPFRE) - Q34.26-36.31/mes ===
+  // === PLAN ASISTENCIA MEDICA (SegurifAI) - Q34.26-36.31/mes ===
   // CALLBACK SERVICES
   {
     id: 'medical_orientation',
@@ -412,9 +412,9 @@ export const RequestAssistance: React.FC = () => {
   const [location, setLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
   const [locating, setLocating] = useState(false);
 
-  // New state for MAWDY service selection
+  // New state for SegurifAI service selection
   const [selectedPlanType, setSelectedPlanType] = useState<'DRIVE' | 'HEALTH' | null>(null);
-  const [selectedService, setSelectedService] = useState<MAWDYService | null>(null);
+  const [selectedService, setSelectedService] = useState<SegurifAIService | null>(null);
   const [validatingService, setValidatingService] = useState(false);
   const [serviceValidation, setServiceValidation] = useState<any>(null);
 
@@ -710,7 +710,7 @@ export const RequestAssistance: React.FC = () => {
   };
 
   const isRoadsideAssistance = () => {
-    // Check based on selected MAWDY service or legacy category
+    // Check based on selected SegurifAI service or legacy category
     if (selectedService) {
       return selectedService.requiresVehicleInfo === true;
     }
@@ -720,7 +720,7 @@ export const RequestAssistance: React.FC = () => {
   };
 
   const isHealthAssistance = () => {
-    // Check based on selected MAWDY service or legacy category
+    // Check based on selected SegurifAI service or legacy category
     if (selectedService) {
       return selectedService.requiresHealthInfo === true;
     }
@@ -744,9 +744,9 @@ export const RequestAssistance: React.FC = () => {
   };
 
   // Get available services based on user's subscriptions
-  const getAvailableServices = (planType: 'DRIVE' | 'HEALTH'): MAWDYService[] => {
+  const getAvailableServices = (planType: 'DRIVE' | 'HEALTH'): SegurifAIService[] => {
     if (!hasPlanType(planType)) return [];
-    return MAWDY_SERVICES.filter(s => s.planType === planType);
+    return SEGURIFAI_SERVICES.filter(s => s.planType === planType);
   };
 
   // Get the subscription that matches a plan type
@@ -779,7 +779,7 @@ export const RequestAssistance: React.FC = () => {
         location: formData.location_address,
       };
 
-      // Add form-specific data based on form type - Complete data for MAWDY
+      // Add form-specific data based on form type - Complete data for SegurifAI
       if (selectedService.formType === 'taxi') {
         validationData.taxi_info = {
           pickup_location: taxiFormData.pickup_location,
@@ -1000,12 +1000,12 @@ export const RequestAssistance: React.FC = () => {
     setSubmitting(true);
 
     try {
-      // Get matching subscription based on new MAWDY service or legacy category
+      // Get matching subscription based on new SegurifAI service or legacy category
       let matchingSubscription;
       let incidentType = 'OTHER';
 
       if (selectedService && selectedPlanType) {
-        // New MAWDY service flow
+        // New SegurifAI service flow
         matchingSubscription = getMatchingSubscription(selectedPlanType);
         incidentType = selectedService.id; // Use service ID as incident type
       } else {
@@ -1052,7 +1052,7 @@ export const RequestAssistance: React.FC = () => {
         incident_type: incidentType,
       };
 
-      // Add MAWDY service metadata
+      // Add SegurifAI service metadata
       if (selectedService) {
         requestData.mawdy_service = {
           service_id: selectedService.id,
@@ -1230,7 +1230,7 @@ export const RequestAssistance: React.FC = () => {
           ))}
         </div>
 
-        {/* Step 1: Select Service Type - MAWDY Complete Catalog */}
+        {/* Step 1: Select Service Type - SegurifAI Complete Catalog */}
         {step === 1 && (
           <div className="card">
             {!selectedPlanType ? (
@@ -4007,7 +4007,7 @@ export const RequestAssistance: React.FC = () => {
 
             {/* Order Summary */}
             <div className="space-y-4 mb-6">
-              {/* MAWDY Service Details */}
+              {/* SegurifAI Service Details */}
               <div className={`p-4 rounded-xl ${
                 selectedPlanType === 'DRIVE'
                   ? 'bg-gradient-to-r from-red-50 to-orange-50'

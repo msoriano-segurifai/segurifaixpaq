@@ -74,7 +74,7 @@ export const HealthPortal: React.FC = () => {
       const requests = historyResponse.data.results || historyResponse.data || [];
       setAssistanceHistory(Array.isArray(requests) ? requests : []);
 
-      // Simulated health records (in production, this would come from MAWDY API)
+      // Simulated health records (in production, this would come from SegurifAI API)
       setHealthRecords([
         {
           id: 1,
@@ -130,7 +130,7 @@ export const HealthPortal: React.FC = () => {
 
     setBookingLoading(true);
     try {
-      // In production, this would call the MAWDY booking API
+      // In production, this would call the SegurifAI booking API
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Add to local appointments

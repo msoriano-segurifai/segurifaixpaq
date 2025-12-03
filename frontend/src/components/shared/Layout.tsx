@@ -78,9 +78,9 @@ const getVariantStyles = (variant: LayoutProps['variant']) => {
     case 'paq-admin':
       return { bg: 'bg-green-700', hover: 'hover:bg-green-600', text: 'PAQ Admin' };
     case 'mawdy-admin':
-      return { bg: 'bg-red-700', hover: 'hover:bg-red-600', text: 'MAWDY Admin' };
+      return { bg: 'bg-red-700', hover: 'hover:bg-red-600', text: 'SegurifAI Admin' };
     case 'field-tech':
-      return { bg: 'bg-red-600', hover: 'hover:bg-red-500', text: 'MAWDY Tech' };
+      return { bg: 'bg-red-600', hover: 'hover:bg-red-500', text: 'SegurifAI Tech' };
     case 'user':
       return { bg: 'bg-blue-900', hover: 'hover:bg-blue-800', text: 'SegurifAI' };
   }

@@ -546,7 +546,6 @@ export const UserProfile: React.FC = () => {
                       <div>
                         <p className="font-semibold text-gray-900">
                           {sub.plan_name}
-                          <span className="text-blue-600 font-medium ml-1">MAPFRE</span>
                         </p>
                         <p className="text-xs text-gray-500">
                           {sub.plan_category === 'ROADSIDE' ? 'Asistencia Vial' : sub.plan_category === 'INSURANCE' ? 'Seguro Accidentes' : 'Asistencia Salud'}
@@ -1025,7 +1024,6 @@ export const UserProfile: React.FC = () => {
                 <div>
                   <h4 className="font-bold text-lg text-gray-900">
                     {selectedSubscription.plan_name}
-                    <span className="text-blue-600 font-semibold ml-1">MAPFRE</span>
                   </h4>
                   <p className="text-sm text-gray-600">
                     {selectedSubscription.plan_category === 'ROADSIDE'

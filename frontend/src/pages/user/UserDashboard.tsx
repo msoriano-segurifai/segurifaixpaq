@@ -347,7 +347,6 @@ export const UserDashboard: React.FC = () => {
                     <div className="flex-1">
                       <p className="font-bold text-gray-900">
                         {sub.plan_name}
-                        <span className="text-blue-600 font-semibold ml-1">MAPFRE</span>
                       </p>
                       <div className="flex items-center gap-2 text-sm">
                         <span className={`font-medium ${sub.days_remaining <= 7 ? 'text-orange-600' : 'text-green-600'}`}>
