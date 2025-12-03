@@ -1444,7 +1444,25 @@ export const Subscriptions: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
+                {/* Mobile scroll hint */}
+                <div className="flex items-center justify-center gap-2 mb-3 text-gray-500 text-sm md:hidden">
+                  <span className="animate-pulse">👈</span>
+                  <span>Desliza para ver más planes</span>
+                  <span className="animate-pulse">👉</span>
+                </div>
+
+                <div className="relative">
+                  {/* Scroll shadow indicators */}
+                  <div className="absolute left-[220px] top-0 bottom-0 w-4 bg-gradient-to-r from-gray-200/80 to-transparent pointer-events-none z-20 md:hidden"></div>
+
+                  <div
+                    className="overflow-x-auto scroll-smooth"
+                    style={{
+                      WebkitOverflowScrolling: 'touch',
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: '#CBD5E1 #F1F5F9'
+                    }}
+                  >
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b-2 border-gray-300">
@@ -1584,6 +1602,7 @@ export const Subscriptions: React.FC = () => {
                       </tr>
                     </tbody>
                   </table>
+                  </div>
                 </div>
 
                 {/* Legend */}

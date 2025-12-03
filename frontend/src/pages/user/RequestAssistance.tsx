@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/shared/Layout';
-import { servicesAPI, assistanceAPI, mapsAPI } from '../../services/api';
+import { servicesAPI, assistanceAPI, mapsAPI, userAPI } from '../../services/api';
 import {
   MapPin, Truck, Heart, Home, Shield, Phone, AlertTriangle,
   Navigation, CheckCircle, Loader2, Clock, Car, AlertCircle,
@@ -418,6 +418,9 @@ export const RequestAssistance: React.FC = () => {
   const [validatingService, setValidatingService] = useState(false);
   const [serviceValidation, setServiceValidation] = useState<any>(null);
 
+  // User profile state for auto-fill
+  const [userProfile, setUserProfile] = useState<any>(null);
+
   // Additional form data for specific service types
   const [taxiFormData, setTaxiFormData] = useState({
     pickup_location: '',
@@ -581,9 +584,10 @@ export const RequestAssistance: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [categoriesRes, subscriptionsRes] = await Promise.all([
+      const [categoriesRes, subscriptionsRes, profileRes] = await Promise.all([
         servicesAPI.getCategories(),
-        servicesAPI.getMySubscriptions()
+        servicesAPI.getMySubscriptions(),
+        userAPI.getProfile()
       ]);
 
       const categoriesData = categoriesRes.data.categories || categoriesRes.data;
@@ -591,12 +595,59 @@ export const RequestAssistance: React.FC = () => {
 
       const subsData = subscriptionsRes.data.subscriptions || subscriptionsRes.data;
       setUserSubscriptions(Array.isArray(subsData) ? subsData : []);
+
+      // Set user profile and auto-fill phone number
+      const profile = profileRes.data;
+      setUserProfile(profile);
+      if (profile?.phone_number) {
+        setFormData(prev => ({ ...prev, phone: profile.phone_number }));
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
       setCategories([]);
       setUserSubscriptions([]);
     }
   };
+
+  // Generate auto-description from step 1 (service) and step 2 (location/details)
+  const generateAutoDescription = (): string => {
+    const parts: string[] = [];
+
+    // Service info from step 1
+    if (selectedService) {
+      parts.push(`Servicio: ${selectedService.name}`);
+    } else if (selectedPlanType) {
+      parts.push(`Plan: ${selectedPlanType === 'DRIVE' ? 'Asistencia Vial' : 'Asistencia Médica'}`);
+    }
+
+    // Location info from step 2
+    if (formData.location_address) {
+      parts.push(`Ubicación: ${formData.location_address}`);
+    }
+
+    // Vehicle info if roadside
+    if (formData.vehicle_make && formData.vehicle_model) {
+      parts.push(`Vehículo: ${formData.vehicle_year || ''} ${formData.vehicle_make} ${formData.vehicle_model}`.trim());
+      if (formData.vehicle_plate) {
+        parts.push(`Placa: ${formData.vehicle_plate}`);
+      }
+    }
+
+    return parts.join('. ');
+  };
+
+  // Auto-fill description when entering the details step (step 4 for most flows, step 3 for generic)
+  useEffect(() => {
+    const detailsStep = (selectedService?.requiresVehicleInfo || selectedService?.requiresHealthInfo) ? 4 :
+                        (selectedService?.requiresSpecificForm) ? 4 : 3;
+
+    if (step === detailsStep && !formData.description && selectedService) {
+      const autoDesc = generateAutoDescription();
+      if (autoDesc) {
+        setFormData(prev => ({ ...prev, description: autoDesc }));
+      }
+    }
+  }, [step, selectedService]);
 
   const getCurrentLocation = () => {
     setLocating(true);
