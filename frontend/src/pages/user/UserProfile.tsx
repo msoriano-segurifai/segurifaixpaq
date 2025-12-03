@@ -8,6 +8,7 @@ import {
   Camera, CheckCircle, Clock, Award, RefreshCw, Bell, Lock, X, Plus, Navigation, Loader2,
   CreditCard, XCircle, ChevronRight, Car, Heart, Download, FileText, Check
 } from 'lucide-react';
+import { generateTermsAndConditionsPDF, getPlanTypeFromName } from '../../utils/termsAndConditions';
 
 interface UserProfileData {
   id: number;
@@ -1079,14 +1080,20 @@ export const UserProfile: React.FC = () => {
                 <FileText size={16} className="text-gray-600" />
                 Términos y Condiciones
               </h5>
-              <a
-                href="/docs/terminos-condiciones.pdf"
-                download="Terminos-y-Condiciones-SegurifAI.pdf"
+              <button
+                onClick={() => {
+                  if (selectedSubscription) {
+                    generateTermsAndConditionsPDF({
+                      name: selectedSubscription.plan_name,
+                      type: getPlanTypeFromName(selectedSubscription.plan_name),
+                    });
+                  }
+                }}
                 className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
               >
                 <Download size={18} />
                 Descargar Términos y Condiciones (PDF)
-              </a>
+              </button>
               <p className="text-xs text-gray-500 mt-2 text-center">
                 Al utilizar nuestros servicios, aceptas los términos y condiciones descritos en el documento.
               </p>

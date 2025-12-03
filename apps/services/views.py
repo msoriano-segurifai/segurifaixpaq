@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 # AI PLAN SUGGESTION ENDPOINT
 # =============================================================================
 
-# MAPFRE Plan Information for AI Context - PAQ Wallet Integration
+# SegurifAI Plan Information for AI Context - PAQ Wallet Integration
 MAWDY_PLANS_CONTEXT = """
-MAPFRE ofrece planes de asistencia en Guatemala a través de PAQ Wallet con las siguientes opciones:
+SegurifAI ofrece planes de asistencia en Guatemala a través de PAQ Wallet con las siguientes opciones:
 
 === PLAN ASISTENCIA VIAL ===
 
@@ -101,7 +101,7 @@ NOTA IMPORTANTE:
 - "Inclusión PAQ" = precio preferencial para usuarios de PAQ Wallet
 - "Opcional" = precio estándar para compra independiente
 - Todos los planes incluyen seguro de Muerte Accidental
-- Proveedor de servicios: MAPFRE Guatemala
+- Proveedor de servicios: SegurifAI Guatemala
 - Todos los límites en USD se aplican por evento/uso
 """
 
@@ -130,7 +130,7 @@ def ai_plan_suggestion(request):
         )
 
         # Build the AI prompt
-        system_prompt = f"""Eres un asistente experto de MAPFRE Guatemala, proveedor de asistencia vial y de salud a través de PAQ Wallet.
+        system_prompt = f"""Eres un asistente experto de SegurifAI Guatemala, proveedor de asistencia vial y de salud a través de PAQ Wallet.
 Tu trabajo es analizar las necesidades del usuario, recomendar planes Y comparar planes cuando se solicite.
 
 {MAWDY_PLANS_CONTEXT}

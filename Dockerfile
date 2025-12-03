@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-03-v2 - forces rebuild of frontend
+# Cache bust: 2025-12-03-v3 - forces rebuild of frontend
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
