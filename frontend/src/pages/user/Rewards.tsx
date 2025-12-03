@@ -641,41 +641,44 @@ export const Rewards: React.FC = () => {
         {/* Leaderboard Tab */}
         {activeTab === 'leaderboard' && (
           <div className="card">
-            <div className="space-y-3">
-              {data?.leaderboard.map((entry) => (
-                <div
-                  key={entry.rank}
-                  className={`flex items-center gap-4 p-4 rounded-xl ${
-                    entry.is_current_user
-                      ? 'bg-blue-50 border-2 border-blue-200'
-                      : 'bg-gray-50'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                    entry.rank === 1 ? 'bg-yellow-400 text-yellow-900' :
-                    entry.rank === 2 ? 'bg-gray-300 text-gray-700' :
-                    entry.rank === 3 ? 'bg-orange-300 text-orange-800' :
-                    'bg-gray-200 text-gray-600'
-                  }`}>
-                    {entry.rank <= 3 ? (
-                      <Crown size={20} />
-                    ) : (
-                      entry.rank
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">
-                      {entry.user_name}
-                      {entry.is_current_user && <span className="text-blue-600"> (Tu)</span>}
-                    </p>
-                    <p className="text-sm text-gray-500">Nivel {entry.level}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-lg">{entry.points}</p>
-                    <p className="text-xs text-gray-500">puntos</p>
-                  </div>
+            {/* User's own stats */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-3">Tu Posición</h3>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-blue-50 border-2 border-blue-200">
+                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+                  <Star className="text-white" size={24} />
                 </div>
-              ))}
+                <div className="flex-1">
+                  <p className="font-medium text-lg">
+                    {data?.points?.total_points || 0} puntos
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Nivel {Math.floor((data?.points?.total_points || 0) / 100) + 1} • {data?.progress?.filter((p: any) => p.estado === 'COMPLETADO').length || 0} módulos completados
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-blue-600 font-medium">
+                    Q{((data?.points?.total_points || 0) * 0.05).toFixed(2)}
+                  </p>
+                  <p className="text-xs text-gray-500">en créditos</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Ranking explanation */}
+            <div className="bg-gray-50 rounded-xl p-6 text-center">
+              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="text-gray-400" size={32} />
+              </div>
+              <h4 className="font-bold text-gray-700 mb-2">Ranking Global Próximamente</h4>
+              <p className="text-gray-500 text-sm max-w-md mx-auto">
+                A medida que más usuarios completen módulos y acumulen puntos, podrás ver cómo te comparas con otros miembros de SegurifAI. ¡Sigue aprendiendo para subir en el ranking!
+              </p>
+              <div className="mt-4 flex justify-center gap-2">
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">🥇 Top 1</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">🥈 Top 2</span>
+                <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">🥉 Top 3</span>
+              </div>
             </div>
           </div>
         )}

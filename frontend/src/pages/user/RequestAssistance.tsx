@@ -257,14 +257,14 @@ const MAWDY_SERVICES: MAWDYService[] = [
   {
     id: 'medication_delivery',
     name: 'Medicamentos a Domicilio',
-    description: 'Coordinación de entrega de medicamentos recetados a tu domicilio',
+    description: 'Entrega de medicamentos recetados a tu domicilio con seguimiento en tiempo real',
     icon: <Pill className="text-purple-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: null,
     coverageAmount: 50,
-    formType: 'medication',
-    serviceFlow: 'SCHEDULED',
-    followUpQuestions: ['¿Tiene receta médica?', '¿Qué medicamentos necesita?', '¿Es urgente o puede esperar 24hrs?']
+    formType: 'delivery',
+    serviceFlow: 'IMMEDIATE',
+    followUpQuestions: ['¿Tiene receta médica?', '¿Qué medicamentos necesita?', '¿Dirección de entrega?']
   },
   // CLAIM/SCHEDULED SERVICES - Post hospitalization
   {
