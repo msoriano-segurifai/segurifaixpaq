@@ -34,8 +34,10 @@ COPY . .
 # Copy built frontend from stage 1
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
+# Create staticfiles directory and collect static files
+# Use a dummy SECRET_KEY for collectstatic (only used during build)
+RUN mkdir -p /app/staticfiles && \
+    SECRET_KEY=build-time-secret-key python manage.py collectstatic --noinput --clear
 
 # Run migrations during build (database must be available)
 # Note: This runs at build time - ensure DATABASE_URL is set

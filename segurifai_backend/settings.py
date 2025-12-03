@@ -193,13 +193,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Include frontend build in static files
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend' / 'dist',
-]
+# WhiteNoise serves frontend assets from WHITENOISE_ROOT at the root URL
+# This means /assets/main.js is served from frontend/dist/assets/main.js
+WHITENOISE_ROOT = BASE_DIR / 'frontend' / 'dist'
 
-# WhiteNoise for serving static files in production
-# Use CompressedStaticFilesStorage (not Manifest) to avoid issues with hashed filenames
+# WhiteNoise index file for root URL
+WHITENOISE_INDEX_FILE = True
+
+# WhiteNoise storage for Django's static files (admin, etc.)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type

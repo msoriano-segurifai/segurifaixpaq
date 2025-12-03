@@ -63,8 +63,10 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Catch-all route for React frontend (must be last)
-# This serves the React app for all non-API routes
+# Catch-all route for React frontend SPA routing (must be last)
+# Handles client-side routes like /dashboard, /login, etc.
+# WhiteNoise serves /assets/* files, this handles everything else
 urlpatterns += [
-    re_path(r'^(?!api|admin|static|media).*$', serve_react_app, name='react-app'),
+    path('', serve_react_app, name='react-app-home'),  # Root path
+    re_path(r'^(?!api/|admin/|static/|media/|assets/).*$', serve_react_app, name='react-app'),
 ]

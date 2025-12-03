@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // Use /static/ base path so Django can serve assets via WhiteNoise
-  base: '/static/',
+  // Use root base path - assets served via WhiteNoise WHITENOISE_ROOT
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
