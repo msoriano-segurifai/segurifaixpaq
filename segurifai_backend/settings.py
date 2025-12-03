@@ -112,18 +112,27 @@ WSGI_APPLICATION = 'segurifai_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 import dj_database_url
+import os
 
-# Check for DATABASE_URL first (Railway/Heroku style)
-DATABASE_URL = config('DATABASE_URL', default='')
+# FORCE_SQLITE: Set to True in .env to use SQLite regardless of DATABASE_URL
+# This is useful for local development when DATABASE_URL is set as a system variable
+FORCE_SQLITE = config('FORCE_SQLITE', default=False, cast=bool)
+
+# Check for DATABASE_URL (Railway/Heroku style) - but not if FORCE_SQLITE is True
+DATABASE_URL = '' if FORCE_SQLITE else config('DATABASE_URL', default='')
 
 if DATABASE_URL:
+    # Normalize Supabase URL format (postgresql+psycopg:// -> postgresql://)
+    if DATABASE_URL.startswith('postgresql+psycopg://'):
+        DATABASE_URL = DATABASE_URL.replace('postgresql+psycopg://', 'postgresql://')
+
     # Use DATABASE_URL if provided (production - Railway/Supabase)
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
     # Fallback to individual variables (local development)
-    DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
+    DB_ENGINE = config('DB_ENGINE', default='django.db.backends.sqlite3')
 
     if DB_ENGINE == 'django.db.backends.sqlite3':
         # SQLite configuration for development

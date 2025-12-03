@@ -2,14 +2,32 @@ from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from .serializers import (
     UserSerializer, UserCreateSerializer, UserProfileSerializer,
-    ChangePasswordSerializer
+    ChangePasswordSerializer, PhoneTokenObtainPairSerializer
 )
 from .permissions import IsAdmin, IsOwnerOrAdmin
 
 User = get_user_model()
+
+
+class PhoneTokenObtainPairView(APIView):
+    """
+    Custom token obtain view that accepts phone and password instead of email.
+    Returns access and refresh JWT tokens.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PhoneTokenObtainPairSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response({
+                'access': serializer.validated_data['access'],
+                'refresh': serializer.validated_data['refresh'],
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):

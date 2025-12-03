@@ -39,122 +39,70 @@ class Command(BaseCommand):
 
             self.stdout.write('  Created service categories')
 
-            # Update or create plans (don't delete to preserve existing subscriptions)
+            # Deactivate old optional plans - keeping only standard pricing
+            ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
+
+            # Update or create plans (MAPFRE standard pricing)
             plans_data = [
-                # ROADSIDE ASSISTANCE PLANS (MAPFRE Plan Asistencia Vial)
+                # ROADSIDE ASSISTANCE PLAN (MAPFRE AP Muerte Accidental + Asistencia Vial)
                 {
                     'category': roadside_cat,
-                    'name': 'Asistencia Vial (Inclusion)',
-                    'description': 'Plan de asistencia vial MAPFRE con precio preferencial para usuarios PAQ',
+                    'name': 'Asistencia Vial MAPFRE',
+                    'description': 'Plan de asistencia vial con seguro de muerte accidental y servicios MAWDY',
                     'price_monthly': 36.88,
                     'price_yearly': 442.56,
                     'duration_days': 30,
                     'features': [
-                        'Seguro Muerte Accidental Q3,000',
-                        'Servicio de Grua (3/ano, limite $150 USD)',
+                        'Seguro Muerte Accidental Q3,000.00',
+                        'Grua del Vehiculo (3/ano, limite $150 USD)',
                         'Abasto de Combustible (3/ano, limite combinado $150)',
                         'Cambio de Neumaticos (3/ano, limite combinado $150)',
                         'Paso de Corriente (3/ano, limite combinado $150)',
-                        'Cerrajeria Vehicular (3/ano, limite combinado $150)',
-                        'Ambulancia por Accidente (1/ano, $100 USD)',
-                        'Conductor Profesional (1/ano, $60 USD)',
+                        'Emergencia de Cerrajeria (3/ano, limite combinado $150)',
+                        'Servicio de Ambulancia por Accidente (1/ano, $100 USD)',
+                        'Servicio de Conductor Profesional (1/ano, $60 USD)',
                         'Taxi al Aeropuerto (1/ano, $60 USD)',
                         'Asistencia Legal Telefonica (1/ano, $200 USD)',
-                        'Apoyo Emergencia Hospital (1/ano, $1,000 USD)',
+                        'Apoyo Economico Sala Emergencia (1/ano, $1,000 USD)',
                         'Rayos X (1/ano, $300 USD)',
                         'Descuentos en Red de Proveedores (hasta 20%)',
-                        'Asistentes Telefonicos Incluidos'
+                        'Asistente Telefonico Cotizacion Repuestos',
+                        'Asistente Telefonico Referencias Medicas'
                     ],
                     'max_requests_per_month': 3,
-                    'coverage_amount': 1163.00,
-                    'is_active': True,
-                    'is_featured': False
-                },
-                {
-                    'category': roadside_cat,
-                    'name': 'Asistencia Vial (Opcional)',
-                    'description': 'Plan de asistencia vial MAPFRE independiente sin requisitos',
-                    'price_monthly': 38.93,
-                    'price_yearly': 467.16,
-                    'duration_days': 30,
-                    'features': [
-                        'Seguro Muerte Accidental Q3,000',
-                        'Servicio de Grua (3/ano, limite $150 USD)',
-                        'Abasto de Combustible (3/ano, limite combinado $150)',
-                        'Cambio de Neumaticos (3/ano, limite combinado $150)',
-                        'Paso de Corriente (3/ano, limite combinado $150)',
-                        'Cerrajeria Vehicular (3/ano, limite combinado $150)',
-                        'Ambulancia por Accidente (1/ano, $100 USD)',
-                        'Conductor Profesional (1/ano, $60 USD)',
-                        'Taxi al Aeropuerto (1/ano, $60 USD)',
-                        'Asistencia Legal Telefonica (1/ano, $200 USD)',
-                        'Apoyo Emergencia Hospital (1/ano, $1,000 USD)',
-                        'Rayos X (1/ano, $300 USD)',
-                        'Descuentos en Red de Proveedores (hasta 20%)',
-                        'Asistentes Telefonicos Incluidos'
-                    ],
-                    'max_requests_per_month': 3,
-                    'coverage_amount': 1163.00,
+                    'coverage_amount': 2920.00,  # Sum of all USD limits
                     'is_active': True,
                     'is_featured': True
                 },
 
-                # HEALTH ASSISTANCE PLANS (MAPFRE Plan Asistencia Medica)
+                # HEALTH ASSISTANCE PLAN (MAPFRE AP Muerte Accidental + Asistencia Medica)
                 {
                     'category': health_cat,
-                    'name': 'Asistencia Medica (Inclusion)',
-                    'description': 'Plan de asistencia medica MAPFRE con precio preferencial para usuarios PAQ',
+                    'name': 'Asistencia Medica MAPFRE',
+                    'description': 'Plan de asistencia medica con seguro de muerte accidental y servicios MAWDY',
                     'price_monthly': 34.26,
                     'price_yearly': 411.12,
                     'duration_days': 30,
                     'features': [
-                        'Seguro Muerte Accidental Q3,000',
-                        'Orientacion Medica Telefonica 24/7 (Ilimitado)',
-                        'Conexion con Especialistas (Ilimitado)',
-                        'Coordinacion Medicamentos a Domicilio (Ilimitado)',
-                        'Consulta Presencial (3/ano, $150 USD)',
-                        'Cuidados Post-Op Enfermera (1/ano, $100 USD)',
-                        'Articulos de Aseo Hospitalizacion (1/ano, $100 USD)',
-                        'Examenes Lab Basicos (2/ano, $100 USD)',
-                        'Examenes Especializados (2/ano, $100 USD)',
-                        'Nutricionista Video (4/ano, $150 USD)',
-                        'Psicologia Video (4/ano, $150 USD)',
-                        'Mensajeria Hospitalizacion (2/ano, $60 USD)',
-                        'Taxi Familiar Hospitalizacion (2/ano, $100 USD)',
-                        'Ambulancia Accidente (2/ano, $150 USD)',
-                        'Taxi Post-Alta (1/ano, $100 USD)'
+                        'Seguro Muerte Accidental Q3,000.00',
+                        'Orientacion Medica Telefonica (Ilimitado)',
+                        'Conexion con Especialistas de la Red (Ilimitado)',
+                        'Consulta Presencial Medico/Ginecologo/Pediatra (3/ano, $150 USD)',
+                        'Coordinacion de Medicamentos a Domicilio (Ilimitado)',
+                        'Cuidados Post Operatorios Enfermera (1/ano, $100 USD)',
+                        'Envio Articulos Aseo por Hospitalizacion (1/ano, $100 USD)',
+                        'Examenes Lab: Heces, Orina, Hematologia (2/ano, $100 USD)',
+                        'Examenes: Papanicolau/Mamografia/Antigeno (2/ano, $100 USD)',
+                        'Nutricionista Video Consulta (4/ano, $150 USD)',
+                        'Psicologia Video Consulta (4/ano, $150 USD)',
+                        'Servicio de Mensajeria por Hospitalizacion (2/ano, $60 USD)',
+                        'Taxi Familiar por Hospitalizacion (2/ano, $100 USD)',
+                        'Traslado en Ambulancia por Accidente (2/ano, $150 USD)',
+                        'Taxi al Domicilio tras Alta (1/ano, $100 USD)'
                     ],
                     'max_requests_per_month': 3,
-                    'coverage_amount': 1163.00,
-                    'is_active': True,
-                    'is_featured': False
-                },
-                {
-                    'category': health_cat,
-                    'name': 'Asistencia Medica (Opcional)',
-                    'description': 'Plan de asistencia medica MAPFRE independiente sin requisitos',
-                    'price_monthly': 36.31,
-                    'price_yearly': 435.72,
-                    'duration_days': 30,
-                    'features': [
-                        'Seguro Muerte Accidental Q3,000',
-                        'Orientacion Medica Telefonica 24/7 (Ilimitado)',
-                        'Conexion con Especialistas (Ilimitado)',
-                        'Coordinacion Medicamentos a Domicilio (Ilimitado)',
-                        'Consulta Presencial (3/ano, $150 USD)',
-                        'Cuidados Post-Op Enfermera (1/ano, $100 USD)',
-                        'Articulos de Aseo Hospitalizacion (1/ano, $100 USD)',
-                        'Examenes Lab Basicos (2/ano, $100 USD)',
-                        'Examenes Especializados (2/ano, $100 USD)',
-                        'Nutricionista Video (4/ano, $150 USD)',
-                        'Psicologia Video (4/ano, $150 USD)',
-                        'Mensajeria Hospitalizacion (2/ano, $60 USD)',
-                        'Taxi Familiar Hospitalizacion (2/ano, $100 USD)',
-                        'Ambulancia Accidente (2/ano, $150 USD)',
-                        'Taxi Post-Alta (1/ano, $100 USD)'
-                    ],
-                    'max_requests_per_month': 3,
-                    'coverage_amount': 1163.00,
+                    'coverage_amount': 1360.00,  # Sum of all USD limits
                     'is_active': True,
                     'is_featured': True
                 }

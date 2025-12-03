@@ -47,11 +47,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         # PAQ Organization Roles
         PAQ_ADMIN = 'PAQ_ADMIN', _('PAQ Administrator')
 
+    class Gender(models.TextChoices):
+        MALE = 'M', _('Masculino')
+        FEMALE = 'F', _('Femenino')
+        OTHER = 'O', _('Otro')
+        NOT_SPECIFIED = 'N', _('Prefiero no decir')
+
     # Basic Information
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(_('first name'), max_length=150)
     last_name = models.CharField(_('last name'), max_length=150)
     phone_number = models.CharField(_('phone number'), max_length=20)
+    date_of_birth = models.DateField(_('date of birth'), null=True, blank=True)
+    gender = models.CharField(_('gender'), max_length=1, choices=Gender.choices, blank=True)
 
     # Role
     role = models.CharField(

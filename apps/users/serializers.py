@@ -1,8 +1,69 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
+
+
+class PhoneTokenObtainPairSerializer(serializers.Serializer):
+    """Custom serializer that authenticates using phone number instead of email"""
+
+    phone = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        phone = attrs.get('phone', '').strip().replace('-', '').replace(' ', '')
+        password = attrs.get('password', '')
+
+        # Remove country code if present
+        if phone.startswith('+502'):
+            phone = phone[4:]
+        elif phone.startswith('502'):
+            phone = phone[3:]
+
+        # Try to find user by phone number (with various formats)
+        user = None
+        phone_formats = [phone, f'+502{phone}', f'502{phone}']
+
+        for phone_format in phone_formats:
+            try:
+                user = User.objects.get(phone_number__icontains=phone_format[-8:])
+                break
+            except User.DoesNotExist:
+                continue
+            except User.MultipleObjectsReturned:
+                # If multiple users, try exact match
+                try:
+                    user = User.objects.get(phone_number=phone_format)
+                    break
+                except User.DoesNotExist:
+                    continue
+
+        if user is None:
+            raise serializers.ValidationError({
+                'phone': 'No se encontró un usuario con este número de teléfono.'
+            })
+
+        if not user.is_active:
+            raise serializers.ValidationError({
+                'phone': 'Esta cuenta está desactivada.'
+            })
+
+        if not user.check_password(password):
+            raise serializers.ValidationError({
+                'password': 'Contraseña incorrecta.'
+            })
+
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': user
+        }
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,7 +91,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'email', 'password', 'password2', 'first_name', 'last_name', 'phone_number',
-            'role', 'address', 'city', 'state', 'postal_code', 'country'
+            'date_of_birth', 'gender', 'role', 'address', 'city', 'state', 'postal_code', 'country'
         )
 
     def validate(self, attrs):
@@ -56,7 +117,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'first_name', 'last_name', 'full_name', 'phone_number',
-            'address', 'city', 'state', 'postal_code', 'country',
+            'date_of_birth', 'gender', 'address', 'city', 'state', 'postal_code', 'country',
             'emergency_contact_name', 'emergency_contact_phone',
             'paq_wallet_id', 'profile_image', 'role', 'date_joined'
         )

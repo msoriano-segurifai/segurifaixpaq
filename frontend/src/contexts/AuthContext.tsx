@@ -16,7 +16,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isPAQUser: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
   loginWithPAQToken: (paqToken: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -76,8 +76,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkPAQToken();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await authAPI.login(email, password);
+  const login = async (phone: string, password: string) => {
+    const response = await authAPI.login(phone, password);
     const { access, refresh } = response.data;
 
     localStorage.setItem('access_token', access);
