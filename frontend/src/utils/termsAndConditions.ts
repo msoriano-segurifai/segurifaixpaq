@@ -30,7 +30,7 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('Asistencia Vial y Medica en Guatemala', margin, 30);
+    doc.text('Asistencia Vial y Médica en Guatemala', margin, 30);
 
     yPos = 50;
   };
@@ -91,7 +91,7 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text('TERMINOS Y CONDICIONES', pageWidth / 2, yPos, { align: 'center' });
+  doc.text('TÉRMINOS Y CONDICIONES', pageWidth / 2, yPos, { align: 'center' });
   yPos += 8;
 
   doc.setFontSize(12);
@@ -106,10 +106,10 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   yPos += 15;
 
   // Introduction
-  addParagraph('Agradecemos la confianza en SegurifAI Guatemala, S.A., para adquirir el Plan de Asistencia para la cuenta en referencia, cuyos terminos y condiciones se presentan a continuacion.');
+  addParagraph('Agradecemos la confianza en SegurifAI Guatemala, S.A., para adquirir el Plan de Asistencia para la cuenta en referencia, cuyos términos y condiciones se presentan a continuación.');
   yPos += 5;
 
-  addParagraph('SegurifAI Guatemala, S.A., forma parte de un grupo lider en servicios de asistencia que desarrolla principalmente actividades de asistencia vial, medica y servicios relacionados. Tenemos cobertura en toda Guatemala y somos la empresa de referencia en el mercado guatemalteco. Los mas de 50,000 clientes que confian en nosotros lo confirman.');
+  addParagraph('SegurifAI Guatemala, S.A., forma parte de un grupo líder en servicios de asistencia que desarrolla principalmente actividades de asistencia vial, médica y servicios relacionados. Tenemos cobertura en toda Guatemala y somos la empresa de referencia en el mercado guatemalteco. Los más de 50,000 clientes que confían en nosotros lo confirman.');
   yPos += 10;
 
   addSeparator();
@@ -122,19 +122,19 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
 
     const vialBenefits = [
       { name: 'Seguro Muerte Accidental', limit: 'Q3,000.00' },
-      { name: 'Grua del Vehiculo (Accidente o falla mecanica)', limit: '3 al ano, limite economico $150.00' },
-      { name: 'Abasto de Combustible (1 galon)', limit: '3 al ano a elegir, limite economico $150.00' },
-      { name: 'Cambio de Neumaticos', limit: '3 al ano a elegir, limite economico $150.00' },
-      { name: 'Paso de Corriente', limit: '3 al ano a elegir, limite economico $150.00' },
-      { name: 'Emergencia de Cerrajeria', limit: '3 al ano a elegir, limite economico $150.00' },
-      { name: 'Servicio de Ambulancia (por accidente)', limit: '1 al ano, limite economico $100.00' },
-      { name: 'Servicio de Conductor Profesional', limit: '1 al ano, limite economico $60.00' },
-      { name: 'Taxi al Aeropuerto (por viaje al extranjero)', limit: '1 al ano, limite economico $60.00' },
-      { name: 'Asistencia Legal Telefonica', limit: '1 al ano, limite economico $200.00' },
-      { name: 'Apoyo Economico en Emergencia por Accidente', limit: '1 al ano, limite economico $1,000.00' },
-      { name: 'Rayos X', limit: '1 al ano, limite economico $300.00' },
+      { name: 'Grúa del Vehículo (Accidente o falla mecánica)', limit: '3 al año, límite económico Q1,175.00' },
+      { name: 'Abasto de Combustible (1 galón)', limit: '3 al año a elegir, límite económico Q1,175.00' },
+      { name: 'Cambio de Neumáticos', limit: '3 al año a elegir, límite económico Q1,175.00' },
+      { name: 'Paso de Corriente', limit: '3 al año a elegir, límite económico Q1,175.00' },
+      { name: 'Emergencia de Cerrajería', limit: '3 al año a elegir, límite económico Q1,175.00' },
+      { name: 'Servicio de Ambulancia (por accidente)', limit: '1 al año, límite económico Q785.00' },
+      { name: 'Servicio de Conductor Profesional', limit: '1 al año, límite económico Q470.00' },
+      { name: 'Taxi al Aeropuerto (por viaje al extranjero)', limit: '1 al año, límite económico Q470.00' },
+      { name: 'Asistencia Legal Telefónica', limit: '1 al año, límite económico Q1,570.00' },
+      { name: 'Apoyo Económico en Emergencia por Accidente', limit: '1 al año, límite económico Q7,850.00' },
+      { name: 'Rayos X', limit: '1 al año, límite económico Q2,355.00' },
       { name: 'Descuentos en Red de Proveedores', limit: 'Incluido, hasta 20% de descuento' },
-      { name: 'Asistente Telefonico (cotizaciones y referencias)', limit: 'Incluido' },
+      { name: 'Asistente Telefónico (cotizaciones y referencias)', limit: 'Incluido' },
     ];
 
     vialBenefits.forEach(benefit => {
@@ -146,25 +146,25 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
 
   if (plan.type === 'HEALTH' || plan.type === 'COMBO') {
     checkPageBreak(50);
-    addSubtitle('BENEFICIOS DE ASISTENCIA MEDICA');
+    addSubtitle('BENEFICIOS DE ASISTENCIA MÉDICA');
     yPos += 5;
 
     const healthBenefits = [
       { name: 'Seguro Muerte Accidental', limit: 'Q3,000.00' },
-      { name: 'Orientacion Medica Telefonica 24/7', limit: 'Incluido' },
-      { name: 'Conexion con Especialistas de la Red', limit: 'Incluido' },
-      { name: 'Consulta Presencial (Medico General, Ginecologo o Pediatra)', limit: '3 al ano, limite economico $150.00' },
-      { name: 'Coordinacion de Medicamentos a Domicilio', limit: 'Incluido' },
-      { name: 'Cuidados Post Operatorios de Enfermera', limit: '1 al ano, limite economico $100.00' },
-      { name: 'Envio de Articulos de Aseo por Hospitalizacion', limit: '1 al ano, limite economico $100.00' },
-      { name: 'Examenes de Laboratorio Basicos', limit: '2 al ano, limite economico $100.00' },
-      { name: 'Examenes Especializados (Papanicolau/Mamografia/Antigeno)', limit: '2 al ano, limite economico $100.00' },
-      { name: 'Nutricionista Video Consulta (Grupo Familiar)', limit: '4 al ano, limite economico $150.00' },
-      { name: 'Psicologia Video Consulta (Nucleo Familiar)', limit: '4 al ano, limite economico $150.00' },
-      { name: 'Servicio de Mensajeria por Hospitalizacion', limit: '2 al ano, limite economico $60.00' },
-      { name: 'Taxi para Familiar por Hospitalizacion', limit: '2 al ano, limite economico $100.00' },
-      { name: 'Traslado en Ambulancia por Accidente', limit: '2 al ano, limite economico $150.00' },
-      { name: 'Taxi Post-Alta al Domicilio', limit: '1 al ano, limite economico $100.00' },
+      { name: 'Orientación Médica Telefónica 24/7', limit: 'Incluido' },
+      { name: 'Conexión con Especialistas de la Red', limit: 'Incluido' },
+      { name: 'Consulta Presencial (Médico General, Ginecólogo o Pediatra)', limit: '3 al año, límite económico Q1,175.00' },
+      { name: 'Coordinación de Medicamentos a Domicilio', limit: 'Incluido' },
+      { name: 'Cuidados Post Operatorios de Enfermera', limit: '1 al año, límite económico Q785.00' },
+      { name: 'Envío de Artículos de Aseo por Hospitalización', limit: '1 al año, límite económico Q785.00' },
+      { name: 'Exámenes de Laboratorio Básicos', limit: '2 al año, límite económico Q785.00' },
+      { name: 'Exámenes Especializados (Papanicoláu/Mamografía/Antígeno)', limit: '2 al año, límite económico Q785.00' },
+      { name: 'Nutricionista Video Consulta (Grupo Familiar)', limit: '4 al año, límite económico Q1,175.00' },
+      { name: 'Psicología Video Consulta (Núcleo Familiar)', limit: '4 al año, límite económico Q1,175.00' },
+      { name: 'Servicio de Mensajería por Hospitalización', limit: '2 al año, límite económico Q470.00' },
+      { name: 'Taxi para Familiar por Hospitalización', limit: '2 al año, límite económico Q785.00' },
+      { name: 'Traslado en Ambulancia por Accidente', limit: '2 al año, límite económico Q1,175.00' },
+      { name: 'Taxi Post-Alta al Domicilio', limit: '1 al año, límite económico Q785.00' },
     ];
 
     healthBenefits.forEach(benefit => {
@@ -180,8 +180,8 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   addTitle('CONDICIONES GENERALES');
   yPos += 5;
 
-  addBulletPoint('Limite de Edad de Ingreso: 18 anos a 61 anos inclusive');
-  addBulletPoint('Limite de Edad de Terminacion: 70 anos');
+  addBulletPoint('Límite de Edad de Ingreso: 18 años a 61 años inclusive');
+  addBulletPoint('Límite de Edad de Terminación: 70 años');
   addBulletPoint('Reembolso convencional');
   addBulletPoint('Esta propuesta no contempla la cobertura de uso de motocicleta como medio de transporte.');
   yPos += 10;
@@ -190,20 +190,20 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
 
   // Definition of accident
   checkPageBreak(60);
-  addSubtitle('DEFINICION DE ACCIDENTE');
-  addParagraph('Se entiende por accidente para los efectos de este seguro, toda lesion corporal sufrida por el Asegurado independientemente de su voluntad y debida a una causa fortuita, momentanea, violenta y externa que le haya producido directamente la muerte, invalidez, perdida de miembros o incapacidad temporal.');
+  addSubtitle('DEFINICIÓN DE ACCIDENTE');
+  addParagraph('Se entiende por accidente para los efectos de este seguro, toda lesión corporal sufrida por el Asegurado independientemente de su voluntad y debida a una causa fortuita, momentánea, violenta y externa que le haya producido directamente la muerte, invalidez, pérdida de miembros o incapacidad temporal.');
   yPos += 5;
 
-  addSubtitle('SERAN CONSIDERADOS TAMBIEN COMO ACCIDENTES');
+  addSubtitle('SERÁN CONSIDERADOS TAMBIÉN COMO ACCIDENTES');
   const accidentTypes = [
-    'Los causados por explosiones, descargas electricas o atmosfericas.',
-    'Las quemaduras causadas por fuego, escapes de vapor imprevistos o contacto accidental con acido y corrosivos.',
+    'Los causados por explosiones, descargas eléctricas o atmosféricas.',
+    'Las quemaduras causadas por fuego, escapes de vapor imprevistos o contacto accidental con ácido y corrosivos.',
     'La asfixia accidental producida por agua, gas, humo o vapores.',
-    'Las infecciones respecto a las cuales quede probado que el virus ha penetrado por una lesion producida por un accidente cubierto.',
+    'Las infecciones respecto a las cuales quede probado que el virus ha penetrado por una lesión producida por un accidente cubierto.',
     'Las mordeduras de animales o picaduras de insectos y sus consecuencias.',
-    'Los casos de legitima defensa o tentativas de salvar personas o bienes en peligro.',
-    'Los que se produzcan como consecuencia de fenomenos de la naturaleza.',
-    'La intoxicacion o envenenamiento por ingestion de sustancias toxicas o alimentos en mal estado.',
+    'Los casos de legítima defensa o tentativas de salvar personas o bienes en peligro.',
+    'Los que se produzcan como consecuencia de fenómenos de la naturaleza.',
+    'La intoxicación o envenenamiento por ingestión de sustancias tóxicas o alimentos en mal estado.',
   ];
   accidentTypes.forEach(type => {
     checkPageBreak(15);
@@ -215,26 +215,26 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   doc.addPage();
   yPos = 20;
   addTitle('EXCLUSIONES');
-  addParagraph('El seguro a que se refiere esta Poliza no cubre la muerte, incapacidad, lesiones o cualquier otra perdida causada directa o indirectamente, en todo o en parte por:');
+  addParagraph('El seguro a que se refiere esta Póliza no cubre la muerte, incapacidad, lesiones o cualquier otra pérdida causada directa o indirectamente, en todo o en parte por:');
   yPos += 5;
 
   const exclusions = [
     'Muerte natural.',
     'Lesiones causadas intencionalmente por otra persona cuando el asegurado participe en actos de imprudencia, o participe en actos delictivos o cometiendo un asalto.',
-    'Lesion intencionalmente infligida a si mismo, ya sea en estado de cordura o locura.',
-    'Guerra (declarada o no), huelgas, motines o rebelion civil, insurreccion, guerra civil, operaciones belicas, o terrorismo nacional e internacional.',
+    'Lesión intencionalmente infligida a sí mismo, ya sea en estado de cordura o locura.',
+    'Guerra (declarada o no), huelgas, motines o rebelión civil, insurrección, guerra civil, operaciones bélicas, o terrorismo nacional e internacional.',
     'Cualquier acto delictuoso en que participe el asegurado directamente con dolo o culpa grave.',
-    'La operacion o transporte en ascenso o descenso de cualquier vehiculo aereo si el asegurado es piloto, oficial o miembro de la tripulacion del mismo.',
+    'La operación o transporte en ascenso o descenso de cualquier vehículo aéreo si el asegurado es piloto, oficial o miembro de la tripulación del mismo.',
     'Dolencia corporal o mental, o enfermedad que contribuya total o parcialmente a la muerte.',
     'Veneno, gas o vapores (tragados, administrados, absorbidos o inhalados por accidente o de otra manera voluntaria).',
-    'Asfixia por estrangulacion, ya sea voluntaria o involuntariamente.',
+    'Asfixia por estrangulación, ya sea voluntaria o involuntariamente.',
     'Hernia, locura.',
-    'Cualquier enfermedad o dolencia, prenez o parto.',
-    'Accidentes que ocurran mientras el asegurado se encuentre bajo el efecto de estupefacientes, drogas o bebidas alcoholicas.',
-    'Mientras participe en reyertas o realice competencias de velocidad en algun vehiculo con ruedas.',
-    'Desempenando servicios militares o navales en tiempo de guerra.',
+    'Cualquier enfermedad o dolencia, preñez o parto.',
+    'Accidentes que ocurran mientras el asegurado se encuentre bajo el efecto de estupefacientes, drogas o bebidas alcohólicas.',
+    'Mientras participe en reyertas o realice competencias de velocidad en algún vehículo con ruedas.',
+    'Desempeñando servicios militares o navales en tiempo de guerra.',
     'Asalto, homicidio o asesinato, o por suicidio o cualquier intento del mismo.',
-    'Actos de personas que tomen parte en paros, huelgas o disturbios de caracter obrero, motines, tumultos o alborotos populares.',
+    'Actos de personas que tomen parte en paros, huelgas o disturbios de carácter obrero, motines, tumultos o alborotos populares.',
   ];
 
   exclusions.forEach((exclusion, index) => {
@@ -246,25 +246,25 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   doc.addPage();
   yPos = 20;
   addTitle('AVISO Y PROCEDIMIENTO EN CASO DE ACCIDENTE');
-  addParagraph('El asegurado y/o El Contratante deberan dar aviso por escrito a la Compania dentro de los cinco dias siguientes a la fecha del accidente, de cualquier lesion cubierta por la presente Poliza. En caso de muerte accidental, se debera dar aviso inmediato de la misma a la Compania.');
+  addParagraph('El asegurado y/o El Contratante deberán dar aviso por escrito a la Compañía dentro de los cinco días siguientes a la fecha del accidente, de cualquier lesión cubierta por la presente Póliza. En caso de muerte accidental, se deberá dar aviso inmediato de la misma a la Compañía.');
   yPos += 5;
-  addParagraph('La Falta de aviso dentro del termino estipulado en esta Poliza no afectara la validez de la reclamacion si se demuestra que no fue posible, dentro de lo razonable, dar tal aviso y que se informo del acontecimiento a la Compania inmediatamente que fue posible.');
+  addParagraph('La falta de aviso dentro del término estipulado en esta Póliza no afectará la validez de la reclamación si se demuestra que no fue posible, dentro de lo razonable, dar tal aviso y que se informó del acontecimiento a la Compañía inmediatamente que fue posible.');
   yPos += 10;
 
   // How to request assistance
   addSeparator();
-  addSubtitle('COMO SOLICITAR ASISTENCIA');
+  addSubtitle('CÓMO SOLICITAR ASISTENCIA');
   addParagraph('Para solicitar asistencia, utilice cualquiera de los siguientes canales:');
-  addBulletPoint('Aplicacion movil SegurifAI - Disponible 24/7');
-  addBulletPoint('Linea telefonica de emergencias: 2375-5000');
+  addBulletPoint('Aplicación móvil SegurifAI - Disponible 24/7');
+  addBulletPoint('Línea telefónica de emergencias: 2375-5000');
   addBulletPoint('Portal web: www.segurifai.com.gt');
   yPos += 10;
 
   // Contact information
   addSeparator();
-  addSubtitle('INFORMACION DE CONTACTO');
+  addSubtitle('INFORMACIÓN DE CONTACTO');
   addParagraph('SegurifAI Guatemala, S.A.');
-  addParagraph('Telefono: 2375-5000');
+  addParagraph('Teléfono: 2375-5000');
   addParagraph('Correo: soporte@segurifai.com.gt');
   addParagraph('Sitio web: www.segurifai.com.gt');
   yPos += 10;
@@ -272,7 +272,7 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   // Footer on last page
   doc.setFontSize(8);
   doc.setTextColor(128, 128, 128);
-  doc.text('Este documento es generado automaticamente y forma parte de los terminos y condiciones de su plan SegurifAI.', pageWidth / 2, doc.internal.pageSize.getHeight() - 15, { align: 'center' });
+  doc.text('Este documento es generado automáticamente y forma parte de los términos y condiciones de su plan SegurifAI.', pageWidth / 2, doc.internal.pageSize.getHeight() - 15, { align: 'center' });
   doc.text(`Documento generado el ${today.toLocaleDateString('es-GT')}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
 
   // Save the PDF
