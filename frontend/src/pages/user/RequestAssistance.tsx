@@ -192,7 +192,7 @@ const MAWDY_SERVICES: MAWDYService[] = [
   {
     id: 'network_discounts',
     name: 'Descuentos en Red',
-    description: '20% de descuento en servicios de la red MAPFRE',
+    description: '20% de descuento en servicios de la red SegurifAI',
     icon: <CheckCircle className="text-green-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: null,
@@ -834,7 +834,7 @@ export const RequestAssistance: React.FC = () => {
       } else {
         setServiceValidation({
           validation_status: 'PENDING_REVIEW',
-          validation_message: 'Tu solicitud será revisada por un agente MAWDY',
+          validation_message: 'Tu solicitud será revisada por un agente SegurifAI',
         });
         setStep(isRoadsideAssistance() || isHealthAssistance() ? 4 : 3);
       }
@@ -1101,11 +1101,11 @@ export const RequestAssistance: React.FC = () => {
       const createdRequestId = response.data?.id || response.data?.request?.id;
 
       if (vehicleValidation?.validation_status === 'PENDING_REVIEW') {
-        alert('Solicitud creada! Tu información vehicular está en revisión por un agente MAWDY. Te notificaremos pronto.');
+        alert('Solicitud creada! Tu información vehicular está en revisión por un agente SegurifAI. Te notificaremos pronto.');
       } else if (healthValidation?.validation_status === 'PENDING_REVIEW') {
-        alert('Solicitud creada! Tu información médica está en revisión por un agente MAWDY. Te contactaremos pronto.');
+        alert('Solicitud creada! Tu información médica está en revisión por un agente SegurifAI. Te contactaremos pronto.');
       } else if (serviceValidation?.validation_status === 'PENDING_REVIEW') {
-        alert('Solicitud creada! Tu solicitud está en revisión por un agente MAWDY. Te contactaremos pronto.');
+        alert('Solicitud creada! Tu solicitud está en revisión por un agente SegurifAI. Te contactaremos pronto.');
       } else {
         alert('Solicitud creada exitosamente! Te contactaremos pronto.');
       }
@@ -1257,9 +1257,9 @@ export const RequestAssistance: React.FC = () => {
                       <AlertTriangle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
                         <p className="font-bold text-yellow-900">No tienes suscripciones activas</p>
-                        <p className="text-sm text-yellow-700 mt-1">Para solicitar asistencia, primero debes suscribirte a un plan MAWDY.</p>
+                        <p className="text-sm text-yellow-700 mt-1">Para solicitar asistencia, primero debes suscribirte a un plan.</p>
                         <button
-                          onClick={() => navigate('/app/plans')}
+                          onClick={() => navigate('/app/subscriptions')}
                           className="mt-2 text-sm font-medium text-yellow-800 hover:text-yellow-900 underline"
                         >
                           Ver planes disponibles →
@@ -1884,7 +1884,7 @@ export const RequestAssistance: React.FC = () => {
                             }`}>
                               {healthValidation.urgency_level === 'CRITICAL' ? '🚨 EMERGENCIA CRÍTICA - Agente Notificado' :
                                healthValidation.urgency_level === 'HIGH' ? '⚠️ Alta Urgencia - Revisión Prioritaria' :
-                               '⏳ Revisión de Agente MAWDY Requerida'}
+                               '⏳ Revisión de Agente SegurifAI Requerida'}
                             </p>
                             {healthValidation.urgency_level && (
                               <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
@@ -1902,7 +1902,7 @@ export const RequestAssistance: React.FC = () => {
                             healthValidation.urgency_level === 'HIGH' ? 'text-orange-700' :
                             'text-yellow-700'
                           }`}>
-                            {healthValidation.validation_message || 'Un agente médico MAWDY revisará tu caso.'}
+                            {healthValidation.validation_message || 'Un agente médico SegurifAI revisará tu caso.'}
                           </p>
                           {healthValidation.urgency_level === 'CRITICAL' && (
                             <div className="mt-3 p-3 bg-red-100 rounded-lg">
@@ -2356,9 +2356,9 @@ export const RequestAssistance: React.FC = () => {
                       <>
                         <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                         <div className="flex-1">
-                          <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY en Proceso</p>
+                          <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI en Proceso</p>
                           <p className="text-sm text-yellow-700 mt-1">
-                            {vehicleValidation.validation_message || 'La IA no pudo validar automáticamente. Un agente MAWDY revisará tu información.'}
+                            {vehicleValidation.validation_message || 'La IA no pudo validar automáticamente. Un agente SegurifAI revisará tu información.'}
                           </p>
                           <div className="mt-3 p-3 bg-yellow-100 rounded-lg">
                             <p className="text-xs text-yellow-800">
@@ -2525,7 +2525,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un agente revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -2676,7 +2676,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un asesor legal revisará tu caso.'}</p>
                       </div>
                     </>
@@ -2805,7 +2805,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un agente revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -3030,7 +3030,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un coordinador médico revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -3244,7 +3244,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un coordinador revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -3454,7 +3454,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un coordinador médico revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -3632,7 +3632,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un farmacéutico revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -3828,7 +3828,7 @@ export const RequestAssistance: React.FC = () => {
                     <>
                       <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
                       <div>
-                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente MAWDY</p>
+                        <p className="font-bold text-yellow-900">⏳ Revisión de Agente SegurifAI</p>
                         <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un coordinador revisará tu solicitud.'}</p>
                       </div>
                     </>
@@ -4038,7 +4038,7 @@ export const RequestAssistance: React.FC = () => {
                             : 'bg-yellow-100 text-yellow-700'
                         }`}>
                           {vehicleValidation.validation_status === 'APPROVED' && '✓ Validado por IA'}
-                          {vehicleValidation.validation_status === 'PENDING_REVIEW' && '⏳ Revisión MAWDY en proceso'}
+                          {vehicleValidation.validation_status === 'PENDING_REVIEW' && '⏳ Revisión SegurifAI en proceso'}
                         </span>
                       </div>
                     )}
@@ -4107,8 +4107,8 @@ export const RequestAssistance: React.FC = () => {
                           {healthValidation.validation_status === 'APPROVED' && '✓ Validado'}
                           {healthValidation.validation_status === 'PENDING_REVIEW' && (
                             healthValidation.urgency_level === 'CRITICAL'
-                              ? '🚨 Agente MAWDY notificado'
-                              : '⏳ Revisión MAWDY en proceso'
+                              ? '🚨 Agente SegurifAI notificado'
+                              : '⏳ Revisión SegurifAI en proceso'
                           )}
                         </span>
                       </div>

@@ -90,7 +90,7 @@ export const UserDashboard: React.FC = () => {
                     : 'Usuario'}!
                 </h1>
                 <p className="text-blue-200 mt-2 max-w-md">
-                  Tu asistencia MAWDY está activa las 24 horas del día, los 7 días de la semana.
+                  Tu asistencia SegurifAI está activa las 24 horas del día, los 7 días de la semana.
                 </p>
               </div>
               <div className="hidden md:flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
@@ -236,7 +236,7 @@ export const UserDashboard: React.FC = () => {
                 <ShoppingCart className="text-purple-600" size={28} />
               </div>
               <p className="font-bold text-gray-900">Planes</p>
-              <p className="text-xs text-gray-500 mt-1">MAWDY Drive & Health</p>
+              <p className="text-xs text-gray-500 mt-1">SegurifAI Drive & Health</p>
             </Link>
             <Link to="/app/requests" className="card card-hover text-center group p-6">
               <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-green-100 flex items-center justify-center group-hover:bg-green-200 group-hover:scale-110 transition-all">
@@ -369,9 +369,9 @@ export const UserDashboard: React.FC = () => {
               </div>
             )}
 
-            {/* MAWDY Services Quick Info */}
+            {/* SegurifAI Services Quick Info */}
             <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-              <p className="text-sm font-medium text-blue-800 mb-2">Servicios MAWDY incluyen:</p>
+              <p className="text-sm font-medium text-blue-800 mb-2">Servicios SegurifAI incluyen:</p>
               <div className="grid grid-cols-2 gap-2 text-xs text-blue-700">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={14} /> Grúa 24/7

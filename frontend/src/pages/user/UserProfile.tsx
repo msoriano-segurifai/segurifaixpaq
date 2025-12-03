@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   User, Mail, Phone, MapPin, Calendar, Shield, Star, Edit2,
   Camera, CheckCircle, Clock, Award, RefreshCw, Bell, Lock, X, Plus, Navigation, Loader2,
-  CreditCard, XCircle, ChevronRight, Car, Heart
+  CreditCard, XCircle, ChevronRight, Car, Heart, Download, FileText, Check
 } from 'lucide-react';
 
 interface UserProfileData {
@@ -49,7 +49,69 @@ interface Subscription {
   start_date: string;
   end_date: string;
   days_remaining?: number;
+  plan_price?: number;
 }
+
+// Plan benefits data for the details modal
+const PLAN_BENEFITS: Record<string, { price: number; benefits: string[] }> = {
+  'Plan Asistencia Vial': {
+    price: 36.88,
+    benefits: [
+      'Seguro Muerte Accidental Q3,000.00',
+      'Grúa del Vehículo (3/año, límite $150 USD)',
+      'Abasto de Combustible (3/año, límite combinado $150)',
+      'Cambio de Neumáticos (3/año, límite combinado $150)',
+      'Paso de Corriente (3/año, límite combinado $150)',
+      'Emergencia de Cerrajería (3/año, límite combinado $150)',
+      'Servicio de Ambulancia por Accidente (1/año, $100 USD)',
+      'Servicio de Conductor Profesional (1/año, $60 USD)',
+      'Taxi al Aeropuerto (1/año, $60 USD)',
+      'Asistencia Legal Telefónica (1/año, $200 USD)',
+      'Apoyo Económico Sala Emergencia (1/año, $1,000 USD)',
+      'Rayos X (1/año, $300 USD)',
+      'Descuentos en Red de Proveedores (hasta 20%)',
+      'Asistente Telefónico Cotización Repuestos',
+      'Asistente Telefónico Referencias Médicas'
+    ]
+  },
+  'Plan Asistencia Médica': {
+    price: 34.26,
+    benefits: [
+      'Seguro Muerte Accidental Q3,000.00',
+      'Orientación Médica Telefónica (Ilimitado)',
+      'Conexión con Especialistas de la Red (Ilimitado)',
+      'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, $150 USD)',
+      'Coordinación de Medicamentos a Domicilio (Ilimitado)',
+      'Cuidados Post Operatorios Enfermera (1/año, $100 USD)',
+      'Envío Artículos Aseo por Hospitalización (1/año, $100 USD)',
+      'Exámenes Lab: Heces, Orina, Hematología (2/año, $100 USD)',
+      'Exámenes: Papanicolau/Mamografía/Antígeno (2/año, $100 USD)',
+      'Nutricionista Video Consulta (4/año, $150 USD)',
+      'Psicología Video Consulta (4/año, $150 USD)',
+      'Servicio de Mensajería por Hospitalización (2/año, $60 USD)',
+      'Taxi Familiar por Hospitalización (2/año, $100 USD)',
+      'Traslado en Ambulancia por Accidente (2/año, $150 USD)',
+      'Taxi al Domicilio tras Alta (1/año, $100 USD)'
+    ]
+  },
+  'Plan Seguro Accidentes': {
+    price: 4.12,
+    benefits: [
+      'Muerte Accidental Q3,000.00',
+      'Cobertura por explosiones y descargas eléctricas',
+      'Cobertura por quemaduras (fuego, vapor, ácidos)',
+      'Cobertura por asfixia accidental',
+      'Cobertura por infecciones de accidentes cubiertos',
+      'Cobertura por mordeduras de animales',
+      'Cobertura por fenómenos naturales',
+      'Cobertura por intoxicación alimentaria',
+      'Cobertura en legítima defensa',
+      'Cobertura en accidentes aéreos comerciales',
+      'Edad de ingreso: 18-61 años',
+      'Edad de terminación: 70 años'
+    ]
+  }
+};
 
 export const UserProfile: React.FC = () => {
   const navigate = useNavigate();
@@ -77,6 +139,8 @@ export const UserProfile: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loadingSubscriptions, setLoadingSubscriptions] = useState(true);
   const [cancellingSubscription, setCancellingSubscription] = useState<number | null>(null);
+  const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
+  const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -116,7 +180,7 @@ export const UserProfile: React.FC = () => {
     try {
       await servicesAPI.initiateRenewal(subscriptionId);
       alert('Renovación iniciada. Por favor completa el pago.');
-      navigate('/subscriptions');
+      navigate('/app/subscriptions');
     } catch (error: any) {
       alert(error.response?.data?.error || 'Error al renovar suscripción');
     }
@@ -427,7 +491,7 @@ export const UserProfile: React.FC = () => {
               Mis Suscripciones
             </h3>
             <button
-              onClick={() => navigate('/subscriptions')}
+              onClick={() => navigate('/app/subscriptions')}
               className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800"
             >
               Ver Planes
@@ -444,7 +508,7 @@ export const UserProfile: React.FC = () => {
               <Shield className="mx-auto text-gray-300 mb-3" size={48} />
               <p className="text-gray-500 mb-4">No tienes suscripciones activas</p>
               <button
-                onClick={() => navigate('/subscriptions')}
+                onClick={() => navigate('/app/subscriptions')}
                 className="btn btn-primary"
               >
                 Ver Planes Disponibles
@@ -456,19 +520,25 @@ export const UserProfile: React.FC = () => {
               {subscriptions.filter(sub => sub.status !== 'CANCELLED').map((sub) => (
                 <div
                   key={sub.id}
-                  className={`p-4 rounded-xl border ${
+                  className={`p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md ${
                     sub.status === 'ACTIVE'
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-yellow-50 border-yellow-200'
+                      ? 'bg-green-50 border-green-200 hover:border-green-400'
+                      : 'bg-yellow-50 border-yellow-200 hover:border-yellow-400'
                   }`}
+                  onClick={() => {
+                    setSelectedSubscription(sub);
+                    setShowPlanDetailsModal(true);
+                  }}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${
-                        sub.plan_category === 'ROADSIDE' ? 'bg-blue-100' : 'bg-pink-100'
+                        sub.plan_category === 'ROADSIDE' ? 'bg-blue-100' : sub.plan_category === 'INSURANCE' ? 'bg-purple-100' : 'bg-pink-100'
                       }`}>
                         {sub.plan_category === 'ROADSIDE' ? (
                           <Car className="text-blue-600" size={20} />
+                        ) : sub.plan_category === 'INSURANCE' ? (
+                          <Shield className="text-purple-600" size={20} />
                         ) : (
                           <Heart className="text-pink-600" size={20} />
                         )}
@@ -476,15 +546,21 @@ export const UserProfile: React.FC = () => {
                       <div>
                         <p className="font-semibold text-gray-900">{sub.plan_name}</p>
                         <p className="text-xs text-gray-500">
-                          {sub.plan_category === 'ROADSIDE' ? 'Asistencia Vial' : 'Asistencia Salud'}
+                          {sub.plan_category === 'ROADSIDE' ? 'Asistencia Vial' : sub.plan_category === 'INSURANCE' ? 'Seguro Accidentes' : 'Asistencia Salud'}
                         </p>
                       </div>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      sub.status === 'ACTIVE' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
-                    }`}>
-                      {sub.status === 'ACTIVE' ? 'Activo' : sub.status}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        sub.status === 'ACTIVE' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
+                      }`}>
+                        {sub.status === 'ACTIVE' ? 'Activo' : sub.status}
+                      </span>
+                      <span className="text-xs text-blue-600 font-medium flex items-center gap-1">
+                        <FileText size={12} />
+                        Ver detalles
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mt-3 flex items-center justify-between text-sm">
@@ -500,7 +576,7 @@ export const UserProfile: React.FC = () => {
                     </div>
 
                     {sub.status === 'ACTIVE' && (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         {sub.days_remaining !== undefined && sub.days_remaining <= 7 && (
                           <button
                             onClick={() => handleRenewSubscription(sub.id)}
@@ -898,6 +974,125 @@ export const UserProfile: React.FC = () => {
                 Guardar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Plan Details Modal */}
+      {showPlanDetailsModal && selectedSubscription && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Detalles del Plan</h3>
+              <button
+                onClick={() => {
+                  setShowPlanDetailsModal(false);
+                  setSelectedSubscription(null);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Plan Header */}
+            <div className={`p-4 rounded-xl mb-4 ${
+              selectedSubscription.plan_category === 'ROADSIDE'
+                ? 'bg-blue-50 border border-blue-200'
+                : selectedSubscription.plan_category === 'INSURANCE'
+                ? 'bg-purple-50 border border-purple-200'
+                : 'bg-pink-50 border border-pink-200'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`p-3 rounded-lg ${
+                  selectedSubscription.plan_category === 'ROADSIDE'
+                    ? 'bg-blue-100'
+                    : selectedSubscription.plan_category === 'INSURANCE'
+                    ? 'bg-purple-100'
+                    : 'bg-pink-100'
+                }`}>
+                  {selectedSubscription.plan_category === 'ROADSIDE' ? (
+                    <Car className="text-blue-600" size={28} />
+                  ) : selectedSubscription.plan_category === 'INSURANCE' ? (
+                    <Shield className="text-purple-600" size={28} />
+                  ) : (
+                    <Heart className="text-pink-600" size={28} />
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900">{selectedSubscription.plan_name}</h4>
+                  <p className="text-sm text-gray-600">
+                    {selectedSubscription.plan_category === 'ROADSIDE'
+                      ? 'Asistencia Vial'
+                      : selectedSubscription.plan_category === 'INSURANCE'
+                      ? 'Seguro de Accidentes'
+                      : 'Asistencia Médica'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Costo Mensual:</span>
+                <span className="text-2xl font-bold text-blue-600">
+                  Q{PLAN_BENEFITS[selectedSubscription.plan_name]?.price.toFixed(2) || selectedSubscription.plan_price?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-2 text-sm">
+                <span className="text-gray-500">Vigencia:</span>
+                <span className="text-gray-700">
+                  {new Date(selectedSubscription.start_date).toLocaleDateString('es-GT')} - {new Date(selectedSubscription.end_date).toLocaleDateString('es-GT')}
+                </span>
+              </div>
+            </div>
+
+            {/* Benefits List */}
+            <div className="mb-4">
+              <h5 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <Shield size={16} className="text-blue-600" />
+                Servicios y Beneficios Incluidos
+              </h5>
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                {(PLAN_BENEFITS[selectedSubscription.plan_name]?.benefits || []).map((benefit, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-sm">
+                    <Check className="text-green-500 flex-shrink-0 mt-0.5" size={16} />
+                    <span className="text-gray-700">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Terms & Conditions Download */}
+            <div className="border-t pt-4 mt-4">
+              <h5 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <FileText size={16} className="text-gray-600" />
+                Términos y Condiciones
+              </h5>
+              <a
+                href="/docs/terminos-condiciones.pdf"
+                download="Terminos-y-Condiciones-SegurifAI.pdf"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+              >
+                <Download size={18} />
+                Descargar Términos y Condiciones (PDF)
+              </a>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Al utilizar nuestros servicios, aceptas los términos y condiciones descritos en el documento.
+              </p>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowPlanDetailsModal(false);
+                setSelectedSubscription(null);
+              }}
+              className="w-full mt-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}

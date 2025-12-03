@@ -173,7 +173,7 @@ export const EvidenceSubmission: React.FC = () => {
       } else if (response.data.status === 'NEEDS_INFO') {
         alert(`Se requiere informacion adicional: ${response.data.issues?.join(', ')}`);
       } else {
-        alert('Formulario enviado para revision por agente MAWDY');
+        alert('Formulario enviado para revision por agente SegurifAI');
         navigate(`/app/requests/${requestId}`);
       }
     } catch (error: any) {
@@ -243,7 +243,7 @@ export const EvidenceSubmission: React.FC = () => {
               <h3 className="font-bold text-purple-900">Revision Automatica con IA</h3>
               <p className="text-sm text-purple-700 mt-1">
                 Tus documentos seran analizados por inteligencia artificial para agilizar el proceso.
-                Si la IA no puede verificar la evidencia, un agente MAWDY la revisara manualmente.
+                Si la IA no puede verificar la evidencia, un agente SegurifAI la revisara manualmente.
               </p>
             </div>
           </div>

@@ -1,9 +1,10 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home, Users, FileText, CreditCard, Settings, LogOut, Menu, X,
   Truck, MapPin, Clock, DollarSign, Award, BookOpen, ShoppingCart,
-  Activity, PieChart, Bell, Shield, Wallet, BarChart3, Building2
+  Activity, PieChart, Bell, Shield, Wallet, BarChart3, Building2,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -87,12 +88,28 @@ const getVariantStyles = (variant: LayoutProps['variant']) => {
 
 export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const navItems = getNavItems(variant);
   const styles = getVariantStyles(variant);
+
+  // Load collapsed state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    if (saved !== null) {
+      setSidebarCollapsed(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save collapsed state to localStorage
+  const toggleSidebarCollapse = () => {
+    const newState = !sidebarCollapsed;
+    setSidebarCollapsed(newState);
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(newState));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -106,51 +123,76 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 ${styles.bg} text-white transform transition-transform lg:translate-x-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64 ${styles.bg} text-white transform transition-all duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-white/10">
-            <h1 className="text-xl font-bold">{styles.text}</h1>
-            <p className="text-sm text-white/60 mt-1">{user?.email}</p>
+          <div className={`p-4 lg:p-6 border-b border-white/10 ${sidebarCollapsed ? 'lg:px-3' : ''}`}>
+            <div className="flex items-center justify-between">
+              <div className={`${sidebarCollapsed ? 'lg:hidden' : ''}`}>
+                <h1 className="text-xl font-bold">{styles.text}</h1>
+                <p className="text-sm text-white/60 mt-1 truncate max-w-[180px]">{user?.email}</p>
+              </div>
+              {/* Collapsed state - show icon */}
+              <div className={`hidden ${sidebarCollapsed ? 'lg:flex' : ''} items-center justify-center w-full`}>
+                <Shield size={28} className="text-white" />
+              </div>
+              {/* Desktop collapse button */}
+              <button
+                onClick={toggleSidebarCollapse}
+                className={`hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-white/10 transition-colors ${sidebarCollapsed ? 'absolute right-2 top-4' : ''}`}
+                title={sidebarCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+              >
+                {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              </button>
+              {/* Mobile close button */}
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <nav className={`flex-1 p-2 lg:p-4 space-y-1 overflow-y-auto ${sidebarCollapsed ? 'lg:px-2' : ''}`}>
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''} ${
                   location.pathname === item.path
                     ? 'bg-white/20 text-white'
                     : `text-white/70 ${styles.hover}`
                 }`}
                 onClick={() => setSidebarOpen(false)}
+                title={sidebarCollapsed ? item.label : ''}
               >
-                {item.icon}
-                <span>{item.label}</span>
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span className={`${sidebarCollapsed ? 'lg:hidden' : ''}`}>{item.label}</span>
               </Link>
             ))}
           </nav>
 
           {/* Logout */}
-          <div className="p-4 border-t border-white/10">
+          <div className={`p-2 lg:p-4 border-t border-white/10 ${sidebarCollapsed ? 'lg:px-2' : ''}`}>
             <button
               onClick={logout}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-white/70 ${styles.hover} transition-colors`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-white/70 ${styles.hover} transition-colors ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+              title={sidebarCollapsed ? 'Cerrar Sesión' : ''}
             >
-              <LogOut size={20} />
-              <span>Cerrar Sesión</span>
+              <LogOut size={20} className="flex-shrink-0" />
+              <span className={`${sidebarCollapsed ? 'lg:hidden' : ''}`}>Cerrar Sesión</span>
             </button>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Top header */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="flex items-center justify-between px-4 py-3">
@@ -158,10 +200,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
               className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+              <Menu size={24} />
             </button>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto">
               <button className="p-2 rounded-lg hover:bg-gray-100 relative">
                 <Bell size={20} />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
@@ -178,7 +220,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

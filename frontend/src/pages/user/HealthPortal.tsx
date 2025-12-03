@@ -111,7 +111,7 @@ export const HealthPortal: React.FC = () => {
           doctor_name: 'Dr. Carlos Rodriguez',
           date: '2024-12-05',
           time: '10:00 AM',
-          location: 'Clinica MAWDY - Zona 10',
+          location: 'Clinica SegurifAI - Zona 10',
           status: 'scheduled'
         }
       ]);
@@ -531,14 +531,14 @@ export const HealthPortal: React.FC = () => {
           </div>
         )}
 
-        {/* MAWDY Health Services Banner */}
+        {/* SegurifAI Health Services Banner */}
         <div className="card bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
               <Stethoscope className="text-pink-600" size={24} />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-gray-900">Servicios de Salud MAWDY</p>
+              <p className="font-semibold text-gray-900">Servicios de Salud SegurifAI</p>
               <p className="text-sm text-gray-600">
                 Accede a consultas, examenes y medicamentos con tu plan
               </p>

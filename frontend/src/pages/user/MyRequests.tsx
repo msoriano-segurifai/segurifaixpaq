@@ -292,7 +292,7 @@ export const MyRequests: React.FC = () => {
                               </div>
                             </div>
                             <div>
-                              <p className="font-bold text-lg">{tracking.provider.driver_name || 'Tecnico Mawdy'}</p>
+                              <p className="font-bold text-lg">{tracking.provider.driver_name || 'Técnico SegurifAI'}</p>
                               <p className="text-sm text-gray-600">{tracking.provider.company_name}</p>
                               <div className="flex items-center gap-1 mt-1">
                                 <Star size={14} className="text-yellow-500 fill-yellow-500" />

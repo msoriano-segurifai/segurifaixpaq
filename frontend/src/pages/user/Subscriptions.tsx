@@ -116,7 +116,7 @@ const MAWDY_BENEFITS: Record<string, {
       { icon: <Star size={20} />, title: 'Descuentos en Red', description: 'Hasta 20% en proveedores asociados' },
       { icon: <Phone size={20} />, title: 'Asistentes Telefonicos', description: 'Cotizacion repuestos y referencias medicas' },
       { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Central telefonica siempre disponible' },
-      { icon: <Shield size={20} />, title: 'Proveedor MAPFRE', description: 'Respaldado por MAPFRE Guatemala' },
+      { icon: <Shield size={20} />, title: 'Proveedor SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 150,
     eventosAnuales: '14+',
@@ -146,7 +146,7 @@ const MAWDY_BENEFITS: Record<string, {
       { icon: <Users size={20} />, title: 'Cobertura Familiar', description: 'Incluye grupo familiar y nucleo familiar' },
       { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Orientacion medica siempre disponible' },
       { icon: <MapPin size={20} />, title: 'Cobertura Nacional', description: 'Valido en toda Guatemala' },
-      { icon: <Shield size={20} />, title: 'Proveedor MAPFRE', description: 'Respaldado por MAPFRE Guatemala' },
+      { icon: <Shield size={20} />, title: 'Proveedor SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 15,
     eventosAnuales: '15+',
@@ -574,8 +574,8 @@ export const Subscriptions: React.FC = () => {
       <div className="space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Planes MAWDY</h1>
-          <p className="text-gray-500 mt-2">Asistencia vial, médica y en hogar respaldada por MAWDY</p>
+          <h1 className="text-3xl font-bold text-gray-900">Planes SegurifAI</h1>
+          <p className="text-gray-500 mt-2">Asistencia vial, médica y en hogar respaldada por SegurifAI</p>
         </div>
 
         {/* Billing Toggle */}
@@ -1122,7 +1122,7 @@ export const Subscriptions: React.FC = () => {
             {/* Modal Header - Full Width */}
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 flex items-center justify-between z-10 shadow-lg">
               <div>
-                <h3 className="text-3xl font-bold">Compara Nuestros Planes MAWDY</h3>
+                <h3 className="text-3xl font-bold">Compara Nuestros Planes SegurifAI</h3>
                 <p className="text-blue-100 mt-1">Encuentra el plan perfecto para tus necesidades</p>
               </div>
               <button
@@ -1405,7 +1405,7 @@ export const Subscriptions: React.FC = () => {
 
               {/* Detailed Feature Comparison Table - ALL MAWDY Plans */}
               <div className="bg-gray-50 rounded-2xl p-6">
-                <h4 className="font-bold text-gray-900 mb-4 text-center text-xl">Comparación de Todos los Planes MAWDY</h4>
+                <h4 className="font-bold text-gray-900 mb-4 text-center text-xl">Comparación de Todos los Planes SegurifAI</h4>
                 <p className="text-center text-gray-500 text-sm mb-6">Compara los servicios incluidos en cada plan</p>
 
                 {/* Filter Buttons */}
