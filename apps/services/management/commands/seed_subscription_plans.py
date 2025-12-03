@@ -56,11 +56,11 @@ class Command(BaseCommand):
 
             # Update or create plans (MAPFRE standard pricing)
             plans_data = [
-                # ROADSIDE ASSISTANCE PLAN (MAPFRE AP Muerte Accidental + Asistencia Vial)
+                # ROADSIDE ASSISTANCE PLAN (AP Muerte Accidental + Asistencia Vial)
                 {
                     'category': roadside_cat,
-                    'name': 'Asistencia Vial MAPFRE',
-                    'description': 'Plan de asistencia vial con seguro de muerte accidental y servicios MAWDY',
+                    'name': 'Plan Asistencia Vial',
+                    'description': 'Plan de asistencia vial con seguro de muerte accidental',
                     'price_monthly': 36.88,
                     'price_yearly': 442.56,
                     'duration_days': 30,
@@ -87,11 +87,11 @@ class Command(BaseCommand):
                     'is_featured': True
                 },
 
-                # HEALTH ASSISTANCE PLAN (MAPFRE AP Muerte Accidental + Asistencia Medica)
+                # HEALTH ASSISTANCE PLAN (AP Muerte Accidental + Asistencia Medica)
                 {
                     'category': health_cat,
-                    'name': 'Asistencia Medica MAPFRE',
-                    'description': 'Plan de asistencia medica con seguro de muerte accidental y servicios MAWDY',
+                    'name': 'Plan Asistencia Médica',
+                    'description': 'Plan de asistencia medica con seguro de muerte accidental',
                     'price_monthly': 34.26,
                     'price_yearly': 411.12,
                     'duration_days': 30,
@@ -118,11 +118,11 @@ class Command(BaseCommand):
                     'is_featured': True
                 },
 
-                # BASE PERSONAL ACCIDENT INSURANCE (MAPFRE Seguro de Accidentes Personales)
+                # BASE PERSONAL ACCIDENT INSURANCE (Seguro de Accidentes Personales)
                 {
                     'category': insurance_cat,
-                    'name': 'Seguro de Accidentes Personales',
-                    'description': 'Seguro basico de accidentes personales MAPFRE con cobertura de muerte accidental',
+                    'name': 'Plan Seguro Accidentes',
+                    'description': 'Seguro basico de accidentes personales con cobertura de muerte accidental',
                     'price_monthly': 4.12,
                     'price_yearly': 49.44,
                     'duration_days': 30,

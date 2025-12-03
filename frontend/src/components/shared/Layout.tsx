@@ -143,7 +143,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
               className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-white/70 ${styles.hover} transition-colors`}
             >
               <LogOut size={20} />
-              <span>Logout</span>
+              <span>Cerrar Sesión</span>
             </button>
           </div>
         </div>

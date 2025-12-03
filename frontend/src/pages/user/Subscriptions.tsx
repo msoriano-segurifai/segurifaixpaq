@@ -797,7 +797,7 @@ export const Subscriptions: React.FC = () => {
             </div>
             <div>
               <Shield size={32} className="mx-auto mb-2 opacity-80" />
-              <h4 className="font-bold">Respaldo MAWDY</h4>
+              <h4 className="font-bold">Asistencia Profesional</h4>
               <p className="text-sm text-blue-200">Empresa líder en asistencias</p>
             </div>
             <div>
@@ -1608,7 +1608,7 @@ export const Subscriptions: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                   <div>
                     <Shield className="mx-auto mb-2 opacity-90" size={28} />
-                    <h5 className="font-bold text-sm">Respaldo MAWDY</h5>
+                    <h5 className="font-bold text-sm">Asistencia Profesional</h5>
                     <p className="text-xs text-blue-200 mt-1">Lider en asistencias</p>
                   </div>
                   <div>
