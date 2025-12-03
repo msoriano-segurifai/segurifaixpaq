@@ -64,8 +64,9 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Catch-all route for React frontend SPA routing (must be last)
-# Handles client-side routes like /dashboard, /login, etc.
-# WhiteNoise serves index.html at root and /assets/* files
+# Handles root path and client-side routes like /dashboard, /login, etc.
+# WhiteNoise serves /assets/* files, Django serves index.html for everything else
 urlpatterns += [
+    path('', serve_react_app, name='react-app-home'),
     re_path(r'^(?!api/|admin/|static/|media/|assets/).*$', serve_react_app, name='react-app'),
 ]

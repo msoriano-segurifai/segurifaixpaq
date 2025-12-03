@@ -200,9 +200,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # This means /assets/main.js is served from frontend/dist/assets/main.js
 WHITENOISE_ROOT = BASE_DIR / 'frontend' / 'dist'
 
-# WhiteNoise index file for root URL
-WHITENOISE_INDEX_FILE = True
-
 # WhiteNoise storage for Django's static files (admin, etc.)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
