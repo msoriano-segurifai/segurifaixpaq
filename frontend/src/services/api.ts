@@ -494,4 +494,63 @@ export const userAPI = {
     api.post('/wallet/generate-token/', data),
 };
 
+// =============================================================================
+// BOOKINGS API
+// =============================================================================
+export const bookingsAPI = {
+  // CRUD Operations
+  create: (data: {
+    service_type: string;
+    service_name: string;
+    description?: string;
+    priority?: string;
+    scheduled_date: string;
+    scheduled_time?: string;
+    estimated_duration_minutes?: number;
+    location_address?: string;
+    location_latitude?: number;
+    location_longitude?: number;
+    location_notes?: string;
+    contact_name?: string;
+    contact_phone?: string;
+    user_notes?: string;
+  }) => api.post('/bookings/', data),
+
+  list: (params?: {
+    status?: string;
+    service_type?: string;
+    date_from?: string;
+    date_to?: string;
+    search?: string;
+    ordering?: string;
+    page?: number;
+  }) => api.get('/bookings/', { params }),
+
+  get: (id: number) => api.get(`/bookings/${id}/`),
+
+  update: (id: number, data: any) => api.put(`/bookings/${id}/`, data),
+
+  partialUpdate: (id: number, data: any) => api.patch(`/bookings/${id}/`, data),
+
+  delete: (id: number) => api.delete(`/bookings/${id}/`),
+
+  // Custom Actions
+  my: () => api.get('/bookings/my/'),
+
+  upcoming: () => api.get('/bookings/upcoming/'),
+
+  history: () => api.get('/bookings/history/'),
+
+  stats: () => api.get('/bookings/stats/'),
+
+  cancel: (id: number, reason?: string) =>
+    api.post(`/bookings/${id}/cancel/`, { reason }),
+
+  rate: (id: number, rating: number, comment?: string) =>
+    api.post(`/bookings/${id}/rate/`, { rating, comment }),
+
+  updateStatus: (id: number, status: string, notes?: string, assigned_provider?: number) =>
+    api.post(`/bookings/${id}/status/`, { status, notes, assigned_provider }),
+};
+
 export default api;

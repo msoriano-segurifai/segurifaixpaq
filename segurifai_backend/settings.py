@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.paq_wallet',
     'apps.gamification',
     'apps.promotions',
+    'apps.bookings',
 ]
 
 MIDDLEWARE = [

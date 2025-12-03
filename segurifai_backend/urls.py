@@ -58,6 +58,7 @@ urlpatterns = [
     path('api/admin/dashboard/', include('apps.admin_dashboard.urls')),
     path('api/admin/', include('apps.users.admin_urls')),
     path('api/promotions/', include('apps.promotions.urls')),
+    path('api/bookings/', include('apps.bookings.urls')),
 ]
 
 # Serve media files in development

@@ -6,8 +6,9 @@ import {
   ChevronLeft, ChevronRight, Phone, MapPin,
   Ambulance, Home, Scale, Car, Fuel, Key,
   Users, FileText, Zap, Loader2, X, AlertCircle, Table2, Minus, Tag, Gift,
-  Sparkles, Send, MessageSquare, Lock, BarChart3
+  Sparkles, Send, MessageSquare, Lock, BarChart3, Download
 } from 'lucide-react';
+import { generateTermsAndConditionsPDF, getPlanTypeFromName } from '../../utils/termsAndConditions';
 
 // Helper to normalize Guatemala phone numbers to 8 digits
 const normalizePhoneNumber = (phone: string): string => {
@@ -745,6 +746,22 @@ export const Subscriptions: React.FC = () => {
                   Pago seguro con tu billetera PAQ
                 </p>
               </div>
+
+              {/* Download T&Cs Button */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => generateTermsAndConditionsPDF({
+                    name: currentPlan.name,
+                    type: getPlanTypeFromName(currentPlan.name),
+                    price_monthly: currentPlan.price_monthly,
+                    price_yearly: currentPlan.price_yearly
+                  })}
+                  className="w-full py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={18} />
+                  Descargar Terminos y Condiciones
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1090,284 +1107,299 @@ export const Subscriptions: React.FC = () => {
 
       {/* Full Comparison Table Modal - FULL SCREEN Design */}
       {showComparisonModal && (
-        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
           <div className="min-h-screen">
-            {/* Modal Header - Full Width */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 flex items-center justify-between z-10 shadow-lg">
-              <div>
-                <h3 className="text-3xl font-bold">Compara Nuestros Planes SegurifAI</h3>
-                <p className="text-blue-100 mt-1">Encuentra el plan perfecto para tus necesidades</p>
-              </div>
-              <button
-                onClick={() => setShowComparisonModal(false)}
-                className="p-3 hover:bg-white/20 rounded-full transition-colors flex items-center gap-2 bg-white/10"
-              >
-                <X size={28} />
-                <span className="font-medium">Cerrar</span>
-              </button>
-            </div>
-
-            <div className="p-6 space-y-8">
-              {/* AI Plan Suggestion Section */}
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
-                    <Sparkles className="text-white" size={24} />
+            {/* Modal Header - Cleaner Design */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 shadow-sm z-10">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                    <Table2 className="text-white" size={20} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-lg">Asistente IA para elegir tu plan</h4>
-                    <p className="text-sm text-gray-600">Describe tus necesidades y te recomendaremos el mejor plan</p>
+                    <h3 className="text-xl font-bold text-gray-900">Compara Nuestros Planes</h3>
+                    <p className="text-sm text-gray-500">Encuentra el plan perfecto para ti</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowComparisonModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+              {/* AI Plan Suggestion Section - Redesigned */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                {/* AI Header */}
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+                      <Sparkles className="text-white" size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">Asistente IA</h4>
+                      <p className="text-sm text-white/80">Te ayudamos a elegir el plan ideal</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* AI Prompt Input */}
-                <div className="flex gap-3 mb-4">
-                  <div className="flex-1 relative">
-                    <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && !aiLoading && getAIPlanSuggestion()}
-                      placeholder="Ej: Manejo mucho y necesito grua, o tengo familia y quiero consultas medicas..."
-                      className="w-full pl-12 pr-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all text-gray-700"
-                      disabled={aiLoading}
-                    />
+                <div className="p-6">
+                  {/* AI Prompt Input - Cleaner */}
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <div className="flex-1 relative">
+                      <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                      <input
+                        type="text"
+                        value={aiPrompt}
+                        onChange={(e) => setAiPrompt(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && !aiLoading && getAIPlanSuggestion()}
+                        placeholder="¿Qué tipo de protección necesitas?"
+                        className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all text-gray-700 bg-gray-50"
+                        disabled={aiLoading}
+                      />
+                    </div>
+                    <button
+                      onClick={getAIPlanSuggestion}
+                      disabled={aiLoading || !aiPrompt.trim()}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[140px]"
+                    >
+                      {aiLoading ? (
+                        <>
+                          <Loader2 className="animate-spin" size={18} />
+                          <span className="hidden sm:inline">Analizando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send size={18} />
+                          Recomendar
+                        </>
+                      )}
+                    </button>
                   </div>
-                  <button
-                    onClick={getAIPlanSuggestion}
-                    disabled={aiLoading || !aiPrompt.trim()}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {aiLoading ? (
-                      <>
-                        <Loader2 className="animate-spin" size={20} />
-                        Analizando...
-                      </>
-                    ) : (
-                      <>
-                        <Send size={20} />
-                        Recomendar
-                      </>
-                    )}
-                  </button>
-                </div>
 
-                {/* AI Error */}
-                {aiError && (
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-center gap-3">
-                    <AlertCircle className="text-red-500 flex-shrink-0" size={20} />
-                    <p className="text-red-700 text-sm">{aiError}</p>
-                  </div>
-                )}
+                  {/* AI Error */}
+                  {aiError && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-center gap-3">
+                      <AlertCircle className="text-red-500 flex-shrink-0" size={18} />
+                      <p className="text-red-700 text-sm">{aiError}</p>
+                    </div>
+                  )}
 
-                {/* AI Suggestion Result - Handles both recommendations and comparisons */}
-                {aiSuggestion && (
-                  <div className="bg-white border-2 border-green-200 rounded-xl p-5 shadow-lg">
-                    {/* COMPARISON VIEW */}
-                    {aiSuggestion.is_comparison ? (
-                      <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-pink-100 flex items-center justify-center">
-                            <BarChart3 className="text-purple-600" size={24} />
-                          </div>
-                          <div>
-                            <h5 className="font-bold text-gray-900 text-lg">Comparación de Planes</h5>
-                            <p className="text-sm text-gray-500">
-                              {aiSuggestion.compared_plans?.join(' vs ')}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Comparison Table */}
-                        {aiSuggestion.comparison_details && aiSuggestion.comparison_details.length > 0 && (
-                          <div className="overflow-x-auto mb-4">
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="bg-gray-100">
-                                  <th className="text-left p-3 font-semibold text-gray-700 rounded-tl-lg">Aspecto</th>
-                                  <th className="text-center p-3 font-semibold text-blue-700 bg-blue-50">
-                                    {aiSuggestion.compared_plans?.[0]}
-                                  </th>
-                                  <th className="text-center p-3 font-semibold text-pink-700 bg-pink-50 rounded-tr-lg">
-                                    {aiSuggestion.compared_plans?.[1]}
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {aiSuggestion.comparison_details.map((detail, idx) => (
-                                  <tr key={idx} className="border-b border-gray-200">
-                                    <td className="p-3 font-medium text-gray-700">{detail.aspect}</td>
-                                    <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[0] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                                      {detail.plan1}
-                                      {detail.winner === aiSuggestion.compared_plans?.[0] && <Check size={14} className="inline ml-1 text-green-600" />}
-                                    </td>
-                                    <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[1] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                                      {detail.plan2}
-                                      {detail.winner === aiSuggestion.compared_plans?.[1] && <Check size={14} className="inline ml-1 text-green-600" />}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
-
-                        {/* Key Differences */}
-                        {aiSuggestion.key_differences && aiSuggestion.key_differences.length > 0 && (
-                          <div className="mb-4 bg-purple-50 rounded-lg p-4">
-                            <p className="text-sm font-semibold text-purple-800 mb-2">Diferencias Clave:</p>
-                            <ul className="space-y-1">
-                              {aiSuggestion.key_differences.map((diff, idx) => (
-                                <li key={idx} className="text-sm text-purple-700 flex items-start gap-2">
-                                  <span className="text-purple-500 mt-1">•</span>
-                                  {diff}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* AI Message */}
-                        <p className="text-gray-700 mb-3">{aiSuggestion.message}</p>
-
-                        {/* Recommendation from comparison */}
-                        {aiSuggestion.recommendation && (
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
-                            <p className="text-sm text-green-800">
-                              <span className="font-semibold">💡 Recomendación:</span> {aiSuggestion.recommendation}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      /* RECOMMENDATION VIEW */
-                      <div>
-                        <div className="flex items-start gap-4">
-                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
-                            aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' : 'bg-purple-100'
-                          }`}>
-                            {aiSuggestion.recommended_plan?.includes('Drive') ? (
-                              <Car className="text-blue-600" size={28} />
-                            ) : aiSuggestion.recommended_plan?.includes('Health') ? (
-                              <Heart className="text-pink-600" size={28} />
-                            ) : (
-                              <Shield className="text-purple-600" size={28} />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                              <h5 className="font-bold text-gray-900 text-lg">Plan Recomendado: {aiSuggestion.recommended_plan}</h5>
-                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                aiSuggestion.confidence === 'alta' ? 'bg-green-100 text-green-700' :
-                                aiSuggestion.confidence === 'media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-                              }`}>
-                                {aiSuggestion.confidence === 'alta' ? 'Alta confianza' :
-                                 aiSuggestion.confidence === 'media' ? 'Confianza media' : 'Sugerencia'}
-                              </span>
+                  {/* AI Suggestion Result - Enhanced Card Design */}
+                  {aiSuggestion && (
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5">
+                      {/* COMPARISON VIEW */}
+                      {aiSuggestion.is_comparison ? (
+                        <div>
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                              <BarChart3 className="text-purple-600" size={20} />
                             </div>
-                            {/* Price display */}
-                            {aiSuggestion.price_monthly && (
-                              <p className="text-lg font-bold text-green-600 mb-2">
-                                {aiSuggestion.price_monthly}/mes
-                                {aiSuggestion.price_yearly && <span className="text-sm font-normal text-gray-500 ml-2">({aiSuggestion.price_yearly}/año)</span>}
+                            <div>
+                              <h5 className="font-bold text-gray-900">Comparación de Planes</h5>
+                              <p className="text-sm text-gray-500">
+                                {aiSuggestion.compared_plans?.join(' vs ')}
                               </p>
-                            )}
-                            <p className="text-gray-700 mb-3">{aiSuggestion.message}</p>
-                            {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
-                              <div className="mb-3">
-                                <p className="text-sm font-medium text-gray-600 mb-2">Servicios clave para ti:</p>
-                                <div className="flex flex-wrap gap-2">
-                                  {aiSuggestion.key_services.map((service, idx) => (
-                                    <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                                      <Check size={14} />
-                                      {service}
-                                    </span>
+                            </div>
+                          </div>
+
+                          {/* Comparison Table - Cleaner */}
+                          {aiSuggestion.comparison_details && aiSuggestion.comparison_details.length > 0 && (
+                            <div className="overflow-x-auto mb-4 bg-white rounded-lg border border-gray-200">
+                              <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="border-b border-gray-200">
+                                    <th className="text-left p-3 font-semibold text-gray-700 bg-gray-50">Aspecto</th>
+                                    <th className="text-center p-3 font-semibold text-blue-700 bg-blue-50/50">
+                                      {aiSuggestion.compared_plans?.[0]}
+                                    </th>
+                                    <th className="text-center p-3 font-semibold text-pink-700 bg-pink-50/50">
+                                      {aiSuggestion.compared_plans?.[1]}
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {aiSuggestion.comparison_details.map((detail, idx) => (
+                                    <tr key={idx} className="border-b border-gray-100 last:border-0">
+                                      <td className="p-3 font-medium text-gray-700">{detail.aspect}</td>
+                                      <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[0] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                                        {detail.plan1}
+                                        {detail.winner === aiSuggestion.compared_plans?.[0] && <Check size={14} className="inline ml-1 text-green-600" />}
+                                      </td>
+                                      <td className={`p-3 text-center ${detail.winner === aiSuggestion.compared_plans?.[1] ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                                        {detail.plan2}
+                                        {detail.winner === aiSuggestion.compared_plans?.[1] && <Check size={14} className="inline ml-1 text-green-600" />}
+                                      </td>
+                                    </tr>
                                   ))}
-                                </div>
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+
+                          {/* Key Differences */}
+                          {aiSuggestion.key_differences && aiSuggestion.key_differences.length > 0 && (
+                            <div className="mb-4 bg-white rounded-lg p-4 border border-purple-100">
+                              <p className="text-sm font-semibold text-purple-800 mb-2">Diferencias Clave:</p>
+                              <ul className="space-y-1">
+                                {aiSuggestion.key_differences.map((diff, idx) => (
+                                  <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                                    <span className="text-purple-500 mt-0.5">•</span>
+                                    {diff}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* AI Message */}
+                          <p className="text-gray-700 text-sm mb-3">{aiSuggestion.message}</p>
+
+                          {/* Recommendation from comparison */}
+                          {aiSuggestion.recommendation && (
+                            <div className="bg-white border border-green-200 rounded-lg p-3">
+                              <p className="text-sm text-green-800">
+                                <span className="font-semibold">💡 Recomendación:</span> {aiSuggestion.recommendation}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* RECOMMENDATION VIEW - Enhanced */
+                        <div>
+                          <div className="flex items-start gap-4">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
+                              aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
+                              aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' : 'bg-purple-100'
+                            }`}>
+                              {aiSuggestion.recommended_plan?.includes('Drive') ? (
+                                <Car className="text-blue-600" size={24} />
+                              ) : aiSuggestion.recommended_plan?.includes('Health') ? (
+                                <Heart className="text-pink-600" size={24} />
+                              ) : (
+                                <Shield className="text-purple-600" size={24} />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <h5 className="font-bold text-gray-900">Plan Recomendado: {aiSuggestion.recommended_plan}</h5>
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                  aiSuggestion.confidence === 'alta' ? 'bg-green-100 text-green-700' :
+                                  aiSuggestion.confidence === 'media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
+                                }`}>
+                                  {aiSuggestion.confidence === 'alta' ? '✓ Alta confianza' :
+                                   aiSuggestion.confidence === 'media' ? 'Confianza media' : 'Sugerencia'}
+                                </span>
                               </div>
-                            )}
-                            <p className="text-sm text-gray-500 italic">{aiSuggestion.reason}</p>
+                              {/* Price display */}
+                              {aiSuggestion.price_monthly && (
+                                <p className="text-lg font-bold text-green-600 mb-2">
+                                  {aiSuggestion.price_monthly}/mes
+                                  {aiSuggestion.price_yearly && <span className="text-sm font-normal text-gray-500 ml-2">({aiSuggestion.price_yearly}/año)</span>}
+                                </p>
+                              )}
+                              <p className="text-gray-700 text-sm mb-3">{aiSuggestion.message}</p>
+                              {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
+                                <div className="mb-3">
+                                  <p className="text-xs font-medium text-gray-500 mb-2">Servicios clave para ti:</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {aiSuggestion.key_services.map((service, idx) => (
+                                      <span key={idx} className="bg-white text-gray-700 px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 border border-gray-200 shadow-sm">
+                                        <Check size={12} className="text-green-500" />
+                                        {service}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {aiSuggestion.reason && (
+                                <p className="text-xs text-gray-500 italic bg-white/50 rounded-lg p-2">{aiSuggestion.reason}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-green-200 flex justify-end">
+                            <button
+                              onClick={() => setShowComparisonModal(false)}
+                              className={`px-5 py-2 font-semibold rounded-lg transition-all flex items-center gap-2 shadow-sm ${
+                                aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
+                                aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
+                                'bg-purple-600 hover:bg-purple-700 text-white'
+                              }`}
+                            >
+                              Ver Plan
+                              <ChevronRight size={16} />
+                            </button>
                           </div>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
-                          <button
-                            onClick={() => setShowComparisonModal(false)}
-                            className={`px-6 py-2 font-bold rounded-lg transition-all flex items-center gap-2 ${
-                              aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                              aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
-                              'bg-purple-600 hover:bg-purple-700 text-white'
-                            }`}
-                          >
-                            Ver Planes
-                            <ChevronRight size={18} />
-                          </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Example Prompts - Cleaner Grid */}
+                  {!aiSuggestion && !aiLoading && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Recomendaciones</p>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            'Manejo mucho y mi carro es viejo',
+                            'Tengo hijos pequeños',
+                            'Protección completa'
+                          ].map((example, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setAiPrompt(example)}
+                              className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors border border-transparent hover:border-purple-200"
+                            >
+                              {example}
+                            </button>
+                          ))}
                         </div>
                       </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Example Prompts */}
-                {!aiSuggestion && !aiLoading && (
-                  <div className="mt-4">
-                    <p className="text-xs text-gray-500 mb-2">Ejemplos de lo que puedes preguntar:</p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {[
-                        'Manejo mucho y mi carro es viejo',
-                        'Tengo hijos pequeños y quiero consultas médicas',
-                        'Quiero protección completa para mi familia'
-                      ].map((example, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setAiPrompt(example)}
-                          className="text-xs bg-white border border-purple-200 text-purple-700 px-3 py-1.5 rounded-full hover:bg-purple-50 transition-colors"
-                        >
-                          "{example}"
-                        </button>
-                      ))}
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Comparaciones</p>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            'Drive vs Health',
+                            '¿Qué incluye Combo?'
+                          ].map((example, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setAiPrompt(example)}
+                              className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
+                            >
+                              {example}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mb-2">O compara planes específicos:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Compara Drive Inclusión vs Drive Opcional',
-                        'Diferencia entre Health Inclusión y Opcional',
-                        'Compara Plan Drive vs Plan Health',
-                        '¿Qué incluye el Plan Combo?'
-                      ].map((example, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setAiPrompt(example)}
-                          className="text-xs bg-white border border-blue-200 text-blue-700 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors"
-                        >
-                          "{example}"
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
-              {/* Billing Toggle */}
+              {/* Billing Toggle - Improved */}
               <div className="flex justify-center">
-                <div className="bg-gray-100 p-1.5 rounded-xl inline-flex shadow-inner">
+                <div className="bg-white border border-gray-200 p-1 rounded-xl inline-flex shadow-sm">
                   <button
                     onClick={() => setBillingCycle('monthly')}
-                    className={`px-8 py-2.5 rounded-lg font-semibold transition-all ${
+                    className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                       billingCycle === 'monthly'
-                        ? 'bg-white shadow-md text-blue-900'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-gray-900 text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     Mensual
                   </button>
                   <button
                     onClick={() => setBillingCycle('yearly')}
-                    className={`px-8 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2 ${
+                    className={`px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
                       billingCycle === 'yearly'
-                        ? 'bg-white shadow-md text-blue-900'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-gray-900 text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     Anual
@@ -1376,214 +1408,242 @@ export const Subscriptions: React.FC = () => {
                 </div>
               </div>
 
-              {/* Detailed Feature Comparison Table - ALL SegurifAI Plans */}
-              <div className="bg-gray-50 rounded-2xl p-6">
-                {/* Sticky Header for Comparison Table */}
-                <div className="sticky top-0 z-30 bg-gray-50 pb-4 -mt-2 pt-2">
-                  <h4 className="font-bold text-gray-900 mb-2 text-center text-xl">Compara Nuestros Planes SegurifAI</h4>
-                  <p className="text-center text-gray-500 text-sm mb-4">Encuentra el plan perfecto para tus necesidades</p>
+              {/* Detailed Feature Comparison Table - Redesigned */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                {/* Table Header */}
+                <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h4 className="font-bold text-gray-900 text-lg">Tabla Comparativa</h4>
+                      <p className="text-sm text-gray-500">Todos los servicios incluidos en cada plan</p>
+                    </div>
 
-                  {/* Filter Buttons */}
-                  <div className="flex justify-center gap-2">
-                  <button
-                    onClick={() => setServiceFilter('all')}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all ${
-                      serviceFilter === 'all'
-                        ? 'bg-gray-800 text-white shadow-md'
-                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
-                    }`}
-                  >
-                    Todos los Servicios
-                  </button>
-                  <button
-                    onClick={() => setServiceFilter('vial')}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 ${
-                      serviceFilter === 'vial'
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-white text-blue-600 hover:bg-blue-50 border border-blue-300'
-                    }`}
-                  >
-                    <Car size={18} />
-                    Servicios Viales
-                  </button>
-                  <button
-                    onClick={() => setServiceFilter('salud')}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 ${
-                      serviceFilter === 'salud'
-                        ? 'bg-pink-600 text-white shadow-md'
-                        : 'bg-white text-pink-600 hover:bg-pink-50 border border-pink-300'
-                    }`}
-                  >
-                    <Heart size={18} />
-                    Servicios de Salud
-                  </button>
+                    {/* Filter Buttons - Compact */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setServiceFilter('all')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          serviceFilter === 'all'
+                            ? 'bg-gray-900 text-white'
+                            : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                        }`}
+                      >
+                        Todos
+                      </button>
+                      <button
+                        onClick={() => setServiceFilter('vial')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                          serviceFilter === 'vial'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-blue-600 hover:bg-blue-50 border border-blue-200'
+                        }`}
+                      >
+                        <Car size={14} />
+                        Vial
+                      </button>
+                      <button
+                        onClick={() => setServiceFilter('salud')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                          serviceFilter === 'salud'
+                            ? 'bg-pink-600 text-white'
+                            : 'bg-white text-pink-600 hover:bg-pink-50 border border-pink-200'
+                        }`}
+                      >
+                        <Heart size={14} />
+                        Salud
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 {/* Mobile scroll hint */}
-                <div className="flex items-center justify-center gap-2 mb-3 text-gray-500 text-sm md:hidden">
-                  <span className="animate-pulse">👈</span>
-                  <span>Desliza para ver más planes</span>
-                  <span className="animate-pulse">👉</span>
+                <div className="flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-500 text-xs border-b border-gray-100 md:hidden">
+                  <ChevronLeft size={14} className="animate-pulse" />
+                  <span>Desliza para ver todos los planes</span>
+                  <ChevronRight size={14} className="animate-pulse" />
                 </div>
 
-                <div className="relative border border-gray-200 rounded-xl overflow-hidden">
-                  {/* Scroll shadow indicators */}
-                  <div className="absolute left-[220px] top-0 bottom-0 w-4 bg-gradient-to-r from-gray-200/80 to-transparent pointer-events-none z-20 md:hidden"></div>
-
+                <div className="relative">
                   <div
-                    className="overflow-auto scroll-smooth max-h-[500px]"
+                    className="overflow-auto max-h-[450px]"
                     style={{
                       WebkitOverflowScrolling: 'touch',
                       scrollbarWidth: 'thin',
-                      scrollbarColor: '#CBD5E1 #F1F5F9'
+                      scrollbarColor: '#E5E7EB #F9FAFB'
                     }}
                   >
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 z-20">
-                      <tr className="border-b-2 border-gray-300">
-                        <th className="text-left p-3 font-semibold text-gray-700 bg-gray-100 rounded-tl-lg min-w-[220px] sticky left-0 z-30">
-                          Servicio
-                        </th>
-                        {/* Dynamic columns for ALL database plans */}
-                        {plans.map((plan) => {
-                          const isVial = plan.category_type === 'ROADSIDE';
-                          return (
-                            <th
-                              key={plan.id}
-                              className={`text-center p-3 font-bold min-w-[140px] ${
-                                isVial ? 'bg-blue-100 text-blue-900' : 'bg-pink-100 text-pink-900'
-                              } ${plan.is_featured ? 'ring-2 ring-yellow-400' : ''}`}
-                            >
-                              <div className="flex flex-col items-center">
-                                {isVial ? <Car size={18} className="mb-1" /> : <Heart size={18} className="mb-1" />}
-                                <span className="text-xs leading-tight">{plan.name}</span>
-                                {plan.is_featured && (
-                                  <span className="text-[10px] bg-yellow-400 text-yellow-900 px-1 rounded mt-1">⭐</span>
-                                )}
-                              </div>
-                            </th>
-                          );
-                        })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ALL_SERVICES
-                        .filter(service => serviceFilter === 'all' || service.category === serviceFilter)
-                        .map((service) => (
-                        <tr
-                          key={service.id}
-                          className={`border-b border-gray-200 ${
-                            service.category === 'vial'
-                              ? 'bg-blue-50/30 hover:bg-blue-100/50'
-                              : 'bg-pink-50/30 hover:bg-pink-100/50'
-                          }`}
-                        >
-                          <td className="p-3 text-gray-700 font-medium bg-white sticky left-0 z-10 border-r border-gray-200">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${service.category === 'vial' ? 'bg-blue-500' : 'bg-pink-500'}`}></span>
-                              <span className="text-xs">{service.name}</span>
-                            </div>
-                          </td>
-                          {/* Dynamic cells for each database plan */}
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 z-20">
+                        <tr>
+                          <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50 min-w-[200px] sticky left-0 z-30 border-b border-gray-200">
+                            Servicio
+                          </th>
+                          {/* Dynamic columns for ALL database plans */}
                           {plans.map((plan) => {
                             const isVial = plan.category_type === 'ROADSIDE';
-                            const hasService = (isVial && service.category === 'vial') || (!isVial && service.category === 'salud');
-                            const limit = isVial ? service.driveLimit : service.healthLimit;
-                            const value = isVial ? service.driveValue : service.healthValue;
                             return (
-                              <td key={plan.id} className={`p-2 text-center ${hasService ? (isVial ? 'text-blue-700' : 'text-pink-700') : 'text-gray-300'}`}>
-                                {hasService && limit !== '-' ? (
-                                  <div className="flex flex-col items-center">
-                                    <Check size={16} className={isVial ? 'text-blue-600' : 'text-pink-600'} />
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full mt-0.5 ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
-                                      {limit}
-                                    </span>
+                              <th
+                                key={plan.id}
+                                className={`text-center p-3 min-w-[130px] border-b border-gray-200 ${
+                                  isVial ? 'bg-blue-50' : 'bg-pink-50'
+                                } ${plan.is_featured ? 'ring-2 ring-inset ring-yellow-400' : ''}`}
+                              >
+                                <div className="flex flex-col items-center gap-1">
+                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
+                                    {isVial ? <Car size={16} className="text-blue-600" /> : <Heart size={16} className="text-pink-600" />}
                                   </div>
-                                ) : (
-                                  <Minus className="mx-auto text-gray-300" size={14} />
-                                )}
+                                  <span className={`text-xs font-bold leading-tight ${isVial ? 'text-blue-900' : 'text-pink-900'}`}>{plan.name}</span>
+                                  {plan.is_featured && (
+                                    <span className="text-[9px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">Recomendado</span>
+                                  )}
+                                </div>
+                              </th>
+                            );
+                          })}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {ALL_SERVICES
+                          .filter(service => serviceFilter === 'all' || service.category === serviceFilter)
+                          .map((service, idx) => (
+                          <tr
+                            key={service.id}
+                            className={`transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-gray-100/50`}
+                          >
+                            <td className="p-3 text-gray-700 bg-white sticky left-0 z-10">
+                              <div className="flex items-center gap-2">
+                                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${service.category === 'vial' ? 'bg-blue-500' : 'bg-pink-500'}`}></span>
+                                <span className="text-xs leading-tight">{service.name}</span>
+                              </div>
+                            </td>
+                            {/* Dynamic cells for each database plan */}
+                            {plans.map((plan) => {
+                              const isVial = plan.category_type === 'ROADSIDE';
+                              const hasService = (isVial && service.category === 'vial') || (!isVial && service.category === 'salud');
+                              const limit = isVial ? service.driveLimit : service.healthLimit;
+                              return (
+                                <td key={plan.id} className="p-2 text-center">
+                                  {hasService && limit !== '-' ? (
+                                    <div className="flex flex-col items-center gap-0.5">
+                                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
+                                        <Check size={12} className={isVial ? 'text-blue-600' : 'text-pink-600'} />
+                                      </div>
+                                      <span className={`text-[10px] font-medium ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>
+                                        {limit}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <Minus className="mx-auto text-gray-300" size={14} />
+                                  )}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                      {/* Footer with prices and CTA */}
+                      <tfoot className="sticky bottom-0 z-20">
+                        {/* Price Row */}
+                        <tr className="bg-gray-100 border-t-2 border-gray-300">
+                          <td className="p-4 font-bold text-gray-900 sticky left-0 bg-gray-100">
+                            Precio {billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
+                          </td>
+                          {plans.map((plan) => {
+                            const isVial = plan.category_type === 'ROADSIDE';
+                            const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
+                            return (
+                              <td key={plan.id} className="p-3 text-center bg-gray-100">
+                                <div className="flex flex-col items-center">
+                                  <span className={`text-xl font-bold ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>Q{price}</span>
+                                  <span className="text-[10px] text-gray-500">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
+                                </div>
                               </td>
                             );
                           })}
                         </tr>
-                      ))}
-                      {/* Price Row */}
-                      <tr className="bg-gradient-to-r from-gray-100 to-gray-200 font-bold border-t-2 border-gray-400">
-                        <td className="p-3 text-gray-900 rounded-bl-lg sticky left-0 bg-gray-100 border-r border-gray-300">
-                          Precio {billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
-                        </td>
-                        {plans.map((plan) => {
-                          const isVial = plan.category_type === 'ROADSIDE';
-                          const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
-                          return (
-                            <td key={plan.id} className={`p-3 text-center ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>
-                              <div className="flex flex-col items-center">
-                                <span className="text-lg font-bold">Q{price}</span>
-                                <span className="text-[10px] text-gray-500">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
-                              </div>
-                            </td>
-                          );
-                        })}
-                      </tr>
-                      {/* Service Count Row */}
-                      <tr className="bg-gray-50">
-                        <td className="p-3 text-gray-700 font-medium sticky left-0 bg-gray-50 border-r border-gray-200">
-                          Total Servicios Incluidos
-                        </td>
-                        {plans.map((plan) => {
-                          const isVial = plan.category_type === 'ROADSIDE';
-                          const serviceCount = ALL_SERVICES.filter(s =>
-                            (isVial && s.category === 'vial' && s.driveLimit !== '-') ||
-                            (!isVial && s.category === 'salud' && s.healthLimit !== '-')
-                          ).length;
-                          return (
-                            <td key={plan.id} className={`p-3 text-center font-bold ${isVial ? 'text-blue-600' : 'text-pink-600'}`}>
-                              {serviceCount} servicios
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    </tbody>
-                  </table>
+                        {/* CTA Buttons Row */}
+                        <tr className="bg-white">
+                          <td className="p-4 sticky left-0 bg-white border-t border-gray-200">
+                            <span className="text-xs text-gray-500">Selecciona un plan</span>
+                          </td>
+                          {plans.map((plan) => {
+                            const isVial = plan.category_type === 'ROADSIDE';
+                            return (
+                              <td key={plan.id} className="p-3 text-center border-t border-gray-200">
+                                <button
+                                  onClick={() => {
+                                    setShowComparisonModal(false);
+                                    const planIndex = plans.findIndex(p => p.id === plan.id);
+                                    if (planIndex !== -1) setCurrentPlanIndex(planIndex);
+                                    setTimeout(() => openPAQModal(plan), 300);
+                                  }}
+                                  className={`w-full px-3 py-2 text-xs font-bold rounded-lg transition-all shadow-sm hover:shadow-md ${
+                                    isVial
+                                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                      : 'bg-pink-600 hover:bg-pink-700 text-white'
+                                  } ${plan.is_featured ? 'ring-2 ring-yellow-400 ring-offset-1' : ''}`}
+                                >
+                                  <span className="flex items-center justify-center gap-1">
+                                    <Wallet size={12} />
+                                    Suscribirse
+                                  </span>
+                                </button>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tfoot>
+                    </table>
                   </div>
                 </div>
 
-                {/* Legend */}
-                <div className="mt-4 flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                    <span className="text-gray-600">Servicios Viales (Plan Asistencia Vial)</span>
+                {/* Legend - More compact */}
+                <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap justify-center gap-6 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span className="text-gray-600">Servicios Viales</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-pink-500"></span>
-                    <span className="text-gray-600">Servicios de Salud (Plan Asistencia Medica)</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                    <span className="text-gray-600">Servicios de Salud</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check size={12} className="text-green-600" />
+                    <span className="text-gray-600">Servicio incluido</span>
                   </div>
                 </div>
               </div>
 
-              {/* Trust Badges - Enhanced */}
-              <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-6 text-white">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                  <div>
-                    <Shield className="mx-auto mb-2 opacity-90" size={28} />
-                    <h5 className="font-bold text-sm">Asistencia Profesional</h5>
-                    <p className="text-xs text-blue-200 mt-1">Lider en asistencias</p>
+              {/* Trust Badges - Cleaner Design */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <Shield className="text-blue-600" size={24} />
+                    </div>
+                    <h5 className="font-bold text-gray-900 text-sm">Asistencia Profesional</h5>
+                    <p className="text-xs text-gray-500 mt-1">Líder en Guatemala</p>
                   </div>
-                  <div>
-                    <Clock className="mx-auto mb-2 opacity-90" size={28} />
-                    <h5 className="font-bold text-sm">24/7/365</h5>
-                    <p className="text-xs text-blue-200 mt-1">Siempre disponibles</p>
+                  <div className="text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-xl flex items-center justify-center">
+                      <Clock className="text-green-600" size={24} />
+                    </div>
+                    <h5 className="font-bold text-gray-900 text-sm">24/7/365</h5>
+                    <p className="text-xs text-gray-500 mt-1">Siempre disponibles</p>
                   </div>
-                  <div>
-                    <MapPin className="mx-auto mb-2 opacity-90" size={28} />
-                    <h5 className="font-bold text-sm">Cobertura Nacional</h5>
-                    <p className="text-xs text-blue-200 mt-1">En toda Guatemala</p>
+                  <div className="text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="text-purple-600" size={24} />
+                    </div>
+                    <h5 className="font-bold text-gray-900 text-sm">Cobertura Nacional</h5>
+                    <p className="text-xs text-gray-500 mt-1">En toda Guatemala</p>
                   </div>
-                  <div>
-                    <Wallet className="mx-auto mb-2 opacity-90" size={28} />
-                    <h5 className="font-bold text-sm">Pago PAQ Wallet</h5>
-                    <p className="text-xs text-blue-200 mt-1">Seguro y facil</p>
+                  <div className="text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 bg-emerald-100 rounded-xl flex items-center justify-center">
+                      <Wallet className="text-emerald-600" size={24} />
+                    </div>
+                    <h5 className="font-bold text-gray-900 text-sm">Pago PAQ Wallet</h5>
+                    <p className="text-xs text-gray-500 mt-1">Seguro y fácil</p>
                   </div>
                 </div>
               </div>

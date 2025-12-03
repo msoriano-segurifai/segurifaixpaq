@@ -116,10 +116,10 @@ export const UserDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Quick Stats Row - Centered on mobile, 3 columns on desktop */}
+        <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4">
           {/* Points */}
-          <div className="card bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
+          <div className="card bg-gradient-to-br from-yellow-400 to-orange-500 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0">
             <div className="flex items-center justify-between mb-3">
               <Star size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Puntos</span>
@@ -132,7 +132,7 @@ export const UserDashboard: React.FC = () => {
           </div>
 
           {/* E-Learning Credits */}
-          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0">
             <div className="flex items-center justify-between mb-3">
               <Gift size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Créditos</span>
@@ -145,7 +145,7 @@ export const UserDashboard: React.FC = () => {
           </div>
 
           {/* Active Subscriptions */}
-          <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0 sm:last:mx-auto lg:last:mx-0">
             <div className="flex items-center justify-between mb-3">
               <Shield size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Planes</span>
@@ -248,154 +248,82 @@ export const UserDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* E-Learning Progress */}
-          <div className="card">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <Sparkles className="text-yellow-500" />
-                Tu Progreso de Aprendizaje
-              </h3>
-              <Link to="/app/learning" className="text-blue-600 text-sm flex items-center gap-1 hover:underline">
-                Ver módulos <ChevronRight size={16} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-                <TrendingUp className="mx-auto text-blue-500 mb-2" size={28} />
-                <p className="text-2xl font-bold text-blue-700">
-                  {elearning?.points?.level_display || 'Novato'}
-                </p>
-                <p className="text-sm text-blue-600">Tu nivel actual</p>
-              </div>
-              <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
-                <BookOpen className="mx-auto text-green-500 mb-2" size={28} />
-                <p className="text-2xl font-bold text-green-700">
-                  {elearning?.modules?.completed || 0}/{elearning?.modules?.total_available || 0}
-                </p>
-                <p className="text-sm text-green-600">Módulos completados</p>
-              </div>
-            </div>
-
-            {/* E-Learning Module Progress Bar */}
-            {elearning?.modules && (
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600 font-medium">Progreso E-Learning</span>
-                  <span className="font-bold text-blue-600">
-                    {elearning.modules.total_available > 0
-                      ? Math.round((elearning.modules.completed / elearning.modules.total_available) * 100)
-                      : 0}%
-                  </span>
-                </div>
-                <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
-                    style={{ width: `${elearning.modules.total_available > 0
-                      ? (elearning.modules.completed / elearning.modules.total_available) * 100
-                      : 0}%` }}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  <span className="font-medium text-purple-600">{elearning.modules.completed}</span> de <span className="font-medium">{elearning.modules.total_available}</span> módulos completados
-                </p>
-              </div>
-            )}
-
-            {/* CTA Button */}
-            <Link
-              to="/app/learning"
-              className="mt-6 w-full btn btn-primary flex items-center justify-center gap-2"
-            >
-              <Zap size={18} />
-              Continuar Aprendiendo
+        {/* E-Learning Progress - Full Width */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <Sparkles className="text-yellow-500" />
+              Tu Progreso de Aprendizaje
+            </h3>
+            <Link to="/app/learning" className="text-blue-600 text-sm flex items-center gap-1 hover:underline">
+              Ver módulos <ChevronRight size={16} />
             </Link>
           </div>
 
-          {/* Active Plans Summary */}
-          <div className="card">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <Shield className="text-blue-500" />
-                Tus Planes Activos
-              </h3>
-              <Link to="/app/subscriptions" className="text-blue-600 text-sm flex items-center gap-1 hover:underline">
-                Administrar <ChevronRight size={16} />
-              </Link>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
+              <TrendingUp className="mx-auto text-blue-500 mb-2" size={28} />
+              <p className="text-2xl font-bold text-blue-700">
+                {elearning?.points?.level_display || 'Novato'}
+              </p>
+              <p className="text-sm text-blue-600">Tu nivel actual</p>
             </div>
-
-            {subscription?.active_subscriptions?.length > 0 ? (
-              <div className="space-y-4">
-                {subscription.active_subscriptions.filter((sub: any) => sub.status === 'ACTIVE').map((sub: any, index: number) => (
-                  <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      sub.plan_category === 'ROADSIDE'
-                        ? 'bg-blue-100'
-                        : sub.plan_category === 'INSURANCE'
-                        ? 'bg-purple-100'
-                        : 'bg-pink-100'
-                    }`}>
-                      {sub.plan_category === 'ROADSIDE'
-                        ? <Car className="text-blue-600" size={24} />
-                        : sub.plan_category === 'INSURANCE'
-                        ? <Shield className="text-purple-600" size={24} />
-                        : <Heart className="text-pink-600" size={24} />
-                      }
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-gray-900">
-                        {sub.plan_name}
-                      </p>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className={`font-medium ${sub.days_remaining <= 7 ? 'text-orange-600' : 'text-green-600'}`}>
-                          {sub.days_remaining} días restantes
-                        </span>
-                        <span className="text-gray-400">•</span>
-                        <span className="text-gray-500">
-                          Vence: {new Date(sub.end_date).toLocaleDateString('es-GT')}
-                        </span>
-                      </div>
-                    </div>
-                    <CheckCircle className="text-green-500" size={20} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 px-4">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Shield className="text-gray-400" size={32} />
-                </div>
-                <p className="text-gray-500 mb-4">No tienes planes activos</p>
-                <Link
-                  to="/app/subscriptions"
-                  className="btn btn-primary"
-                >
-                  Ver Planes Disponibles
-                </Link>
-              </div>
-            )}
-
-            {/* SegurifAI Services Quick Info */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-              <p className="text-sm font-medium text-blue-800 mb-2">Servicios SegurifAI incluyen:</p>
-              <div className="grid grid-cols-2 gap-2 text-xs text-blue-700">
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={14} /> Grúa 24/7
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={14} /> Ambulancia
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={14} /> Cerrajería
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={14} /> Orientación Médica
-                </div>
-              </div>
+            <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+              <BookOpen className="mx-auto text-green-500 mb-2" size={28} />
+              <p className="text-2xl font-bold text-green-700">
+                {elearning?.modules?.completed || 0}/{elearning?.modules?.total_available || 0}
+              </p>
+              <p className="text-sm text-green-600">Módulos completados</p>
+            </div>
+            <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-100 rounded-xl">
+              <Star className="mx-auto text-yellow-500 mb-2" size={28} />
+              <p className="text-2xl font-bold text-yellow-700">
+                {elearning?.points?.total_points || 0}
+              </p>
+              <p className="text-sm text-yellow-600">Puntos totales</p>
+            </div>
+            <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
+              <Gift className="mx-auto text-purple-500 mb-2" size={28} />
+              <p className="text-2xl font-bold text-purple-700">
+                Q{elearning?.credits?.available_balance || 0}
+              </p>
+              <p className="text-sm text-purple-600">Créditos disponibles</p>
             </div>
           </div>
+
+          {/* E-Learning Module Progress Bar */}
+          {elearning?.modules && (
+            <div className="mb-6">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-600 font-medium">Progreso E-Learning</span>
+                <span className="font-bold text-blue-600">
+                  {elearning.modules.total_available > 0
+                    ? Math.round((elearning.modules.completed / elearning.modules.total_available) * 100)
+                    : 0}%
+                </span>
+              </div>
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+                  style={{ width: `${elearning.modules.total_available > 0
+                    ? (elearning.modules.completed / elearning.modules.total_available) * 100
+                    : 0}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                <span className="font-medium text-purple-600">{elearning.modules.completed}</span> de <span className="font-medium">{elearning.modules.total_available}</span> módulos completados
+              </p>
+            </div>
+          )}
+
+          {/* CTA Button */}
+          <Link
+            to="/app/learning"
+            className="w-full btn btn-primary flex items-center justify-center gap-2"
+          >
+            <Zap size={18} />
+            Continuar Aprendiendo
+          </Link>
         </div>
 
         {/* Recent Achievements */}
