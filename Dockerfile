@@ -2,11 +2,14 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
+# Cache bust: 2025-12-03-v2 - forces rebuild of frontend
+ARG CACHEBUST=1
+
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN npm run build
+RUN echo "Building frontend at $(date)" && npm run build
 
 # Stage 2: Python application
 FROM python:3.11-slim
