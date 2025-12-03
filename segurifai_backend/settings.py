@@ -65,15 +65,18 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # Security middleware (Cloudflare & OWASP) - must be first
+    # Django security first
+    'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise must be early to serve static files before other middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+    # Security middleware (Cloudflare & OWASP)
     'apps.core.middleware.CloudflareSecurityMiddleware',
     'apps.core.middleware.RateLimitMiddleware',
     'apps.core.middleware.SecurityHeadersMiddleware',
     'apps.core.middleware.RequestValidationMiddleware',
 
     # Django core middleware
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -344,7 +347,9 @@ RATE_LIMIT_EXEMPT_PATHS = {
     '/api/schema/',
     '/api/redoc/',
     '/static/',
+    '/assets/',
     '/favicon.ico',
+    '/index.html',
 }
 
 # Security Headers Configuration

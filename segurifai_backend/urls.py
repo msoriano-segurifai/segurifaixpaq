@@ -65,8 +65,7 @@ if settings.DEBUG:
 
 # Catch-all route for React frontend SPA routing (must be last)
 # Handles client-side routes like /dashboard, /login, etc.
-# WhiteNoise serves /assets/* files, this handles everything else
+# WhiteNoise serves index.html at root and /assets/* files
 urlpatterns += [
-    path('', serve_react_app, name='react-app-home'),  # Root path
     re_path(r'^(?!api/|admin/|static/|media/|assets/).*$', serve_react_app, name='react-app'),
 ]
