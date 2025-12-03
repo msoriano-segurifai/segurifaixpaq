@@ -2,12 +2,29 @@
 URL configuration for segurifai_backend project.
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
+from django.http import HttpResponse
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from apps.core.urls import maps_urlpatterns
+import os
+
+
+def serve_react_app(request):
+    """Serve the React frontend index.html"""
+    index_path = os.path.join(settings.BASE_DIR, 'frontend', 'dist', 'index.html')
+    try:
+        with open(index_path, 'r') as f:
+            return HttpResponse(f.read(), content_type='text/html')
+    except FileNotFoundError:
+        return HttpResponse(
+            '<h1>Frontend not built</h1><p>Run npm run build in frontend directory</p>',
+            content_type='text/html',
+            status=404
+        )
 
 urlpatterns = [
     # Admin
@@ -45,3 +62,9 @@ urlpatterns = [
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Catch-all route for React frontend (must be last)
+# This serves the React app for all non-API routes
+urlpatterns += [
+    re_path(r'^(?!api|admin|static|media).*$', serve_react_app, name='react-app'),
+]
