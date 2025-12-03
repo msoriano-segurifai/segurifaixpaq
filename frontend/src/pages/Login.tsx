@@ -154,7 +154,7 @@ export const Login: React.FC = () => {
         {showPAQLogin && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Login con PAQ Wallet</h2>
+              <h2 className="text-xl font-bold mb-4">Iniciar Sesión con PAQ Wallet</h2>
 
               {error && (
                 <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
