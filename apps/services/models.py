@@ -10,6 +10,7 @@ class ServiceCategory(models.Model):
     class CategoryType(models.TextChoices):
         ROADSIDE = 'ROADSIDE', _('Roadside Assistance')
         HEALTH = 'HEALTH', _('Health Assistance')
+        INSURANCE = 'INSURANCE', _('Personal Accident Insurance')
         CARD_INSURANCE = 'CARD_INSURANCE', _('Card Insurance')
 
     name = models.CharField(_('name'), max_length=100)

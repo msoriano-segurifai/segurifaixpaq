@@ -34,6 +34,17 @@ class Command(BaseCommand):
                 }
             )
 
+            # Create or get insurance category for base accident insurance
+            insurance_cat, _ = ServiceCategory.objects.get_or_create(
+                category_type='INSURANCE',
+                defaults={
+                    'name': 'Seguro de Accidentes',
+                    'description': 'Seguro de accidentes personales MAPFRE',
+                    'icon': 'shield',
+                    'is_active': True
+                }
+            )
+
             # Deactivate any card insurance category (not a MAWDY service)
             ServiceCategory.objects.filter(category_type='CARD_INSURANCE').update(is_active=False)
 
@@ -105,6 +116,34 @@ class Command(BaseCommand):
                     'coverage_amount': 1360.00,  # Sum of all USD limits
                     'is_active': True,
                     'is_featured': True
+                },
+
+                # BASE PERSONAL ACCIDENT INSURANCE (MAPFRE Seguro de Accidentes Personales)
+                {
+                    'category': insurance_cat,
+                    'name': 'Seguro de Accidentes Personales',
+                    'description': 'Seguro basico de accidentes personales MAPFRE con cobertura de muerte accidental',
+                    'price_monthly': 4.12,
+                    'price_yearly': 49.44,
+                    'duration_days': 30,
+                    'features': [
+                        'Muerte Accidental Q3,000.00',
+                        'Cobertura por explosiones y descargas electricas',
+                        'Cobertura por quemaduras (fuego, vapor, acidos)',
+                        'Cobertura por asfixia accidental',
+                        'Cobertura por infecciones de accidentes cubiertos',
+                        'Cobertura por mordeduras de animales',
+                        'Cobertura por fenomenos naturales',
+                        'Cobertura por intoxicacion alimentaria',
+                        'Cobertura en legitima defensa',
+                        'Cobertura en accidentes aereos comerciales',
+                        'Edad de ingreso: 18-61 anos',
+                        'Edad de terminacion: 70 anos'
+                    ],
+                    'max_requests_per_month': 1,
+                    'coverage_amount': 3000.00,  # Q3,000 death benefit
+                    'is_active': True,
+                    'is_featured': False
                 }
             ]
 

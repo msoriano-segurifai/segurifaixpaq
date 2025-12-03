@@ -180,7 +180,7 @@ export const Login: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="+502 3008 2653"
+                placeholder="+502 1234 5678"
                 required
               />
             </div>
@@ -276,7 +276,7 @@ export const Login: React.FC = () => {
                     value={paqPhone}
                     onChange={(e) => setPaqPhone(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                    placeholder="+502 3008 2653"
+                    placeholder="+502 1234 5678"
                   />
                 </div>
               </div>
@@ -382,7 +382,7 @@ export const Login: React.FC = () => {
                     value={signUpData.whatsapp}
                     onChange={(e) => setSignUpData({ ...signUpData, whatsapp: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                    placeholder="+502 3008 2653"
+                    placeholder="+502 1234 5678"
                   />
                 </div>
 
