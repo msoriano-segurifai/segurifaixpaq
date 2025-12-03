@@ -650,15 +650,15 @@ export const Rewards: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-lg">
-                    {data?.points?.total_points || 0} puntos
+                    {data?.total_points || 0} puntos
                   </p>
                   <p className="text-sm text-gray-600">
-                    Nivel {Math.floor((data?.points?.total_points || 0) / 100) + 1} • {data?.progress?.filter((p: any) => p.estado === 'COMPLETADO').length || 0} módulos completados
+                    Nivel {data?.level || 1} • {data?.achievements?.filter((a: Achievement) => a.is_unlocked).length || 0} logros obtenidos
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-blue-600 font-medium">
-                    Q{((data?.points?.total_points || 0) * 0.05).toFixed(2)}
+                    Q{((data?.total_points || 0) * 0.05).toFixed(2)}
                   </p>
                   <p className="text-xs text-gray-500">en créditos</p>
                 </div>
