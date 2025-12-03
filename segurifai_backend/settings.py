@@ -284,6 +284,9 @@ X_FRAME_OPTIONS = 'DENY'
 
 # HTTPS Settings (enabled in production when DEBUG=False)
 if not DEBUG:
+    # Trust the X-Forwarded-Proto header from Railway's proxy
+    # This prevents infinite redirect loops when behind a reverse proxy
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
