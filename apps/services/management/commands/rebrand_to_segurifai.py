@@ -5,39 +5,51 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from apps.services.models import ServiceCategory, ServicePlan
 from apps.providers.models import Provider
+import re
 
 
 class Command(BaseCommand):
     help = 'Replace all MAPFRE references with SegurifAI branding in database'
 
+    def clean_mapfre(self, text):
+        """Remove all MAPFRE variations from text"""
+        if not text:
+            return text
+        # Remove various MAPFRE patterns
+        text = re.sub(r'\s*MAPFRE\s*', ' ', text, flags=re.IGNORECASE)
+        text = re.sub(r'\s*Mapfre\s*', ' ', text)
+        # Clean up extra spaces
+        text = re.sub(r'\s+', ' ', text).strip()
+        return text
+
     def handle(self, *args, **options):
-        self.stdout.write('Rebranding MAPFRE to SegurifAI...')
+        self.stdout.write('Rebranding - removing all MAPFRE references...')
 
         with transaction.atomic():
             # Update service categories
             updated_cats = 0
             for cat in ServiceCategory.objects.all():
                 changed = False
-                if 'MAPFRE' in (cat.name or ''):
-                    cat.name = cat.name.replace('MAPFRE', 'SegurifAI')
+                if cat.name and 'mapfre' in cat.name.lower():
+                    cat.name = self.clean_mapfre(cat.name)
                     changed = True
-                if 'MAPFRE' in (cat.description or ''):
-                    cat.description = cat.description.replace('MAPFRE', 'SegurifAI')
+                if cat.description and 'mapfre' in cat.description.lower():
+                    cat.description = self.clean_mapfre(cat.description)
                     changed = True
                 if changed:
                     cat.save()
                     updated_cats += 1
                     self.stdout.write(f'  Updated category: {cat.name}')
 
-            # Update service plans
+            # Update service plans - remove MAPFRE completely from names
             updated_plans = 0
             for plan in ServicePlan.objects.all():
                 changed = False
-                if 'MAPFRE' in (plan.name or ''):
-                    plan.name = plan.name.replace('MAPFRE', 'SegurifAI')
+                if plan.name and 'mapfre' in plan.name.lower():
+                    plan.name = self.clean_mapfre(plan.name)
                     changed = True
-                if 'MAPFRE' in (plan.description or ''):
-                    plan.description = plan.description.replace('MAPFRE', 'SegurifAI')
+                if plan.description and 'mapfre' in plan.description.lower():
+                    plan.description = self.clean_mapfre(plan.description)
                     changed = True
                 if changed:
                     plan.save()
