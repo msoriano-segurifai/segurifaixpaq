@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-03-v3 - forces rebuild of frontend
+# Cache bust: 2025-12-03-v4 - rebrand MAPFRE to SegurifAI
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
@@ -48,5 +48,5 @@ RUN mkdir -p /app/staticfiles && \
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Simple start command - just gunicorn
-CMD gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
+# Start command - run migrations, rebrand, then gunicorn
+CMD python manage.py migrate --noinput && python manage.py rebrand_to_segurifai && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info

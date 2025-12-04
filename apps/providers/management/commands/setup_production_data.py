@@ -1,5 +1,5 @@
 """
-Management command to clear test data and setup MAPFRE as the only provider
+Management command to clear test data and setup SegurifAI as the only provider
 For Guatemala market with GTQ currency
 """
 from django.core.management.base import BaseCommand
@@ -14,7 +14,7 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Clear all test data and setup MAPFRE as the only provider for Guatemala'
+    help = 'Clear all test data and setup SegurifAI as the only provider for Guatemala'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -114,7 +114,7 @@ class Command(BaseCommand):
             plans_data = [
                 {
                     'category': roadside_cat,
-                    'name': 'MAPFRE Asistencia Vial Básica',
+                    'name': 'SegurifAI Asistencia Vial Básica',
                     'description': 'Asistencia vial básica 24/7 con cobertura nacional en Guatemala',
                     'price_monthly': 150.00,
                     'price_yearly': 1500.00,
@@ -131,7 +131,7 @@ class Command(BaseCommand):
                 },
                 {
                     'category': roadside_cat,
-                    'name': 'MAPFRE Asistencia Vial Premium',
+                    'name': 'SegurifAI Asistencia Vial Premium',
                     'description': 'Asistencia vial premium con cobertura extendida en Guatemala',
                     'price_monthly': 300.00,
                     'price_yearly': 3000.00,
@@ -150,7 +150,7 @@ class Command(BaseCommand):
                 },
                 {
                     'category': health_cat,
-                    'name': 'MAPFRE Asistencia Médica Básica',
+                    'name': 'SegurifAI Asistencia Médica Básica',
                     'description': 'Asistencia médica de emergencia 24/7 en Guatemala',
                     'price_monthly': 225.00,
                     'price_yearly': 2250.00,
@@ -164,7 +164,7 @@ class Command(BaseCommand):
                 },
                 {
                     'category': health_cat,
-                    'name': 'MAPFRE Asistencia Médica Premium',
+                    'name': 'SegurifAI Asistencia Médica Premium',
                     'description': 'Asistencia médica completa con cobertura extendida en Guatemala',
                     'price_monthly': 450.00,
                     'price_yearly': 4500.00,
@@ -181,7 +181,7 @@ class Command(BaseCommand):
                 },
                 {
                     'category': card_cat,
-                    'name': 'MAPFRE Seguro de Tarjeta Básico',
+                    'name': 'SegurifAI Seguro de Tarjeta Básico',
                     'description': 'Protección contra fraude y robo de tarjetas en Guatemala',
                     'price_monthly': 75.00,
                     'price_yearly': 750.00,
@@ -195,7 +195,7 @@ class Command(BaseCommand):
                 },
                 {
                     'category': card_cat,
-                    'name': 'MAPFRE Seguro de Tarjeta Premium',
+                    'name': 'SegurifAI Seguro de Tarjeta Premium',
                     'description': 'Protección completa contra fraude con cobertura extendida en Guatemala',
                     'price_monthly': 150.00,
                     'price_yearly': 1500.00,
@@ -215,12 +215,12 @@ class Command(BaseCommand):
                 plan = ServicePlan.objects.create(**plan_data)
                 self.stdout.write(f'  Created plan: {plan.name}')
 
-            # Create MAPFRE provider
-            self.stdout.write('Creating MAPFRE Guatemala provider...')
+            # Create SegurifAI provider
+            self.stdout.write('Creating SegurifAI Guatemala provider...')
             mapfre = Provider.objects.create(
                 user=admin,
-                company_name='MAPFRE Guatemala',
-                business_license='MAPFRE-GT-2024',
+                company_name='SegurifAI Guatemala',
+                business_license='SegurifAI-GT-2024',
                 tax_id='12345678-9',
                 business_phone='+502 2328 0000',
                 business_email='asistencia@mapfre.com.gt',
@@ -236,7 +236,7 @@ class Command(BaseCommand):
                 service_areas=['Ciudad de Guatemala', 'Antigua Guatemala', 'Quetzaltenango', 'Escuintla', 'Mixco', 'Villa Nueva'],
                 is_available=True,
                 status='ACTIVE',
-                verification_notes='MAPFRE es una aseguradora global con más de 85 años de experiencia. '
+                verification_notes='SegurifAI es una aseguradora global con más de 85 años de experiencia. '
                     'En Guatemala, ofrecemos servicios de asistencia vial, médica y protección '
                     'de tarjetas con cobertura nacional 24/7.'
             )

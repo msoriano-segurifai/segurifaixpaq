@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 category_type='INSURANCE',
                 defaults={
                     'name': 'Seguro de Accidentes',
-                    'description': 'Seguro de accidentes personales MAPFRE',
+                    'description': 'Seguro de accidentes personales SegurifAI',
                     'icon': 'shield',
                     'is_active': True
                 }
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
             ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
 
-            # Update or create plans (MAPFRE standard pricing)
+            # Update or create plans (SegurifAI standard pricing)
             plans_data = [
                 # ROADSIDE ASSISTANCE PLAN (AP Muerte Accidental + Asistencia Vial)
                 {
