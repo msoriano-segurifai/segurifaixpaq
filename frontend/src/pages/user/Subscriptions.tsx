@@ -511,24 +511,58 @@ export const Subscriptions: React.FC = () => {
     }
   };
 
-  // Consistent plan colors: Blue for Vial, Pink for Health
+  // Consistent plan colors: Blue for Vial, Pink for Health, Purple for Insurance/Accidents
   const getPlanColors = (categoryType: string) => {
-    const isVial = categoryType?.toUpperCase() === 'ROADSIDE';
+    const type = categoryType?.toUpperCase();
+    const isVial = type === 'ROADSIDE';
+    const isInsurance = type === 'INSURANCE';
+
+    if (isVial) {
+      return {
+        isVial: true,
+        isInsurance: false,
+        iconBg: 'from-blue-100 to-blue-200',
+        accent: 'text-blue-600',
+        button: 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800',
+        border: 'border-blue-500',
+        badge: 'from-blue-600 to-blue-700',
+        indicator: 'bg-blue-600',
+        priceBg: 'from-blue-50 to-blue-100',
+      };
+    }
+
+    if (isInsurance) {
+      return {
+        isVial: false,
+        isInsurance: true,
+        iconBg: 'from-purple-100 to-purple-200',
+        accent: 'text-purple-600',
+        button: 'from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800',
+        border: 'border-purple-500',
+        badge: 'from-purple-600 to-purple-700',
+        indicator: 'bg-purple-600',
+        priceBg: 'from-purple-50 to-purple-100',
+      };
+    }
+
+    // Default: Health (Pink)
     return {
-      isVial,
-      iconBg: isVial ? 'from-blue-100 to-blue-200' : 'from-pink-100 to-rose-200',
-      accent: isVial ? 'text-blue-600' : 'text-pink-600',
-      button: isVial ? 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' : 'from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700',
-      border: isVial ? 'border-blue-500' : 'border-pink-500',
-      badge: isVial ? 'from-blue-600 to-blue-700' : 'from-pink-600 to-rose-600',
-      indicator: isVial ? 'bg-blue-600' : 'bg-pink-600',
-      priceBg: isVial ? 'from-blue-50 to-blue-100' : 'from-pink-50 to-rose-100',
+      isVial: false,
+      isInsurance: false,
+      iconBg: 'from-pink-100 to-rose-200',
+      accent: 'text-pink-600',
+      button: 'from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700',
+      border: 'border-pink-500',
+      badge: 'from-pink-600 to-rose-600',
+      indicator: 'bg-pink-600',
+      priceBg: 'from-pink-50 to-rose-100',
     };
   };
 
   const getIcon = (categoryType: string) => {
     switch (categoryType?.toUpperCase()) {
       case 'ROADSIDE': return <Car className="text-blue-600" size={32} />;
+      case 'INSURANCE': return <Shield className="text-purple-600" size={32} />;
       case 'HEALTH': return <Heart className="text-pink-600" size={32} />;
       default: return <Star className="text-purple-600" size={32} />;
     }
@@ -1488,19 +1522,21 @@ export const Subscriptions: React.FC = () => {
                           </th>
                           {/* Dynamic columns for ALL database plans */}
                           {plans.map((plan) => {
-                            const isVial = plan.category_type === 'ROADSIDE';
+                            const colors = getPlanColors(plan.category_type);
+                            const bgColor = colors.isVial ? 'bg-blue-50' : colors.isInsurance ? 'bg-purple-50' : 'bg-pink-50';
+                            const iconBg = colors.isVial ? 'bg-blue-100' : colors.isInsurance ? 'bg-purple-100' : 'bg-pink-100';
+                            const textColor = colors.isVial ? 'text-blue-900' : colors.isInsurance ? 'text-purple-900' : 'text-pink-900';
+                            const iconColor = colors.isVial ? 'text-blue-600' : colors.isInsurance ? 'text-purple-600' : 'text-pink-600';
                             return (
                               <th
                                 key={plan.id}
-                                className={`text-center p-3 min-w-[130px] border-b border-gray-200 ${
-                                  isVial ? 'bg-blue-50' : 'bg-pink-50'
-                                } ${plan.is_featured ? 'ring-2 ring-inset ring-yellow-400' : ''}`}
+                                className={`text-center p-3 min-w-[130px] border-b border-gray-200 ${bgColor} ${plan.is_featured ? 'ring-2 ring-inset ring-yellow-400' : ''}`}
                               >
                                 <div className="flex flex-col items-center gap-1">
-                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
-                                    {isVial ? <Car size={16} className="text-blue-600" /> : <Heart size={16} className="text-pink-600" />}
+                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
+                                    {colors.isVial ? <Car size={16} className={iconColor} /> : colors.isInsurance ? <Shield size={16} className={iconColor} /> : <Heart size={16} className={iconColor} />}
                                   </div>
-                                  <span className={`text-xs font-bold leading-tight ${isVial ? 'text-blue-900' : 'text-pink-900'}`}>{plan.name}</span>
+                                  <span className={`text-xs font-bold leading-tight ${textColor}`}>{plan.name}</span>
                                   {plan.is_featured && (
                                     <span className="text-[9px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">Recomendado</span>
                                   )}
@@ -1526,17 +1562,20 @@ export const Subscriptions: React.FC = () => {
                             </td>
                             {/* Dynamic cells for each database plan */}
                             {plans.map((plan) => {
-                              const isVial = plan.category_type === 'ROADSIDE';
-                              const hasService = (isVial && service.category === 'vial') || (!isVial && service.category === 'salud');
-                              const limit = isVial ? service.driveLimit : service.healthLimit;
+                              const colors = getPlanColors(plan.category_type);
+                              const hasService = (colors.isVial && service.category === 'vial') || (!colors.isVial && !colors.isInsurance && service.category === 'salud');
+                              const limit = colors.isVial ? service.driveLimit : service.healthLimit;
+                              const checkBg = colors.isVial ? 'bg-blue-100' : colors.isInsurance ? 'bg-purple-100' : 'bg-pink-100';
+                              const checkColor = colors.isVial ? 'text-blue-600' : colors.isInsurance ? 'text-purple-600' : 'text-pink-600';
+                              const textColor = colors.isVial ? 'text-blue-700' : colors.isInsurance ? 'text-purple-700' : 'text-pink-700';
                               return (
                                 <td key={plan.id} className="p-2 text-center">
                                   {hasService && limit !== '-' ? (
                                     <div className="flex flex-col items-center gap-0.5">
-                                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${isVial ? 'bg-blue-100' : 'bg-pink-100'}`}>
-                                        <Check size={12} className={isVial ? 'text-blue-600' : 'text-pink-600'} />
+                                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${checkBg}`}>
+                                        <Check size={12} className={checkColor} />
                                       </div>
-                                      <span className={`text-[10px] font-medium ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>
+                                      <span className={`text-[10px] font-medium ${textColor}`}>
                                         {limit}
                                       </span>
                                     </div>
@@ -1557,12 +1596,13 @@ export const Subscriptions: React.FC = () => {
                             Precio {billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
                           </td>
                           {plans.map((plan) => {
-                            const isVial = plan.category_type === 'ROADSIDE';
+                            const colors = getPlanColors(plan.category_type);
+                            const priceColor = colors.isVial ? 'text-blue-700' : colors.isInsurance ? 'text-purple-700' : 'text-pink-700';
                             const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
                             return (
                               <td key={plan.id} className="p-3 text-center bg-gray-100">
                                 <div className="flex flex-col items-center">
-                                  <span className={`text-xl font-bold ${isVial ? 'text-blue-700' : 'text-pink-700'}`}>Q{price}</span>
+                                  <span className={`text-xl font-bold ${priceColor}`}>Q{price}</span>
                                   <span className="text-[10px] text-gray-500">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
                                 </div>
                               </td>
