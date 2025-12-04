@@ -5,7 +5,7 @@ import {
   BookOpen, Award, Star, CheckCircle, Play, Trophy, Gift,
   Brain, Heart, Car, Shield, XCircle, Lock,
   Zap, ArrowRight, Target, TrendingUp, Sparkles, ChevronRight, ChevronLeft,
-  Lightbulb, AlertTriangle, Info, Clock, HelpCircle
+  Lightbulb, AlertTriangle, Info, HelpCircle
 } from 'lucide-react';
 
 interface Module {
@@ -405,11 +405,7 @@ export const ELearning: React.FC = () => {
                         {module.dificultad}
                       </span>
                       <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-purple-100 text-purple-700 font-semibold border border-purple-300">
-                        ⏱️ {module.duracion_minutos} min
-                      </span>
-                      <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-blue-100 text-blue-700 font-semibold border border-blue-300 flex items-center gap-1">
-                        <Star size={12} />
-                        +{module.puntos_completar} pts
+                        ~{module.duracion_minutos} min de lectura
                       </span>
                     </div>
 
@@ -528,31 +524,21 @@ export const ELearning: React.FC = () => {
                     <div className="mb-4 sm:mb-8">
                       {/* Progress Header */}
                       <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-2 sm:py-3 px-3 sm:px-4 -mx-4 sm:-mx-4 mb-4 sm:mb-6 border-b shadow-sm">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-                            <Clock size={14} className="flex-shrink-0" />
-                            <span className="hidden sm:inline">~{selectedModule.duracion_minutos} min de lectura</span>
-                            <span className="sm:hidden">{selectedModule.duracion_minutos} min</span>
-                          </div>
-                          <div className="flex items-center gap-2 sm:gap-4">
-                            <div className="flex items-center gap-0.5 sm:gap-1">
-                              {contentSlides.map((_, idx) => (
-                                <button
-                                  key={idx}
-                                  onClick={() => setContentSlide(idx)}
-                                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all ${
-                                    idx === contentSlide
-                                      ? 'bg-blue-600 w-4 sm:w-6'
-                                      : idx < contentSlide
-                                      ? 'bg-green-500'
-                                      : 'bg-gray-300'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-xs sm:text-sm font-medium text-blue-600">
-                              +{selectedModule.puntos_completar} pts
-                            </span>
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center gap-0.5 sm:gap-1">
+                            {contentSlides.map((_, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setContentSlide(idx)}
+                                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all ${
+                                  idx === contentSlide
+                                    ? 'bg-blue-600 w-4 sm:w-6'
+                                    : idx < contentSlide
+                                    ? 'bg-green-500'
+                                    : 'bg-gray-300'
+                                }`}
+                              />
+                            ))}
                           </div>
                         </div>
                       </div>
