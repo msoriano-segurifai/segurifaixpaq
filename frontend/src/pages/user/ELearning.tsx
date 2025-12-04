@@ -1017,29 +1017,29 @@ export const ELearning: React.FC = () => {
                 )}
               </div>
 
-              {/* Modal Footer */}
-              <div className="border-t bg-gray-50 flex-shrink-0">
-                {/* Progress Bar - Only shown during content reading */}
+              {/* Modal Footer - Sticky at bottom */}
+              <div className="border-t bg-gray-50 flex-shrink-0 sticky bottom-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                {/* Progress Bar - Always visible during content reading */}
                 {!showQuiz && !quizResult && (
-                  <div className="px-3 sm:px-4 md:px-6 pt-3 sm:pt-4">
+                  <div className="px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100">
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-xs sm:text-sm font-medium text-gray-600">
-                        Tarjeta {contentSlide + 1} de {contentSlides.length}
+                      <span className="text-xs sm:text-sm font-semibold text-gray-700">
+                        📖 Tarjeta {contentSlide + 1} de {contentSlides.length}
                       </span>
-                      <span className="text-xs sm:text-sm font-bold text-blue-600">
+                      <span className="text-xs sm:text-sm font-bold text-blue-600 bg-white px-2 py-0.5 rounded-full">
                         {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
                       </span>
                     </div>
-                    <div className="h-2 sm:h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-3 sm:h-3.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 rounded-full"
+                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500 rounded-full shadow-lg"
                         style={{ width: `${((contentSlide + 1) / contentSlides.length) * 100}%` }}
                       />
                     </div>
                   </div>
                 )}
                 {/* Buttons */}
-                <div className="p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <div className="p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row gap-2 sm:gap-3 bg-gray-50">
                 {/* Close/Cancel Button */}
                 <button
                   onClick={() => {
