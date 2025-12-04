@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-03-v4 - rebrand MAPFRE to SegurifAI
+# Cache bust: 2025-12-04-v1 - fix AI recommendations and complete rebrand
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
