@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-04-v5 - Cleanup duplicates, only 3 active plans
+# Cache bust: 2025-12-04-v6 - Force rebrand ALL plans to SegurifAI
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
