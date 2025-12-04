@@ -41,13 +41,15 @@ interface Plan {
 interface ServiceItem {
   id: string;
   name: string;
-  category: 'vial' | 'salud' | 'both';
+  category: 'vial' | 'salud' | 'insurance' | 'both';
   driveLimit: string;
   driveValue: string;
   healthLimit: string;
   healthValue: string;
   comboLimit: string;
   comboValue: string;
+  insuranceLimit?: string;
+  insuranceValue?: string;
 }
 
 const ALL_SERVICES: ServiceItem[] = [
@@ -85,6 +87,13 @@ const ALL_SERVICES: ServiceItem[] = [
   { id: 'taxi_familiar', name: 'Taxi Familiar Hospitalización', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q785', comboLimit: '2/año', comboValue: 'Q785' },
   { id: 'ambulancia_salud', name: 'Ambulancia Accidente', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q1,175', comboLimit: '2/año', comboValue: 'Q1,175' },
   { id: 'taxi_alta', name: 'Taxi Post-Alta (al domicilio)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '1/año', healthValue: 'Q785', comboLimit: '1/año', comboValue: 'Q785' },
+
+  // INSURANCE SERVICES (Seguro de Accidentes Personales) - Values in Quetzales
+  { id: 'seguro_muerte', name: 'Seguro por Muerte Accidental', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q10,000' },
+  { id: 'seguro_invalidez', name: 'Invalidez Total y Permanente', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q10,000' },
+  { id: 'gastos_funerarios', name: 'Gastos Funerarios', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q2,000' },
+  { id: 'gastos_medicos', name: 'Gastos Médicos por Accidente', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q3,000' },
+  { id: 'incapacidad_temporal', name: 'Incapacidad Temporal (por día)', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Hasta 30 días', insuranceValue: 'Q50/día' },
 ];
 
 const SEGURIFAI_BENEFITS: Record<string, {
@@ -172,7 +181,7 @@ export const Subscriptions: React.FC = () => {
   const [showPAQModal, setShowPAQModal] = useState(false);
   const [selectedPlanForPurchase, setSelectedPlanForPurchase] = useState<Plan | null>(null);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
-  const [serviceFilter, setServiceFilter] = useState<'all' | 'vial' | 'salud'>('all');
+  const [serviceFilter, setServiceFilter] = useState<'all' | 'vial' | 'salud' | 'insurance'>('all');
 
   // User Profile State (for PAQ phone number)
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -271,12 +280,9 @@ export const Subscriptions: React.FC = () => {
   const loadData = async () => {
     try {
       const plansRes = await servicesAPI.getPlans();
-      // Filter out CARD_INSURANCE plans - only show ROADSIDE and HEALTH
+      // Include ALL plan types: ROADSIDE, HEALTH, and INSURANCE (Seguro de Accidentes Personales)
       const allPlans = plansRes.data.plans || plansRes.data || [];
-      const filteredPlans = allPlans.filter((p: Plan) =>
-        p.category_type !== 'CARD_INSURANCE'
-      );
-      setPlans(filteredPlans);
+      setPlans(allPlans);
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -1461,7 +1467,7 @@ export const Subscriptions: React.FC = () => {
                     </div>
 
                     {/* Filter Buttons - Compact */}
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => setServiceFilter('all')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -1493,6 +1499,17 @@ export const Subscriptions: React.FC = () => {
                       >
                         <Heart size={14} />
                         Salud
+                      </button>
+                      <button
+                        onClick={() => setServiceFilter('insurance')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                          serviceFilter === 'insurance'
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-white text-purple-600 hover:bg-purple-50 border border-purple-200'
+                        }`}
+                      >
+                        <Shield size={14} />
+                        Seguro
                       </button>
                     </div>
                   </div>
@@ -1530,16 +1547,13 @@ export const Subscriptions: React.FC = () => {
                             return (
                               <th
                                 key={plan.id}
-                                className={`text-center p-3 min-w-[130px] border-b border-gray-200 ${bgColor} ${plan.is_featured ? 'ring-2 ring-inset ring-yellow-400' : ''}`}
+                                className={`text-center p-3 min-w-[130px] border-b border-gray-200 ${bgColor}`}
                               >
                                 <div className="flex flex-col items-center gap-1">
                                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
                                     {colors.isVial ? <Car size={16} className={iconColor} /> : colors.isInsurance ? <Shield size={16} className={iconColor} /> : <Heart size={16} className={iconColor} />}
                                   </div>
                                   <span className={`text-xs font-bold leading-tight ${textColor}`}>{plan.name}</span>
-                                  {plan.is_featured && (
-                                    <span className="text-[9px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-bold">Recomendado</span>
-                                  )}
                                 </div>
                               </th>
                             );
@@ -1556,15 +1570,27 @@ export const Subscriptions: React.FC = () => {
                           >
                             <td className="p-3 text-gray-700 bg-white sticky left-0 z-10">
                               <div className="flex items-center gap-2">
-                                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${service.category === 'vial' ? 'bg-blue-500' : 'bg-pink-500'}`}></span>
+                                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                                  service.category === 'vial' ? 'bg-blue-500' :
+                                  service.category === 'insurance' ? 'bg-purple-500' : 'bg-pink-500'
+                                }`}></span>
                                 <span className="text-xs leading-tight">{service.name}</span>
                               </div>
                             </td>
                             {/* Dynamic cells for each database plan */}
                             {plans.map((plan) => {
                               const colors = getPlanColors(plan.category_type);
-                              const hasService = (colors.isVial && service.category === 'vial') || (!colors.isVial && !colors.isInsurance && service.category === 'salud');
-                              const limit = colors.isVial ? service.driveLimit : service.healthLimit;
+                              // Determine if this plan has this service
+                              const hasService =
+                                (colors.isVial && service.category === 'vial') ||
+                                (!colors.isVial && !colors.isInsurance && service.category === 'salud') ||
+                                (colors.isInsurance && service.category === 'insurance');
+                              // Get the appropriate limit based on plan type
+                              const limit = colors.isVial
+                                ? service.driveLimit
+                                : colors.isInsurance
+                                  ? (service.insuranceLimit || '-')
+                                  : service.healthLimit;
                               const checkBg = colors.isVial ? 'bg-blue-100' : colors.isInsurance ? 'bg-purple-100' : 'bg-pink-100';
                               const checkColor = colors.isVial ? 'text-blue-600' : colors.isInsurance ? 'text-purple-600' : 'text-pink-600';
                               const textColor = colors.isVial ? 'text-blue-700' : colors.isInsurance ? 'text-purple-700' : 'text-pink-700';
@@ -1615,7 +1641,12 @@ export const Subscriptions: React.FC = () => {
                             <span className="text-xs text-gray-500">Selecciona un plan</span>
                           </td>
                           {plans.map((plan) => {
-                            const isVial = plan.category_type === 'ROADSIDE';
+                            const colors = getPlanColors(plan.category_type);
+                            const buttonClass = colors.isVial
+                              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                              : colors.isInsurance
+                              ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                              : 'bg-pink-600 hover:bg-pink-700 text-white';
                             return (
                               <td key={plan.id} className="p-3 text-center border-t border-gray-200">
                                 <button
@@ -1625,11 +1656,7 @@ export const Subscriptions: React.FC = () => {
                                     if (planIndex !== -1) setCurrentPlanIndex(planIndex);
                                     setTimeout(() => openPAQModal(plan), 300);
                                   }}
-                                  className={`w-full px-3 py-2 text-xs font-bold rounded-lg transition-all shadow-sm hover:shadow-md ${
-                                    isVial
-                                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                      : 'bg-pink-600 hover:bg-pink-700 text-white'
-                                  } ${plan.is_featured ? 'ring-2 ring-yellow-400 ring-offset-1' : ''}`}
+                                  className={`w-full px-3 py-2 text-xs font-bold rounded-lg transition-all shadow-sm hover:shadow-md ${buttonClass}`}
                                 >
                                   <span className="flex items-center justify-center gap-1">
                                     <Wallet size={12} />
@@ -1646,7 +1673,7 @@ export const Subscriptions: React.FC = () => {
                 </div>
 
                 {/* Legend - More compact */}
-                <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap justify-center gap-6 text-xs">
+                <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap justify-center gap-4 sm:gap-6 text-xs">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                     <span className="text-gray-600">Servicios Viales</span>
@@ -1654,6 +1681,10 @@ export const Subscriptions: React.FC = () => {
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-pink-500"></span>
                     <span className="text-gray-600">Servicios de Salud</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span className="text-gray-600">Seguro Accidentes</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Check size={12} className="text-green-600" />

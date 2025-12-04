@@ -241,182 +241,184 @@ export const Rewards: React.FC = () => {
 
   return (
     <Layout variant="user">
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Hero Header */}
-        <div className="bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-3xl p-8 text-white shadow-2xl">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-              <Trophy className="text-yellow-200" size={36} />
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 px-2 sm:px-0">
+        {/* Hero Header - Ultra responsive */}
+        <div className="bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 text-white shadow-2xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="p-3 sm:p-4 bg-white/20 rounded-xl sm:rounded-2xl backdrop-blur-sm">
+              <Trophy className="text-yellow-200" size={28} />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">Recompensas y Logros</h1>
-              <p className="text-yellow-100">Aprende, gana puntos y canjea premios increíbles</p>
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">Recompensas y Logros</h1>
+              <p className="text-yellow-100 text-sm sm:text-base">Aprende, gana puntos y canjea premios</p>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white/20 rounded-xl p-4 backdrop-blur-sm border border-white/30">
-              <div className="flex items-center justify-between mb-2">
-                <Star className="text-yellow-200" size={24} />
-                <TrendingUp className="text-green-300" size={16} />
+          {/* Stats Cards - Mobile-first grid */}
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+            <div className="bg-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-between mb-1 sm:mb-2">
+                <Star className="text-yellow-200" size={20} />
+                <TrendingUp className="text-green-300 hidden sm:block" size={14} />
               </div>
-              <p className="text-3xl font-bold">{data?.total_points || 0}</p>
-              <p className="text-sm text-yellow-100">Puntos Totales</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{data?.total_points || 0}</p>
+              <p className="text-xs sm:text-sm text-yellow-100 truncate">Puntos</p>
             </div>
 
-            <div className="bg-white/20 rounded-xl p-4 backdrop-blur-sm border border-white/30">
-              <div className="flex items-center justify-between mb-2">
-                <Gift className="text-green-200" size={24} />
-                <Sparkles className="text-yellow-200" size={16} />
+            <div className="bg-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-between mb-1 sm:mb-2">
+                <Gift className="text-green-200" size={20} />
+                <Sparkles className="text-yellow-200 hidden sm:block" size={14} />
               </div>
-              <p className="text-3xl font-bold">Q{creditsEarned}</p>
-              <p className="text-sm text-yellow-100">Créditos Ganados</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">Q{creditsEarned}</p>
+              <p className="text-xs sm:text-sm text-yellow-100 truncate">Créditos</p>
             </div>
 
-            <div className="bg-white/20 rounded-xl p-4 backdrop-blur-sm border border-white/30">
-              <div className="flex items-center justify-between mb-2">
-                <BookOpen className="text-blue-200" size={24} />
-                <CheckCircle className="text-green-300" size={16} />
+            <div className="bg-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-between mb-1 sm:mb-2">
+                <BookOpen className="text-blue-200" size={20} />
+                <CheckCircle className="text-green-300 hidden sm:block" size={14} />
               </div>
-              <p className="text-3xl font-bold">{completedModulesCount}/{modules.length}</p>
-              <p className="text-sm text-yellow-100">Módulos Completados</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{completedModulesCount}/{modules.length}</p>
+              <p className="text-xs sm:text-sm text-yellow-100 truncate">Módulos</p>
             </div>
 
-            <div className="bg-white/20 rounded-xl p-4 backdrop-blur-sm border border-white/30">
-              <div className="flex items-center justify-between mb-2">
-                <Award className="text-purple-200" size={24} />
-                <BadgeCheck className="text-green-300" size={16} />
+            <div className="bg-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-between mb-1 sm:mb-2">
+                <Award className="text-purple-200" size={20} />
+                <BadgeCheck className="text-green-300 hidden sm:block" size={14} />
               </div>
-              <p className="text-3xl font-bold">{unlockedAchievements}/{data?.achievements.length || 0}</p>
-              <p className="text-sm text-yellow-100">Logros Desbloqueados</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{unlockedAchievements}/{data?.achievements.length || 0}</p>
+              <p className="text-xs sm:text-sm text-yellow-100 truncate">Logros</p>
             </div>
           </div>
         </div>
 
-        {/* Level Progress Card */}
-        <div className="card bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                <Crown size={32} />
+        {/* Level Progress Card - Mobile optimized */}
+        <div className="card bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                <Crown size={24} className="sm:hidden" />
+                <Crown size={32} className="hidden sm:block" />
               </div>
               <div>
-                <p className="text-purple-200 text-sm font-medium">Nivel {data?.level}</p>
-                <p className="text-2xl font-bold">{data?.level_name}</p>
+                <p className="text-purple-200 text-xs sm:text-sm font-medium">Nivel {data?.level}</p>
+                <p className="text-lg sm:text-2xl font-bold">{data?.level_name}</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-4xl font-bold">{data?.total_points}</p>
-              <p className="text-purple-200 text-sm">puntos acumulados</p>
+            <div className="text-left sm:text-right w-full sm:w-auto bg-white/10 rounded-lg p-2 sm:p-0 sm:bg-transparent">
+              <p className="text-2xl sm:text-4xl font-bold">{data?.total_points} <span className="text-sm sm:text-base font-normal text-purple-200">pts</span></p>
             </div>
           </div>
           <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span>Progreso al siguiente nivel</span>
-              <span className="font-bold">{data?.total_points} / {data?.next_level_points} pts</span>
+            <div className="flex justify-between text-xs sm:text-sm mb-2">
+              <span>Siguiente nivel</span>
+              <span className="font-bold">{data?.total_points} / {data?.next_level_points}</span>
             </div>
-            <div className="h-4 bg-white/20 rounded-full overflow-hidden shadow-inner">
+            <div className="h-3 sm:h-4 bg-white/20 rounded-full overflow-hidden shadow-inner">
               <div
                 className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-500 shadow-lg"
                 style={{ width: `${Math.min(progressPercent, 100)}%` }}
               />
             </div>
-            <p className="text-sm text-purple-200 mt-2">
-              Te faltan {Math.max(0, (data?.next_level_points || 0) - (data?.total_points || 0))} puntos para el siguiente nivel
+            <p className="text-xs sm:text-sm text-purple-200 mt-2">
+              Faltan {Math.max(0, (data?.next_level_points || 0) - (data?.total_points || 0))} pts
             </p>
           </div>
         </div>
 
-        {/* Credits Info Banner */}
-        <div className="card bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-green-100 rounded-xl">
-              <Gift className="text-green-600" size={28} />
+        {/* Credits Info Banner - Mobile optimized */}
+        <div className="card bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-green-100 rounded-lg sm:rounded-xl">
+              <Gift className="text-green-600" size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-green-900 text-lg mb-1">💰 Sistema de Créditos</h3>
-              <p className="text-green-700 text-sm leading-relaxed">
-                Por cada <strong>20 puntos</strong> que acumules, ganas <strong>Q1.00 en créditos</strong>.
-                Actualmente tienes <strong className="text-green-900 text-lg">Q{creditsEarned}</strong> en créditos
-                que se aplicarán automáticamente como descuento en tu próxima suscripción.
+              <h3 className="font-bold text-green-900 text-base sm:text-lg mb-1">Sistema de Créditos</h3>
+              <p className="text-green-700 text-xs sm:text-sm leading-relaxed">
+                Por cada <strong>20 puntos</strong> ganas <strong>Q1.00</strong>.
+                Tienes <strong className="text-green-900 text-base sm:text-lg">Q{creditsEarned}</strong> en créditos.
               </p>
               <a
                 href="/user/elearning"
-                className="inline-flex items-center gap-2 mt-3 text-green-700 hover:text-green-900 font-semibold transition-colors"
+                className="inline-flex items-center gap-2 mt-2 sm:mt-3 text-green-700 hover:text-green-900 font-semibold transition-colors text-sm"
               >
-                <BookOpen size={18} />
-                Ir al Centro de Aprendizaje
-                <ArrowRight size={16} />
+                <BookOpen size={16} />
+                Centro de Aprendizaje
+                <ArrowRight size={14} />
               </a>
             </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex bg-gray-100 p-1 rounded-xl">
-          {[
-            { id: 'achievements', label: 'Logros', icon: Trophy },
-            { id: 'codes', label: 'Mis Códigos', icon: Ticket, badge: promoCodes.filter(c => c.source === 'E-Learning' && !c.is_used).length },
-            { id: 'rewards', label: 'Premios', icon: Gift },
-            { id: 'leaderboard', label: 'Ranking', icon: TrendingUp }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-                activeTab === tab.id
-                  ? 'bg-white shadow text-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <tab.icon size={18} />
-              {tab.label}
-              {tab.badge !== undefined && tab.badge > 0 && (
-                <span className="ml-1 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full font-bold">
-                  {tab.badge}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Tabs - Scrollable on mobile */}
+        <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
+          <div className="flex bg-gray-100 p-1 rounded-xl min-w-max sm:min-w-0">
+            {[
+              { id: 'achievements', label: 'Logros', shortLabel: 'Logros', icon: Trophy },
+              { id: 'codes', label: 'Mis Códigos', shortLabel: 'Códigos', icon: Ticket, badge: promoCodes.filter(c => c.source === 'E-Learning' && !c.is_used).length },
+              { id: 'rewards', label: 'Premios', shortLabel: 'Premios', icon: Gift },
+              { id: 'leaderboard', label: 'Ranking', shortLabel: 'Rank', icon: TrendingUp }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-white shadow text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <tab.icon size={16} className="flex-shrink-0" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.shortLabel}</span>
+                {tab.badge !== undefined && tab.badge > 0 && (
+                  <span className="ml-0.5 sm:ml-1 px-1.5 sm:px-2 py-0.5 bg-green-500 text-white text-[10px] sm:text-xs rounded-full font-bold">
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Achievements Tab */}
+        {/* Achievements Tab - Mobile optimized */}
         {activeTab === 'achievements' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {data?.achievements.map((achievement) => (
               <div
                 key={achievement.id}
-                className={`card ${
+                className={`card p-3 sm:p-4 ${
                   achievement.is_unlocked
                     ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'
                     : 'opacity-60'
                 }`}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 ${
                     achievement.is_unlocked ? 'bg-yellow-100' : 'bg-gray-100'
                   }`}>
                     {achievement.is_unlocked ? (
                       getAchievementIcon(achievement.icon)
                     ) : (
-                      <Lock className="text-gray-400" size={24} />
+                      <Lock className="text-gray-400" size={20} />
                     )}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold">{achievement.name}</h3>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                      <h3 className="font-bold text-sm sm:text-base">{achievement.name}</h3>
                       {achievement.is_unlocked && (
-                        <CheckCircle className="text-green-500" size={16} />
+                        <CheckCircle className="text-green-500" size={14} />
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mb-2">{achievement.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-yellow-600">
-                        +{achievement.points} puntos
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2 line-clamp-2">{achievement.description}</p>
+                    <div className="flex items-center justify-between flex-wrap gap-1">
+                      <span className="text-xs sm:text-sm font-medium text-yellow-600">
+                        +{achievement.points} pts
                       </span>
                       {achievement.progress !== undefined && !achievement.is_unlocked && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-[10px] sm:text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                           {achievement.progress}/{achievement.max_progress}
                         </span>
                       )}
@@ -434,34 +436,34 @@ export const Rewards: React.FC = () => {
           const elearningCodes = promoCodes.filter(c => c.source === 'E-Learning');
           const totalPoints = data?.total_points || 0;
           return (
-          <div className="space-y-4">
-            {/* Progress info - how to unlock codes */}
-            <div className="card bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-purple-100 rounded-xl">
-                  <Target className="text-purple-600" size={28} />
+          <div className="space-y-3 sm:space-y-4">
+            {/* Progress info - how to unlock codes - Mobile optimized */}
+            <div className="card bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 bg-purple-100 rounded-lg sm:rounded-xl">
+                  <Target className="text-purple-600" size={24} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-purple-900 text-lg mb-2">Desbloquea Codigos con E-Learning</h3>
-                  <p className="text-purple-700 text-sm mb-3">
-                    Completa modulos educativos y quizzes para ganar puntos. Al alcanzar ciertos niveles, desbloquearas codigos de descuento exclusivos.
+                  <h3 className="font-bold text-purple-900 text-base sm:text-lg mb-1 sm:mb-2">Desbloquea Códigos</h3>
+                  <p className="text-purple-700 text-xs sm:text-sm mb-2 sm:mb-3">
+                    Completa módulos y quizzes para ganar puntos y descuentos exclusivos.
                   </p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <div className={`p-2 rounded-lg text-center ${totalPoints >= 100 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong>100 pts</strong><br/>2% OFF
+                  <div className="grid grid-cols-4 gap-1 sm:gap-2 text-[10px] sm:text-sm">
+                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 100 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
+                      <strong className="block">100</strong>2%
                     </div>
-                    <div className={`p-2 rounded-lg text-center ${totalPoints >= 250 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong>250 pts</strong><br/>3% OFF
+                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 250 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
+                      <strong className="block">250</strong>3%
                     </div>
-                    <div className={`p-2 rounded-lg text-center ${totalPoints >= 500 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong>500 pts</strong><br/>5% OFF
+                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 500 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
+                      <strong className="block">500</strong>5%
                     </div>
-                    <div className={`p-2 rounded-lg text-center ${totalPoints >= 1000 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong>1000 pts</strong><br/>7% OFF
+                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 1000 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
+                      <strong className="block">1000</strong>7%
                     </div>
                   </div>
                   <p className="text-purple-600 text-xs mt-2">
-                    Tus puntos actuales: <strong className="text-lg">{totalPoints}</strong>
+                    Tus puntos: <strong className="text-sm sm:text-lg">{totalPoints}</strong>
                   </p>
                 </div>
               </div>

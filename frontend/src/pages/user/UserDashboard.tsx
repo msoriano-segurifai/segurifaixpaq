@@ -115,10 +115,10 @@ export const UserDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Stats Row - Centered on mobile, 3 columns on desktop */}
-        <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4">
+        {/* Quick Stats Row - 3 cards centered on all screen sizes */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Points */}
-          <div className="card bg-gradient-to-br from-yellow-400 to-orange-500 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0">
+          <div className="card bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
             <div className="flex items-center justify-between mb-3">
               <Star size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Puntos</span>
@@ -131,7 +131,7 @@ export const UserDashboard: React.FC = () => {
           </div>
 
           {/* E-Learning Credits */}
-          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(50%-0.5rem)] max-w-xs mx-auto sm:mx-0">
+          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white">
             <div className="flex items-center justify-between mb-3">
               <Gift size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Créditos</span>
@@ -140,6 +140,19 @@ export const UserDashboard: React.FC = () => {
             <p className="text-green-100 text-sm">Por aprendizaje</p>
             <Link to="/app/learning" className="mt-3 text-xs text-white/80 hover:text-white flex items-center gap-1">
               Aprender más <ChevronRight size={14} />
+            </Link>
+          </div>
+
+          {/* PAQ Wallet Balance */}
+          <div className="card bg-gradient-to-br from-[#00A86B] to-[#006644] text-white">
+            <div className="flex items-center justify-between mb-3">
+              <Wallet size={24} className="opacity-80" />
+              <span className="text-xs bg-white/20 px-2 py-1 rounded-full">PAQ Wallet</span>
+            </div>
+            <p className="text-3xl font-bold">Q{wallet?.balance || 0}</p>
+            <p className="text-green-100 text-sm">Saldo disponible</p>
+            <Link to="/app/subscriptions" className="mt-3 text-xs text-white/80 hover:text-white flex items-center gap-1">
+              Suscribirme <ChevronRight size={14} />
             </Link>
           </div>
         </div>
