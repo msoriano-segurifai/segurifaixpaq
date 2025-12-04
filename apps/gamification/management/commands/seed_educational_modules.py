@@ -1054,19 +1054,19 @@ El mantenimiento preventivo es una inversión que se paga sola. Un problema dete
                     ]
                 },
                 {
-                    'titulo': 'Servicios MAWDY: Tu Asistencia en Carretera',
-                    'descripcion': 'Conoce todos los servicios de asistencia vial y de salud que MAWDY te ofrece en Guatemala.',
+                    'titulo': 'Servicios SegurifAI: Tu Asistencia en Carretera',
+                    'descripcion': 'Conoce todos los servicios de asistencia vial y de salud que SegurifAI te ofrece en Guatemala.',
                     'categoria': 'SEGURIDAD_VIAL',
                     'dificultad': 'PRINCIPIANTE',
                     'contenido': '''
-# Servicios MAWDY: Tu Asistencia Integral en Guatemala
+# Servicios SegurifAI: Tu Asistencia Integral en Guatemala
 
 ## Introducción
-MAWDY, a través de la app SegurifAI integrada con PAQ Wallet, te ofrece asistencia vial y de salud las 24 horas del día, los 7 días de la semana, los 365 días del año en todo el territorio guatemalteco. Ya sea que tengas una emergencia en carretera o necesites orientación médica a medianoche, MAWDY está para ayudarte.
+SegurifAI, a través de la app SegurifAI integrada con PAQ Wallet, te ofrece asistencia vial y de salud las 24 horas del día, los 7 días de la semana, los 365 días del año en todo el territorio guatemalteco. Ya sea que tengas una emergencia en carretera o necesites orientación médica a medianoche, SegurifAI está para ayudarte.
 
 ## Planes Disponibles
 
-MAWDY ofrece tres opciones diseñadas para cubrir diferentes necesidades:
+SegurifAI ofrece tres opciones diseñadas para cubrir diferentes necesidades:
 
 **Plan Drive (Vial) - $3.15/mes**
 Ideal para conductores que buscan protección en carretera.
@@ -1142,12 +1142,12 @@ La protección más completa: asistencia vial Y de salud a un precio especial.
 - **Eventos por año**: 1
 - **Monto máximo**: $300
 - **Uso**: Estudios de rayos X si resultaste lesionado en accidente de tránsito
-- **Red**: En clínicas afiliadas de MAWDY
+- **Red**: En clínicas afiliadas de SegurifAI
 
 ### Descuentos en Red de Proveedores
 - **Descuento**: 20% en servicios automotrices
 - **Red**: Talleres, refaccionarias, y proveedores afiliados
-- **Uso**: Presentando tu membresía MAWDY
+- **Uso**: Presentando tu membresía SegurifAI
 
 ## Servicios del Plan Health (Asistencia de Salud)
 
@@ -1165,7 +1165,7 @@ La protección más completa: asistencia vial Y de salud a un precio especial.
 ### Consulta Médica Presencial
 - **Eventos por año**: 3
 - **Monto máximo por evento**: $150
-- **Red**: Clínicas y consultorios afiliados a MAWDY
+- **Red**: Clínicas y consultorios afiliados a SegurifAI
 - **Beneficio**: Medicina general y algunas especialidades
 
 ### Coordinación de Medicamentos
@@ -1206,7 +1206,7 @@ La protección más completa: asistencia vial Y de salud a un precio especial.
 ### Descuentos en Red Médica
 - **Descuento**: 20% en consultas, estudios y procedimientos
 - **Red**: Clínicas, hospitales, laboratorios y farmacias afiliados
-- **Uso**: Presentando tu membresía MAWDY
+- **Uso**: Presentando tu membresía SegurifAI
 
 ## Cómo Solicitar un Servicio
 
@@ -1220,7 +1220,7 @@ La protección más completa: asistencia vial Y de salud a un precio especial.
 7. El proveedor te contactará o llegará a tu ubicación
 
 ### Por Teléfono
-- Llama a la línea de emergencias MAWDY
+- Llama a la línea de emergencias SegurifAI
 - Ten a la mano tu número de membresía
 - Describe tu emergencia
 - Proporciona tu ubicación exacta
@@ -1232,7 +1232,7 @@ La protección más completa: asistencia vial Y de salud a un precio especial.
 
 ## Cobertura Geográfica
 
-MAWDY tiene cobertura en todo el territorio de Guatemala:
+SegurifAI tiene cobertura en todo el territorio de Guatemala:
 
 **Departamentos con mayor infraestructura**:
 - Guatemala (área metropolitana)
@@ -1259,7 +1259,7 @@ Sí, a través de tu suscripción en PAQ Wallet. Puedes cancelar en cualquier mo
 Sí, puedes hacer upgrade o downgrade desde la app en cualquier momento.
 
 ## Conclusión
-MAWDY es tu red de seguridad tanto en la carretera como en tu salud. Con una pequeña inversión mensual, tienes acceso a servicios que pueden ahorrarte miles de quetzales en emergencias. Recuerda: más vale tenerlo y no necesitarlo, que necesitarlo y no tenerlo.
+SegurifAI es tu red de seguridad tanto en la carretera como en tu salud. Con una pequeña inversión mensual, tienes acceso a servicios que pueden ahorrarte miles de quetzales en emergencias. Recuerda: más vale tenerlo y no necesitarlo, que necesitarlo y no tenerlo.
 ''',
                     'duracion_minutos': 10,
                     'puntos_completar': 100,
@@ -1269,27 +1269,27 @@ MAWDY es tu red de seguridad tanto en la carretera como en tu salud. Con una peq
                     'orden': 6,
                     'questions': [
                         {
-                            'pregunta': '¿Que servicio NO ofrece MAWDY?',
+                            'pregunta': '¿Que servicio NO ofrece SegurifAI?',
                             'opcion_a': 'Asistencia vial con grua',
                             'opcion_b': 'Cambio de llanta',
                             'opcion_c': 'Reparacion mecanica completa',
                             'opcion_d': 'Servicio de ambulancia',
                             'respuesta_correcta': 'C',
-                            'explicacion': 'MAWDY ofrece asistencia inmediata pero no reparaciones mecanicas completas. Te llevamos al taller.',
+                            'explicacion': 'SegurifAI ofrece asistencia inmediata pero no reparaciones mecanicas completas. Te llevamos al taller.',
                             'orden': 1
                         },
                         {
-                            'pregunta': '¿En que horario esta disponible MAWDY?',
+                            'pregunta': '¿En que horario esta disponible SegurifAI?',
                             'opcion_a': 'Solo de dia (8am - 6pm)',
                             'opcion_b': 'De lunes a viernes',
                             'opcion_c': '24 horas, 7 dias a la semana',
                             'opcion_d': 'Solo fines de semana',
                             'respuesta_correcta': 'C',
-                            'explicacion': 'MAWDY esta disponible 24/7 para asistirte cuando lo necesites.',
+                            'explicacion': 'SegurifAI esta disponible 24/7 para asistirte cuando lo necesites.',
                             'orden': 2
                         },
                         {
-                            'pregunta': '¿Como solicitas un servicio de MAWDY?',
+                            'pregunta': '¿Como solicitas un servicio de SegurifAI?',
                             'opcion_a': 'Llamando al 911',
                             'opcion_b': 'A traves de la app SegurifAI',
                             'opcion_c': 'Yendo a una oficina',
@@ -1299,23 +1299,23 @@ MAWDY es tu red de seguridad tanto en la carretera como en tu salud. Con una peq
                             'orden': 3
                         },
                         {
-                            'pregunta': '¿Que incluye la asistencia de salud de MAWDY?',
+                            'pregunta': '¿Que incluye la asistencia de salud de SegurifAI?',
                             'opcion_a': 'Solo llamadas telefonicas',
                             'opcion_b': 'Ambulancia y orientacion medica',
                             'opcion_c': 'Solo descuentos en farmacias',
-                            'opcion_d': 'Cirugas gratuitas',
+                            'opcion_d': 'Cirugías gratuitas',
                             'respuesta_correcta': 'B',
-                            'explicacion': 'MAWDY ofrece servicio de ambulancia y orientacion medica telefonica 24/7.',
+                            'explicacion': 'SegurifAI ofrece servicio de ambulancia y orientacion medica telefonica 24/7.',
                             'orden': 4
                         },
                         {
-                            'pregunta': '¿Donde tiene cobertura MAWDY en Guatemala?',
+                            'pregunta': '¿Donde tiene cobertura SegurifAI en Guatemala?',
                             'opcion_a': 'Solo en la ciudad de Guatemala',
                             'opcion_b': 'Solo en carreteras principales',
                             'opcion_c': 'En todo el territorio guatemalteco',
                             'opcion_d': 'Solo en el area metropolitana',
                             'respuesta_correcta': 'C',
-                            'explicacion': 'MAWDY tiene cobertura en todo Guatemala, no importa donde te encuentres.',
+                            'explicacion': 'SegurifAI tiene cobertura en todo Guatemala, no importa donde te encuentres.',
                             'orden': 5
                         }
                     ]

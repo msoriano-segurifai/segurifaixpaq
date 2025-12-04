@@ -26,28 +26,50 @@ class Command(BaseCommand):
             updated_plans = 0
             for plan in ServicePlan.objects.all():
                 original_name = plan.name
+                original_desc = plan.description
                 category_type = plan.category.category_type if plan.category else ''
+                changed = False
 
-                # Determine the correct name based on category
+                # Determine the correct name and description based on category
                 if category_type == 'ROADSIDE':
                     new_name = 'Plan Asistencia Vial'
+                    new_desc = 'Plan de asistencia vial con seguro de muerte accidental'
                 elif category_type == 'HEALTH':
                     new_name = 'Plan Asistencia Médica'
+                    new_desc = 'Plan de asistencia médica con seguro de muerte accidental'
                 elif category_type == 'INSURANCE':
                     new_name = 'Plan Seguro Accidentes'
+                    new_desc = 'Seguro básico de accidentes personales con cobertura de muerte accidental'
                 else:
-                    # Fallback: clean any MAPFRE from the name
-                    new_name = re.sub(r'\s*MAPFRE\s*', ' ', plan.name, flags=re.IGNORECASE).strip()
+                    # Fallback: clean any MAPFRE/MAWDY from name and description
+                    new_name = re.sub(r'\s*(MAPFRE|MAWDY)\s*', ' ', plan.name, flags=re.IGNORECASE).strip()
                     new_name = re.sub(r'\s+', ' ', new_name)
+                    new_desc = plan.description
 
-                # Also clean description
+                # Clean MAPFRE and MAWDY from description regardless
                 if plan.description:
-                    plan.description = re.sub(r'\s*MAPFRE\s*', ' ', plan.description, flags=re.IGNORECASE).strip()
-                    plan.description = re.sub(r'\s+', ' ', plan.description)
+                    new_desc = re.sub(r'\s*(MAPFRE|MAWDY)\s*', ' ', plan.description, flags=re.IGNORECASE).strip()
+                    new_desc = re.sub(r'\s+', ' ', new_desc)
+                    # Replace with standard descriptions for known categories
+                    if category_type in ['ROADSIDE', 'HEALTH', 'INSURANCE']:
+                        if category_type == 'ROADSIDE':
+                            new_desc = 'Plan de asistencia vial con seguro de muerte accidental'
+                        elif category_type == 'HEALTH':
+                            new_desc = 'Plan de asistencia médica con seguro de muerte accidental'
+                        elif category_type == 'INSURANCE':
+                            new_desc = 'Seguro básico de accidentes personales con cobertura de muerte accidental'
 
                 if plan.name != new_name:
-                    self.stdout.write(f'  "{original_name}" -> "{new_name}"')
+                    self.stdout.write(f'  Name: "{original_name}" -> "{new_name}"')
                     plan.name = new_name
+                    changed = True
+
+                if plan.description != new_desc:
+                    self.stdout.write(f'  Desc updated for: {new_name}')
+                    plan.description = new_desc
+                    changed = True
+
+                if changed:
                     plan.save()
                     updated_plans += 1
 
