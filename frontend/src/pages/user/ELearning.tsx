@@ -524,22 +524,21 @@ export const ELearning: React.FC = () => {
                     <div className="mb-4 sm:mb-8">
                       {/* Progress Header */}
                       <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-2 sm:py-3 px-3 sm:px-4 -mx-4 sm:-mx-4 mb-4 sm:mb-6 border-b shadow-sm">
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="flex items-center gap-0.5 sm:gap-1">
-                            {contentSlides.map((_, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setContentSlide(idx)}
-                                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all ${
-                                  idx === contentSlide
-                                    ? 'bg-blue-600 w-4 sm:w-6'
-                                    : idx < contentSlide
-                                    ? 'bg-green-500'
-                                    : 'bg-gray-300'
-                                }`}
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-xs sm:text-sm font-medium text-gray-600 whitespace-nowrap">
+                            Tarjeta {contentSlide + 1} de {contentSlides.length}
+                          </span>
+                          <div className="flex-1 max-w-[200px] sm:max-w-xs">
+                            <div className="h-2 sm:h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 rounded-full"
+                                style={{ width: `${((contentSlide + 1) / contentSlides.length) * 100}%` }}
                               />
-                            ))}
+                            </div>
                           </div>
+                          <span className="text-xs sm:text-sm font-bold text-blue-600 whitespace-nowrap">
+                            {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
+                          </span>
                         </div>
                       </div>
 
