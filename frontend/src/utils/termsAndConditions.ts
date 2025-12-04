@@ -251,24 +251,6 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   addParagraph('La falta de aviso dentro del término estipulado en esta Póliza no afectará la validez de la reclamación si se demuestra que no fue posible, dentro de lo razonable, dar tal aviso y que se informó del acontecimiento a la Compañía inmediatamente que fue posible.');
   yPos += 10;
 
-  // How to request assistance
-  addSeparator();
-  addSubtitle('CÓMO SOLICITAR ASISTENCIA');
-  addParagraph('Para solicitar asistencia, utilice cualquiera de los siguientes canales:');
-  addBulletPoint('Aplicación móvil SegurifAI - Disponible 24/7');
-  addBulletPoint('Línea telefónica de emergencias: 2375-5000');
-  addBulletPoint('Portal web: www.segurifai.com.gt');
-  yPos += 10;
-
-  // Contact information
-  addSeparator();
-  addSubtitle('INFORMACIÓN DE CONTACTO');
-  addParagraph('SegurifAI Guatemala, S.A.');
-  addParagraph('Teléfono: 2375-5000');
-  addParagraph('Correo: soporte@segurifai.com.gt');
-  addParagraph('Sitio web: www.segurifai.com.gt');
-  yPos += 10;
-
   // Footer on last page
   doc.setFontSize(8);
   doc.setTextColor(128, 128, 128);

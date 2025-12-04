@@ -4,8 +4,8 @@ import { elearningAPI } from '../../services/api';
 import {
   BookOpen, Award, Star, CheckCircle, Play, Trophy, Gift,
   Brain, Heart, Car, Shield, XCircle, Lock,
-  Zap, ArrowRight, ArrowLeft, Target, TrendingUp, Sparkles, ChevronRight, ChevronLeft,
-  Lightbulb, AlertTriangle, Info, Clock, HelpCircle, Bookmark
+  Zap, ArrowRight, Target, TrendingUp, Sparkles, ChevronRight, ChevronLeft,
+  Lightbulb, AlertTriangle, Info, Clock, HelpCircle
 } from 'lucide-react';
 
 interface Module {
@@ -247,88 +247,88 @@ export const ELearning: React.FC = () => {
     <Layout variant="user">
       <div className="space-y-8">
         {/* Enhanced Header with Progress */}
-        <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 md:p-10 text-white shadow-2xl">
+        <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 text-white shadow-2xl">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
-                <Sparkles className="text-yellow-300" size={32} />
+            <div className="flex items-start sm:items-center gap-3 mb-3">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-xl sm:rounded-2xl backdrop-blur-sm flex-shrink-0">
+                <Sparkles className="text-yellow-300" size={24} />
               </div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold">Centro de Aprendizaje</h1>
-                <p className="text-blue-100 text-lg mt-1">Aprende y gana descuentos en tus suscripciones</p>
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Centro de Aprendizaje</h1>
+                <p className="text-blue-100 text-sm sm:text-base md:text-lg mt-1">Aprende y gana descuentos en tus suscripciones</p>
               </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-white/20 rounded-2xl p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <Trophy className="text-yellow-300" size={28} />
-                  <TrendingUp className="text-green-300" size={20} />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-8">
+              <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <Trophy className="text-yellow-300" size={20} />
+                  <TrendingUp className="text-green-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-3xl font-bold mb-1">{totalPoints}</p>
-                <p className="text-sm text-blue-100">Puntos Totales</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1">{totalPoints}</p>
+                <p className="text-xs sm:text-sm text-blue-100">Puntos</p>
               </div>
 
-              <div className="bg-white/20 rounded-2xl p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <Gift className="text-green-300" size={28} />
-                  <Sparkles className="text-yellow-300" size={20} />
+              <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <Gift className="text-green-300" size={20} />
+                  <Sparkles className="text-yellow-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-3xl font-bold mb-1">Q{estimatedCredits.toFixed(2)}</p>
-                <p className="text-sm text-blue-100">Créditos Ganados</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1">Q{estimatedCredits.toFixed(2)}</p>
+                <p className="text-xs sm:text-sm text-blue-100">Créditos</p>
               </div>
 
-              <div className="bg-white/20 rounded-2xl p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="text-green-300" size={28} />
-                  <Target className="text-orange-300" size={20} />
+              <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <CheckCircle className="text-green-300" size={20} />
+                  <Target className="text-orange-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-3xl font-bold mb-1">{completedCount}/{modules.length}</p>
-                <p className="text-sm text-blue-100">Módulos Completos</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1">{completedCount}/{modules.length}</p>
+                <p className="text-xs sm:text-sm text-blue-100">Módulos</p>
               </div>
 
-              <div className="bg-white/20 rounded-2xl p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <Brain className="text-purple-300" size={28} />
-                  <Award className="text-pink-300" size={20} />
+              <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all">
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <Brain className="text-purple-300" size={20} />
+                  <Award className="text-pink-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-3xl font-bold mb-1">{points?.puntos?.nivel || 'NOVATO'}</p>
-                <p className="text-sm text-blue-100">Tu Nivel</p>
+                <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate">{points?.puntos?.nivel || 'NOVATO'}</p>
+                <p className="text-xs sm:text-sm text-blue-100">Nivel</p>
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="mt-6 bg-white/20 rounded-2xl p-5 backdrop-blur-sm border border-white/30">
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-semibold text-lg">Progreso General</span>
-                <span className="font-bold text-xl">{progressPercentage.toFixed(0)}%</span>
+            <div className="mt-4 sm:mt-6 bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="font-semibold text-sm sm:text-lg">Progreso General</span>
+                <span className="font-bold text-lg sm:text-xl">{progressPercentage.toFixed(0)}%</span>
               </div>
-              <div className="h-4 bg-white/30 rounded-full overflow-hidden">
+              <div className="h-3 sm:h-4 bg-white/30 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-500 rounded-full shadow-lg"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
-              <p className="text-sm text-blue-100 mt-2">
+              <p className="text-xs sm:text-sm text-blue-100 mt-2">
                 {completedCount === modules.length
-                  ? '🎉 ¡Felicidades! Has completado todos los módulos'
-                  : `Te faltan ${modules.length - completedCount} módulo${modules.length - completedCount !== 1 ? 's' : ''} para completar`}
+                  ? '🎉 ¡Has completado todos los módulos!'
+                  : `Te faltan ${modules.length - completedCount} módulo${modules.length - completedCount !== 1 ? 's' : ''}`}
               </p>
             </div>
 
             {/* Credits Explanation */}
-            <div className="mt-6 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-5 backdrop-blur-sm border-2 border-yellow-400/50">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-yellow-400/30 rounded-xl">
-                  <Gift className="text-yellow-200" size={28} />
+            <div className="mt-4 sm:mt-6 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-5 backdrop-blur-sm border-2 border-yellow-400/50">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 bg-yellow-400/30 rounded-lg sm:rounded-xl flex-shrink-0">
+                  <Gift className="text-yellow-200" size={20} />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-2">💰 Sistema de Recompensas</h3>
-                  <p className="text-blue-100 leading-relaxed">
-                    Por cada <strong>20 puntos</strong> que acumules, ganas <strong>Q1.00 en créditos</strong>.
-                    Estos créditos se aplican automáticamente como descuento en tu próxima suscripción.
-                    ¡Aprende más para ahorrar más! 🎓
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">💰 Sistema de Recompensas</h3>
+                  <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
+                    Por cada <strong>20 puntos</strong> ganas <strong>Q1.00</strong>.
+                    <span className="hidden sm:inline"> Estos créditos se aplican automáticamente como descuento en tu próxima suscripción.</span>
+                    <span className="sm:hidden"> ¡Se aplican automáticamente!</span>
                   </p>
                 </div>
               </div>
@@ -338,14 +338,14 @@ export const ELearning: React.FC = () => {
 
         {/* Modules Section */}
         <div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Módulos Educativos</h2>
-              <p className="text-gray-600 mt-1">Selecciona un módulo para comenzar tu aprendizaje</p>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Módulos Educativos</h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">Selecciona un módulo para comenzar</p>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {modules.map((module, index) => {
               const status = getModuleStatus(module.id);
               const isCompleted = status === 'COMPLETADO';
@@ -363,74 +363,77 @@ export const ELearning: React.FC = () => {
                 >
                   {/* Status Badge */}
                   {isCompleted && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-bl-2xl flex items-center gap-2 shadow-lg">
-                      <CheckCircle size={16} />
-                      COMPLETADO
+                    <div className="absolute top-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-4 py-1.5 sm:py-2 rounded-bl-xl sm:rounded-bl-2xl flex items-center gap-1 sm:gap-2 shadow-lg">
+                      <CheckCircle size={12} className="sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">COMPLETADO</span>
+                      <span className="sm:hidden">✓</span>
                     </div>
                   )}
                   {isInProgress && !isCompleted && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold px-4 py-2 rounded-bl-2xl flex items-center gap-2 shadow-lg">
-                      <Zap size={16} />
-                      EN PROGRESO
+                    <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-4 py-1.5 sm:py-2 rounded-bl-xl sm:rounded-bl-2xl flex items-center gap-1 sm:gap-2 shadow-lg">
+                      <Zap size={12} className="sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">EN PROGRESO</span>
+                      <span className="sm:hidden">...</span>
                     </div>
                   )}
 
-                  <div className="p-6">
+                  <div className="p-4 sm:p-6">
                     {/* Module Header */}
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className={`p-4 rounded-2xl transition-all ${
+                    <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+                      <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all flex-shrink-0 ${
                         isCompleted ? 'bg-green-100' :
                         isInProgress ? 'bg-blue-100' :
                         'bg-gray-100 group-hover:bg-blue-50'
                       }`}>
                         {getCategoryIcon(module.categoria)}
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-bold text-gray-500">MÓDULO {module.orden}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 sm:mb-2">
+                          <span className="text-[10px] sm:text-xs font-bold text-gray-500">MÓDULO {module.orden}</span>
                           {isLocked && (
-                            <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">🔒 Bloqueado</span>
+                            <span className="text-[10px] sm:text-xs bg-gray-200 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">🔒</span>
                           )}
                         </div>
-                        <h3 className="font-bold text-xl mb-2 text-gray-900 leading-tight">{module.titulo}</h3>
-                        <p className="text-sm text-gray-600 line-clamp-2">{module.descripcion}</p>
+                        <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1 sm:mb-2 text-gray-900 leading-tight">{module.titulo}</h3>
+                        <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">{module.descripcion}</p>
                       </div>
                     </div>
 
                     {/* Module Meta */}
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      <span className={`text-xs px-3 py-1.5 rounded-full font-semibold border ${getDifficultyColor(module.dificultad)}`}>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-5">
+                      <span className={`text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold border ${getDifficultyColor(module.dificultad)}`}>
                         {module.dificultad}
                       </span>
-                      <span className="text-xs px-3 py-1.5 rounded-full bg-purple-100 text-purple-700 font-semibold border border-purple-300">
+                      <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-purple-100 text-purple-700 font-semibold border border-purple-300">
                         ⏱️ {module.duracion_minutos} min
                       </span>
-                      <span className="text-xs px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 font-semibold border border-blue-300 flex items-center gap-1">
-                        <Star size={14} />
+                      <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-blue-100 text-blue-700 font-semibold border border-blue-300 flex items-center gap-1">
+                        <Star size={12} />
                         +{module.puntos_completar} pts
                       </span>
                     </div>
 
                     {/* Quiz Info */}
                     {module.total_preguntas > 0 && (
-                      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl mb-5 border-2 border-yellow-300">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Brain className="text-orange-600" size={20} />
-                          <span className="font-bold text-orange-900">{module.total_preguntas} Preguntas de Evaluación</span>
+                      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-3 sm:p-4 rounded-lg sm:rounded-xl mb-3 sm:mb-5 border-2 border-yellow-300">
+                        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                          <Brain className="text-orange-600 flex-shrink-0" size={18} />
+                          <span className="font-bold text-orange-900 text-sm sm:text-base">{module.total_preguntas} Preguntas</span>
                         </div>
                         {module.puntos_quiz_perfecto ? (
-                          <div className="flex items-start gap-2 text-sm">
-                            <Trophy className="text-yellow-600 flex-shrink-0 mt-0.5" size={16} />
+                          <div className="flex items-start gap-2 text-xs sm:text-sm">
+                            <Trophy className="text-yellow-600 flex-shrink-0 mt-0.5" size={14} />
                             <p className="text-yellow-800">
-                              <strong>Bonus perfecto:</strong> +{module.puntos_quiz_perfecto} pts adicionales =
-                              <strong className="text-green-700"> Q{((module.puntos_completar + module.puntos_quiz_perfecto) * 0.05).toFixed(2)}</strong> en créditos
+                              <span className="hidden sm:inline"><strong>Bonus perfecto:</strong> +{module.puntos_quiz_perfecto} pts = </span>
+                              <strong className="text-green-700">Q{((module.puntos_completar + module.puntos_quiz_perfecto) * 0.05).toFixed(2)}</strong>
+                              <span className="sm:hidden"> máx</span>
                             </p>
                           </div>
                         ) : (
-                          <div className="flex items-start gap-2 text-sm">
-                            <Gift className="text-green-600 flex-shrink-0 mt-0.5" size={16} />
+                          <div className="flex items-start gap-2 text-xs sm:text-sm">
+                            <Gift className="text-green-600 flex-shrink-0 mt-0.5" size={14} />
                             <p className="text-yellow-800">
-                              Completa el quiz y gana hasta <strong className="text-green-700">Q{(module.puntos_completar * 0.05).toFixed(2)}</strong>
+                              <span className="hidden sm:inline">Gana hasta </span><strong className="text-green-700">Q{(module.puntos_completar * 0.05).toFixed(2)}</strong>
                             </p>
                           </div>
                         )}
@@ -441,7 +444,7 @@ export const ELearning: React.FC = () => {
                     <button
                       onClick={() => !isLocked && startModule(module)}
                       disabled={loadingModule || isLocked}
-                      className={`w-full btn flex items-center justify-center gap-2 font-semibold transition-all py-3 px-4 text-sm md:text-base min-h-[48px] ${
+                      className={`w-full btn flex items-center justify-center gap-1.5 sm:gap-2 font-semibold transition-all py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm md:text-base min-h-[44px] sm:min-h-[48px] rounded-xl ${
                         isCompleted
                           ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600'
                           : isInProgress
@@ -453,34 +456,35 @@ export const ELearning: React.FC = () => {
                     >
                       {loadingModule ? (
                         <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
                           <span className="hidden sm:inline">Cargando...</span>
                         </>
                       ) : isLocked ? (
                         <>
-                          <Lock size={18} className="flex-shrink-0" />
-                          <span>Completar Módulo Anterior</span>
+                          <Lock size={16} className="flex-shrink-0" />
+                          <span className="hidden sm:inline">Completar Anterior</span>
+                          <span className="sm:hidden">Bloqueado</span>
                         </>
                       ) : isCompleted ? (
                         <>
-                          <CheckCircle size={20} className="flex-shrink-0" />
+                          <CheckCircle size={16} className="sm:w-5 sm:h-5 flex-shrink-0" />
                           <span className="hidden sm:inline">Revisar Módulo</span>
                           <span className="sm:hidden">Revisar</span>
-                          <ArrowRight size={18} className="flex-shrink-0" />
+                          <ArrowRight size={16} className="flex-shrink-0" />
                         </>
                       ) : isInProgress ? (
                         <>
-                          <Play size={20} className="flex-shrink-0" />
+                          <Play size={16} className="sm:w-5 sm:h-5 flex-shrink-0" />
                           <span className="hidden sm:inline">Continuar Módulo</span>
                           <span className="sm:hidden">Continuar</span>
-                          <ArrowRight size={18} className="flex-shrink-0" />
+                          <ArrowRight size={16} className="flex-shrink-0" />
                         </>
                       ) : (
                         <>
-                          <Play size={20} className="flex-shrink-0" />
+                          <Play size={16} className="sm:w-5 sm:h-5 flex-shrink-0" />
                           <span className="hidden sm:inline">Comenzar Módulo</span>
                           <span className="sm:hidden">Comenzar</span>
-                          <ArrowRight size={18} className="flex-shrink-0" />
+                          <ArrowRight size={16} className="flex-shrink-0" />
                         </>
                       )}
                     </button>
@@ -493,51 +497,52 @@ export const ELearning: React.FC = () => {
 
         {/* Module Detail Modal */}
         {selectedModule && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-white rounded-3xl max-w-5xl w-full my-8 shadow-2xl">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4 overflow-hidden">
+            <div className="bg-white rounded-t-2xl sm:rounded-3xl w-full sm:max-w-5xl max-h-[95vh] sm:max-h-[90vh] sm:my-8 shadow-2xl flex flex-col">
               {/* Modal Header */}
-              <div className="p-8 border-b bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50">
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-white rounded-2xl shadow-lg">
+              <div className="p-4 sm:p-6 md:p-8 border-b bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 flex-shrink-0">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                  <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
                     {getCategoryIcon(selectedModule.categoria)}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-bold text-gray-500 bg-white px-3 py-1 rounded-full">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                      <span className="text-[10px] sm:text-xs font-bold text-gray-500 bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                         MÓDULO {selectedModule.orden}
                       </span>
-                      <span className={`text-xs px-3 py-1 rounded-full font-semibold ${getDifficultyColor(selectedModule.dificultad)}`}>
+                      <span className={`text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold ${getDifficultyColor(selectedModule.dificultad)}`}>
                         {selectedModule.dificultad}
                       </span>
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-1">{selectedModule.titulo}</h2>
-                    <p className="text-gray-600 text-lg">{selectedModule.descripcion}</p>
+                    <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 sm:mb-1 leading-tight">{selectedModule.titulo}</h2>
+                    <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-lg line-clamp-2 sm:line-clamp-none">{selectedModule.descripcion}</p>
                   </div>
                 </div>
               </div>
 
               {/* Modal Content */}
-              <div className="p-8 max-h-[60vh] overflow-y-auto">
+              <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-y-auto">
                 {!showQuiz && !quizResult && (
                   <>
                     {/* Module Content - Carousel UI */}
-                    <div className="mb-8">
+                    <div className="mb-4 sm:mb-8">
                       {/* Progress Header */}
-                      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-3 px-4 -mx-4 mb-6 border-b shadow-sm">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock size={16} />
-                            <span>~{selectedModule.duracion_minutos} min de lectura</span>
+                      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-2 sm:py-3 px-3 sm:px-4 -mx-4 sm:-mx-4 mb-4 sm:mb-6 border-b shadow-sm">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+                            <Clock size={14} className="flex-shrink-0" />
+                            <span className="hidden sm:inline">~{selectedModule.duracion_minutos} min de lectura</span>
+                            <span className="sm:hidden">{selectedModule.duracion_minutos} min</span>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-2 sm:gap-4">
+                            <div className="flex items-center gap-0.5 sm:gap-1">
                               {contentSlides.map((_, idx) => (
                                 <button
                                   key={idx}
                                   onClick={() => setContentSlide(idx)}
-                                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all ${
                                     idx === contentSlide
-                                      ? 'bg-blue-600 w-6'
+                                      ? 'bg-blue-600 w-4 sm:w-6'
                                       : idx < contentSlide
                                       ? 'bg-green-500'
                                       : 'bg-gray-300'
@@ -545,7 +550,7 @@ export const ELearning: React.FC = () => {
                                 />
                               ))}
                             </div>
-                            <span className="text-sm font-medium text-blue-600">
+                            <span className="text-xs sm:text-sm font-medium text-blue-600">
                               +{selectedModule.puntos_completar} pts
                             </span>
                           </div>
@@ -554,28 +559,28 @@ export const ELearning: React.FC = () => {
 
                       {/* Carousel Card */}
                       <div className="relative">
-                        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-8 rounded-2xl border-2 border-blue-200 min-h-[400px] shadow-lg">
+                        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border-2 border-blue-200 min-h-[250px] sm:min-h-[350px] md:min-h-[400px] shadow-lg">
                           {/* Slide Counter */}
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 bg-white/80 rounded-xl shadow">
-                                <BookOpen className="text-blue-600" size={24} />
+                          <div className="flex items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="p-1.5 sm:p-2 bg-white/80 rounded-lg sm:rounded-xl shadow flex-shrink-0">
+                                <BookOpen className="text-blue-600" size={18} />
                               </div>
                               <div>
-                                <h3 className="text-xl font-bold text-blue-900">
-                                  Tarjeta {contentSlide + 1} de {contentSlides.length}
+                                <h3 className="text-sm sm:text-lg md:text-xl font-bold text-blue-900">
+                                  Tarjeta {contentSlide + 1}/{contentSlides.length}
                                 </h3>
-                                <p className="text-sm text-blue-700">Lee cada tarjeta para continuar</p>
+                                <p className="text-xs sm:text-sm text-blue-700 hidden sm:block">Lee cada tarjeta para continuar</p>
                               </div>
                             </div>
-                            <div className="text-sm font-bold text-blue-600 bg-white px-3 py-1 rounded-full shadow">
-                              {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}% completado
+                            <div className="text-[10px] sm:text-xs md:text-sm font-bold text-blue-600 bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow whitespace-nowrap">
+                              {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
                             </div>
                           </div>
 
                           {/* Carousel Content */}
                           <div className="prose max-w-none">
-                            <div className="text-gray-800 leading-relaxed text-lg space-y-4 bg-white/70 p-6 rounded-xl">
+                            <div className="text-gray-800 leading-relaxed text-sm sm:text-base md:text-lg space-y-3 sm:space-y-4 bg-white/70 p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl">
                               {(contentSlides[contentSlide] || '').split('\n\n').map((paragraph, index) => {
                             // TIP/NOTA Box
                             if (paragraph.toLowerCase().startsWith('tip:') || paragraph.toLowerCase().startsWith('💡')) {
@@ -788,26 +793,28 @@ export const ELearning: React.FC = () => {
 
                 {/* Quiz Section */}
                 {showQuiz && !quizResult && (
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {/* Quiz Header */}
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-xl">
-                      <h3 className="text-3xl font-bold mb-3 flex items-center gap-3">
-                        <Brain size={36} />
-                        Evaluación de Conocimientos
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl">
+                      <h3 className="text-lg sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 flex items-center gap-2 sm:gap-3">
+                        <Brain size={24} className="flex-shrink-0" />
+                        <span className="hidden sm:inline">Evaluación de Conocimientos</span>
+                        <span className="sm:hidden">Quiz</span>
                       </h3>
-                      <p className="text-blue-100 text-lg mb-6">
-                        Responde todas las preguntas cuidadosamente. ¡Buena suerte! 🍀
+                      <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-4 sm:mb-6">
+                        <span className="hidden sm:inline">Responde todas las preguntas cuidadosamente. ¡Buena suerte!</span>
+                        <span className="sm:hidden">¡Buena suerte!</span>
                       </p>
 
                       {/* Progress Indicator */}
-                      <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-lg font-semibold">Progreso del Quiz:</span>
-                          <span className="text-2xl font-bold">
-                            {Object.keys(quizAnswers).length} / {selectedModule.preguntas.length}
+                      <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <span className="text-sm sm:text-base md:text-lg font-semibold">Progreso:</span>
+                          <span className="text-lg sm:text-xl md:text-2xl font-bold">
+                            {Object.keys(quizAnswers).length}/{selectedModule.preguntas.length}
                           </span>
                         </div>
-                        <div className="h-3 bg-white/30 rounded-full overflow-hidden">
+                        <div className="h-2 sm:h-3 bg-white/30 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 transition-all duration-300 rounded-full"
                             style={{ width: `${(Object.keys(quizAnswers).length / selectedModule.preguntas.length) * 100}%` }}
@@ -822,26 +829,26 @@ export const ELearning: React.FC = () => {
                       return (
                         <div
                           key={question.id}
-                          className={`p-6 rounded-2xl border-2 transition-all ${
+                          className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
                             answered
                               ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-purple-50 shadow-lg'
                               : 'border-gray-300 bg-white hover:border-blue-300 hover:shadow-md'
                           }`}
                         >
-                          <div className="flex items-start gap-4 mb-5">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-md ${
+                          <div className="flex items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-5">
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base md:text-xl flex-shrink-0 shadow-md ${
                               answered
                                 ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white'
                                 : 'bg-gray-200 text-gray-600'
                             }`}>
                               {index + 1}
                             </div>
-                            <p className="font-semibold text-xl text-gray-900 flex-1 leading-relaxed pt-2">
+                            <p className="font-semibold text-sm sm:text-base md:text-lg lg:text-xl text-gray-900 flex-1 leading-relaxed pt-0.5 sm:pt-1 md:pt-2">
                               {question.pregunta}
                             </p>
                           </div>
 
-                          <div className="space-y-3 ml-16">
+                          <div className="space-y-2 sm:space-y-3 ml-0 sm:ml-10 md:ml-14 lg:ml-16">
                             {['A', 'B', 'C', 'D'].map((option) => {
                               const optionText = question[`opcion_${option.toLowerCase()}`];
                               const isSelected = quizAnswers[question.id] === option;
@@ -849,10 +856,10 @@ export const ELearning: React.FC = () => {
                               return (
                                 <label
                                   key={option}
-                                  className={`flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all ${
+                                  className={`flex items-start gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all min-h-[48px] ${
                                     isSelected
-                                      ? 'border-blue-600 bg-blue-50 shadow-md scale-[1.02]'
-                                      : 'border-gray-200 hover:border-blue-400 hover:bg-blue-50/50 hover:shadow-sm'
+                                      ? 'border-blue-600 bg-blue-50 shadow-md'
+                                      : 'border-gray-200 hover:border-blue-400 hover:bg-blue-50/50 hover:shadow-sm active:bg-blue-100'
                                   }`}
                                 >
                                   <input
@@ -860,12 +867,12 @@ export const ELearning: React.FC = () => {
                                     name={`question-${question.id}`}
                                     checked={isSelected}
                                     onChange={() => handleQuizAnswer(question.id, option)}
-                                    className="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0 cursor-pointer"
+                                    className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mt-0.5 flex-shrink-0 cursor-pointer"
                                   />
-                                  <span className={`flex-1 text-lg ${isSelected ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
-                                    <strong className="mr-2">{option}.</strong> {optionText}
+                                  <span className={`flex-1 text-sm sm:text-base md:text-lg ${isSelected ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
+                                    <strong className="mr-1 sm:mr-2">{option}.</strong> {optionText}
                                   </span>
-                                  {isSelected && <CheckCircle className="text-blue-600" size={24} />}
+                                  {isSelected && <CheckCircle className="text-blue-600 flex-shrink-0" size={20} />}
                                 </label>
                               );
                             })}
@@ -878,72 +885,73 @@ export const ELearning: React.FC = () => {
 
                 {/* Quiz Results */}
                 {quizResult && (
-                  <div className="space-y-8">
+                  <div className="space-y-4 sm:space-y-6 md:space-y-8">
                     {/* Results Summary */}
-                    <div className={`p-10 rounded-3xl text-center shadow-2xl ${
+                    <div className={`p-4 sm:p-6 md:p-10 rounded-xl sm:rounded-2xl md:rounded-3xl text-center shadow-2xl ${
                       quizResult.quiz_perfecto
                         ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white'
                         : quizResult.porcentaje >= 70
                         ? 'bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white'
                         : 'bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white'
                     }`}>
-                      <div className="mb-8">
+                      <div className="mb-4 sm:mb-6 md:mb-8">
                         {quizResult.quiz_perfecto ? (
-                          <Trophy className="mx-auto animate-bounce" size={100} />
+                          <Trophy className="mx-auto animate-bounce" size={60} />
                         ) : quizResult.porcentaje >= 70 ? (
-                          <CheckCircle className="mx-auto" size={100} />
+                          <CheckCircle className="mx-auto" size={60} />
                         ) : (
-                          <Target className="mx-auto" size={100} />
+                          <Target className="mx-auto" size={60} />
                         )}
                       </div>
 
-                      <h3 className="text-5xl font-bold mb-4">
-                        {quizResult.quiz_perfecto ? '¡PERFECTO! 🎉' :
-                         quizResult.porcentaje >= 70 ? '¡MUY BIEN! ✅' :
-                         '¡SIGUE INTENTANDO! 📚'}
+                      <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4">
+                        {quizResult.quiz_perfecto ? '¡PERFECTO!' :
+                         quizResult.porcentaje >= 70 ? '¡MUY BIEN!' :
+                         '¡SIGUE INTENTANDO!'}
                       </h3>
-                      <p className="text-3xl mb-8 opacity-95">
-                        {quizResult.correctas} de {quizResult.total} respuestas correctas
-                        <span className="block text-2xl mt-2">({quizResult.porcentaje}%)</span>
+                      <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 sm:mb-6 md:mb-8 opacity-95">
+                        {quizResult.correctas}/{quizResult.total} correctas
+                        <span className="block text-base sm:text-lg md:text-xl lg:text-2xl mt-1 sm:mt-2">({quizResult.porcentaje}%)</span>
                       </p>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                        <div className="bg-white/20 rounded-2xl p-8 backdrop-blur-sm border-2 border-white/30">
-                          <Star className="mx-auto mb-3" size={48} />
-                          <p className="text-5xl font-bold mb-2">+{quizResult.puntos_obtenidos}</p>
-                          <p className="text-lg opacity-90">Puntos Ganados</p>
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-3xl mx-auto">
+                        <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 backdrop-blur-sm border-2 border-white/30">
+                          <Star className="mx-auto mb-2 sm:mb-3" size={28} />
+                          <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2">+{quizResult.puntos_obtenidos}</p>
+                          <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90">Puntos</p>
                         </div>
-                        <div className="bg-white/20 rounded-2xl p-8 backdrop-blur-sm border-2 border-white/30">
-                          <Gift className="mx-auto mb-3" size={48} />
-                          <p className="text-5xl font-bold mb-2">Q{quizResult.creditos_ganados.toFixed(2)}</p>
-                          <p className="text-lg opacity-90">Créditos Ganados</p>
+                        <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 backdrop-blur-sm border-2 border-white/30">
+                          <Gift className="mx-auto mb-2 sm:mb-3" size={28} />
+                          <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2">Q{quizResult.creditos_ganados.toFixed(2)}</p>
+                          <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90">Créditos</p>
                         </div>
                       </div>
 
                       {quizResult.quiz_perfecto && (
-                        <div className="mt-8 bg-white/20 rounded-2xl p-6 backdrop-blur-sm border-2 border-white/30">
-                          <p className="text-2xl font-bold mb-2">🏆 ¡QUIZ PERFECTO!</p>
-                          <p className="text-lg opacity-90">
-                            Ganaste puntos bonus por responder todo correctamente
+                        <div className="mt-4 sm:mt-6 md:mt-8 bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 backdrop-blur-sm border-2 border-white/30">
+                          <p className="text-base sm:text-lg md:text-2xl font-bold mb-1 sm:mb-2">🏆 ¡QUIZ PERFECTO!</p>
+                          <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90">
+                            Ganaste puntos bonus
                           </p>
                         </div>
                       )}
 
-                      <div className="mt-8 bg-white/30 rounded-2xl p-6 backdrop-blur-sm border-2 border-white/40">
-                        <p className="text-lg leading-relaxed">
-                          💰 Tus créditos de <strong className="text-2xl">Q{quizResult.creditos_ganados.toFixed(2)}</strong> se
-                          aplicarán automáticamente como descuento en tu próxima suscripción
+                      <div className="mt-4 sm:mt-6 md:mt-8 bg-white/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 backdrop-blur-sm border-2 border-white/40">
+                        <p className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">
+                          💰 <strong className="text-base sm:text-lg md:text-xl lg:text-2xl">Q{quizResult.creditos_ganados.toFixed(2)}</strong>
+                          <span className="hidden sm:inline"> se aplicarán como descuento en tu próxima suscripción</span>
+                          <span className="sm:hidden"> en créditos</span>
                         </p>
                       </div>
 
                       {quizResult.logros_desbloqueados && quizResult.logros_desbloqueados.length > 0 && (
-                        <div className="mt-8 bg-white/20 rounded-2xl p-6 backdrop-blur-sm border-2 border-white/30">
-                          <Award className="mx-auto mb-3" size={40} />
-                          <p className="font-bold text-2xl mb-4">🎖️ ¡LOGROS DESBLOQUEADOS!</p>
-                          <div className="space-y-2">
+                        <div className="mt-4 sm:mt-6 md:mt-8 bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 backdrop-blur-sm border-2 border-white/30">
+                          <Award className="mx-auto mb-2 sm:mb-3" size={28} />
+                          <p className="font-bold text-base sm:text-lg md:text-2xl mb-2 sm:mb-4">🎖️ ¡LOGROS!</p>
+                          <div className="space-y-1 sm:space-y-2">
                             {quizResult.logros_desbloqueados.map((logro: any, i: number) => (
-                              <p key={i} className="text-lg font-semibold">
-                                🏆 {logro.nombre} <span className="text-yellow-200">(+{logro.puntos_bonus} pts)</span>
+                              <p key={i} className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold">
+                                🏆 {logro.nombre} <span className="text-yellow-200">(+{logro.puntos_bonus})</span>
                               </p>
                             ))}
                           </div>
@@ -952,80 +960,81 @@ export const ELearning: React.FC = () => {
 
                       {/* Promo Codes Earned */}
                       {quizResult.recompensas_codigo && quizResult.recompensas_codigo.length > 0 && (
-                        <div className="mt-8 bg-gradient-to-br from-green-400/30 to-emerald-400/30 rounded-2xl p-6 backdrop-blur-sm border-2 border-green-300/50">
-                          <Gift className="mx-auto mb-3 text-green-200" size={48} />
-                          <p className="font-bold text-2xl mb-4">🎁 ¡CÓDIGOS PROMOCIONALES GANADOS!</p>
-                          <p className="text-green-100 mb-4">Usa estos códigos para obtener descuentos en tus suscripciones</p>
-                          <div className="space-y-3">
+                        <div className="mt-4 sm:mt-6 md:mt-8 bg-gradient-to-br from-green-400/30 to-emerald-400/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 backdrop-blur-sm border-2 border-green-300/50">
+                          <Gift className="mx-auto mb-2 sm:mb-3 text-green-200" size={32} />
+                          <p className="font-bold text-base sm:text-lg md:text-2xl mb-2 sm:mb-4">🎁 ¡CÓDIGOS GANADOS!</p>
+                          <p className="text-green-100 text-xs sm:text-sm mb-2 sm:mb-4 hidden sm:block">Usa estos códigos para descuentos</p>
+                          <div className="space-y-2 sm:space-y-3">
                             {quizResult.recompensas_codigo.map((promo: any, i: number) => (
-                              <div key={i} className="bg-white/20 rounded-xl p-4 border border-white/30">
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <p className="font-bold text-xl tracking-wider">{promo.codigo || promo.code}</p>
-                                    <p className="text-sm text-green-100">{promo.descripcion || promo.description || 'Descuento especial'}</p>
+                              <div key={i} className="bg-white/20 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-white/30">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <p className="font-bold text-sm sm:text-base md:text-xl tracking-wider truncate">{promo.codigo || promo.code}</p>
+                                    <p className="text-[10px] sm:text-xs md:text-sm text-green-100 truncate">{promo.descripcion || promo.description || 'Descuento'}</p>
                                   </div>
-                                  <div className="text-right">
-                                    <span className="inline-block px-3 py-1 bg-green-500/40 rounded-full text-sm font-bold">
-                                      {promo.descuento || promo.discount || '10'}% OFF
+                                  <div className="flex-shrink-0">
+                                    <span className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-green-500/40 rounded-full text-[10px] sm:text-xs md:text-sm font-bold">
+                                      {promo.descuento || promo.discount || '10'}%
                                     </span>
                                   </div>
                                 </div>
                               </div>
                             ))}
                           </div>
-                          <p className="text-sm text-green-100 mt-4">
-                            💡 Tus códigos están guardados en tu perfil y sección de Recompensas
+                          <p className="text-[10px] sm:text-xs md:text-sm text-green-100 mt-2 sm:mt-4">
+                            💡 Guardados en tu perfil
                           </p>
                         </div>
                       )}
                     </div>
 
                     {/* Detailed Review */}
-                    <div className="space-y-5">
-                      <h4 className="font-bold text-3xl flex items-center gap-3 text-gray-900">
-                        <Brain size={32} className="text-blue-600" />
-                        Revisión Detallada
+                    <div className="space-y-3 sm:space-y-4 md:space-y-5">
+                      <h4 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl flex items-center gap-2 sm:gap-3 text-gray-900">
+                        <Brain size={20} className="text-blue-600 flex-shrink-0 sm:w-6 sm:h-6 md:w-8 md:h-8" />
+                        <span className="hidden sm:inline">Revisión Detallada</span>
+                        <span className="sm:hidden">Revisión</span>
                       </h4>
-                      <p className="text-gray-600 text-lg">Revisa tus respuestas y aprende de los errores</p>
+                      <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-lg">Revisa tus respuestas</p>
 
                       {quizResult.detalles.map((detalle: any, index: number) => (
                         <div
                           key={index}
-                          className={`p-6 rounded-2xl border-2 shadow-md ${
+                          className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 shadow-md ${
                             detalle.es_correcta
                               ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50'
                               : 'border-red-400 bg-gradient-to-br from-red-50 to-pink-50'
                           }`}
                         >
-                          <div className="flex items-start gap-4 mb-4">
+                          <div className="flex items-start gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
                             {detalle.es_correcta ? (
-                              <CheckCircle className="text-green-600 flex-shrink-0 mt-1" size={32} />
+                              <CheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
                             ) : (
-                              <XCircle className="text-red-600 flex-shrink-0 mt-1" size={32} />
+                              <XCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
                             )}
-                            <div className="flex-1">
-                              <p className="font-semibold text-xl mb-4 text-gray-900">{detalle.pregunta}</p>
-                              <div className="space-y-3 bg-white p-5 rounded-xl border-2 border-gray-200">
-                                <div className="flex items-start gap-3">
-                                  <span className="font-bold text-gray-700 min-w-[140px]">Tu respuesta:</span>
-                                  <span className={`font-bold text-lg ${detalle.es_correcta ? 'text-green-700' : 'text-red-700'}`}>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm sm:text-base md:text-lg lg:text-xl mb-2 sm:mb-3 md:mb-4 text-gray-900">{detalle.pregunta}</p>
+                              <div className="space-y-2 sm:space-y-3 bg-white p-2 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl border-2 border-gray-200">
+                                <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3">
+                                  <span className="font-bold text-gray-700 text-xs sm:text-sm md:text-base sm:min-w-[100px] md:min-w-[140px]">Tu respuesta:</span>
+                                  <span className={`font-bold text-sm sm:text-base md:text-lg ${detalle.es_correcta ? 'text-green-700' : 'text-red-700'}`}>
                                     {detalle.tu_respuesta}
-                                    {detalle.es_correcta ? ' âœ“' : ' âœ—'}
+                                    {detalle.es_correcta ? ' ✓' : ' ✗'}
                                   </span>
                                 </div>
                                 {!detalle.es_correcta && (
                                   <>
-                                    <div className="flex items-start gap-3">
-                                      <span className="font-bold text-gray-700 min-w-[140px]">Correcta:</span>
-                                      <span className="font-bold text-lg text-green-700">{detalle.respuesta_correcta} âœ“</span>
+                                    <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3">
+                                      <span className="font-bold text-gray-700 text-xs sm:text-sm md:text-base sm:min-w-[100px] md:min-w-[140px]">Correcta:</span>
+                                      <span className="font-bold text-sm sm:text-base md:text-lg text-green-700">{detalle.respuesta_correcta} ✓</span>
                                     </div>
                                     {detalle.explicacion && (
-                                      <div className="mt-4 pt-4 border-t-2 border-gray-200">
-                                        <p className="font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                          <BookOpen size={18} />
+                                      <div className="mt-2 sm:mt-3 md:mt-4 pt-2 sm:pt-3 md:pt-4 border-t-2 border-gray-200">
+                                        <p className="font-bold text-gray-700 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base flex items-center gap-1 sm:gap-2">
+                                          <BookOpen size={14} className="flex-shrink-0" />
                                           Explicación:
                                         </p>
-                                        <p className="text-gray-700 italic leading-relaxed bg-blue-50 p-4 rounded-lg">
+                                        <p className="text-gray-700 italic leading-relaxed bg-blue-50 p-2 sm:p-3 md:p-4 rounded-lg text-xs sm:text-sm md:text-base">
                                           {detalle.explicacion}
                                         </p>
                                       </div>
@@ -1043,7 +1052,7 @@ export const ELearning: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-8 border-t bg-gray-50 flex gap-4">
+              <div className="p-3 sm:p-4 md:p-6 border-t bg-gray-50 flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
                 {/* Close/Cancel Button */}
                 <button
                   onClick={() => {
@@ -1052,7 +1061,7 @@ export const ELearning: React.FC = () => {
                     setQuizAnswers({});
                     setQuizResult(null);
                   }}
-                  className="btn btn-outline text-lg font-semibold"
+                  className="btn btn-outline text-sm sm:text-base font-semibold py-2.5 sm:py-3 min-h-[44px] order-last sm:order-first"
                 >
                   {quizResult ? 'Cerrar' : 'Cancelar'}
                 </button>
@@ -1061,10 +1070,11 @@ export const ELearning: React.FC = () => {
                 {!showQuiz && !quizResult && contentSlide > 0 && (
                   <button
                     onClick={() => setContentSlide(contentSlide - 1)}
-                    className="btn btn-outline text-lg font-semibold flex items-center justify-center gap-2"
+                    className="btn btn-outline text-sm sm:text-base font-semibold flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 min-h-[44px]"
                   >
-                    <ChevronLeft size={20} />
-                    Anterior
+                    <ChevronLeft size={18} />
+                    <span className="hidden sm:inline">Anterior</span>
+                    <span className="sm:hidden">Atrás</span>
                   </button>
                 )}
 
@@ -1072,10 +1082,11 @@ export const ELearning: React.FC = () => {
                 {!showQuiz && !quizResult && contentSlide < contentSlides.length - 1 && (
                   <button
                     onClick={() => setContentSlide(contentSlide + 1)}
-                    className="btn btn-primary flex-1 text-lg font-semibold flex items-center justify-center gap-3"
+                    className="btn btn-primary flex-1 text-sm sm:text-base md:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 min-h-[44px]"
                   >
-                    Siguiente Tarjeta
-                    <ChevronRight size={20} />
+                    <span className="hidden sm:inline">Siguiente Tarjeta</span>
+                    <span className="sm:hidden">Siguiente</span>
+                    <ChevronRight size={18} />
                   </button>
                 )}
 
@@ -1083,11 +1094,12 @@ export const ELearning: React.FC = () => {
                 {!showQuiz && !quizResult && selectedModule.total_preguntas > 0 && contentSlide === contentSlides.length - 1 && (
                   <button
                     onClick={() => setShowQuiz(true)}
-                    className="btn btn-primary flex-1 text-lg font-semibold flex items-center justify-center gap-3"
+                    className="btn btn-primary flex-1 text-sm sm:text-base md:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 min-h-[44px]"
                   >
-                    <Brain size={24} />
-                    Comenzar Quiz ({selectedModule.total_preguntas} preguntas)
-                    <ChevronRight size={20} />
+                    <Brain size={20} />
+                    <span className="hidden sm:inline">Comenzar Quiz ({selectedModule.total_preguntas})</span>
+                    <span className="sm:hidden">Quiz ({selectedModule.total_preguntas})</span>
+                    <ChevronRight size={18} />
                   </button>
                 )}
 
@@ -1096,17 +1108,18 @@ export const ELearning: React.FC = () => {
                   <button
                     onClick={submitQuiz}
                     disabled={completing || Object.keys(quizAnswers).length < selectedModule.preguntas.length}
-                    className="btn btn-primary flex-1 text-lg font-semibold flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn btn-primary flex-1 text-sm sm:text-base md:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {completing ? (
                       <>
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                        Evaluando...
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <span className="hidden sm:inline">Evaluando...</span>
                       </>
                     ) : (
                       <>
-                        <CheckCircle size={24} />
-                        Enviar Respuestas ({Object.keys(quizAnswers).length}/{selectedModule.preguntas.length})
+                        <CheckCircle size={20} />
+                        <span className="hidden sm:inline">Enviar ({Object.keys(quizAnswers).length}/{selectedModule.preguntas.length})</span>
+                        <span className="sm:hidden">Enviar ({Object.keys(quizAnswers).length}/{selectedModule.preguntas.length})</span>
                       </>
                     )}
                   </button>
@@ -1121,10 +1134,11 @@ export const ELearning: React.FC = () => {
                       setQuizAnswers({});
                       setQuizResult(null);
                     }}
-                    className="btn btn-primary flex-1 text-lg font-semibold flex items-center justify-center gap-3"
+                    className="btn btn-primary flex-1 text-sm sm:text-base md:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 min-h-[44px]"
                   >
-                    <CheckCircle size={24} />
-                    Volver a Módulos
+                    <CheckCircle size={20} />
+                    <span className="hidden sm:inline">Volver a Módulos</span>
+                    <span className="sm:hidden">Volver</span>
                   </button>
                 )}
               </div>

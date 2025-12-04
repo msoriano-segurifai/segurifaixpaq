@@ -6,7 +6,7 @@ import {
   Shield, BookOpen, Award, Wallet, ShoppingCart,
   ChevronRight, Star, Gift, TrendingUp, AlertTriangle, Phone,
   Heart, Truck, CheckCircle, Loader2, Sparkles,
-  Bell, FileText, Users, Zap, Sun, Moon, Sunrise,
+  FileText, Users, Zap, Sun, Moon, Sunrise,
   Lightbulb, Car, Activity, MapPin
 } from 'lucide-react';
 
@@ -54,7 +54,6 @@ export const UserDashboard: React.FC = () => {
   };
 
   const elearning = profile?.e_learning;
-  const subscription = profile?.subscription;
   const wallet = profile?.wallet;
 
   if (loading) {
@@ -164,41 +163,6 @@ export const UserDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Subscription Alert */}
-        {subscription?.renewal_countdown && (
-          <div className={`card border-l-4 ${
-            subscription.renewal_countdown.urgency === 'critical' ? 'border-l-red-500 bg-red-50' :
-            subscription.renewal_countdown.urgency === 'high' ? 'border-l-orange-500 bg-orange-50' :
-            subscription.renewal_countdown.urgency === 'medium' ? 'border-l-yellow-500 bg-yellow-50' :
-            'border-l-green-500 bg-green-50'
-          }`}>
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  subscription.renewal_countdown.urgency === 'critical' ? 'bg-red-100' :
-                  subscription.renewal_countdown.urgency === 'high' ? 'bg-orange-100' :
-                  subscription.renewal_countdown.urgency === 'medium' ? 'bg-yellow-100' :
-                  'bg-green-100'
-                }`}>
-                  <Bell className={`${
-                    subscription.renewal_countdown.urgency === 'critical' ? 'text-red-500' :
-                    subscription.renewal_countdown.urgency === 'high' ? 'text-orange-500' :
-                    subscription.renewal_countdown.urgency === 'medium' ? 'text-yellow-500' :
-                    'text-green-500'
-                  }`} size={24} />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">{subscription.renewal_countdown.message}</p>
-                  <p className="text-sm text-gray-600">{subscription.renewal_countdown.plan_name}</p>
-                </div>
-              </div>
-              <Link to="/app/subscriptions" className="btn btn-primary">
-                Renovar Ahora
-              </Link>
-            </div>
-          </div>
-        )}
 
         {/* Quick Actions Grid */}
         <div>
