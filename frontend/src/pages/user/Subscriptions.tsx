@@ -512,11 +512,26 @@ export const Subscriptions: React.FC = () => {
     }
   };
 
+  // Consistent plan colors: Blue for Vial, Pink for Health
+  const getPlanColors = (categoryType: string) => {
+    const isVial = categoryType?.toUpperCase() === 'ROADSIDE';
+    return {
+      isVial,
+      iconBg: isVial ? 'from-blue-100 to-blue-200' : 'from-pink-100 to-rose-200',
+      accent: isVial ? 'text-blue-600' : 'text-pink-600',
+      button: isVial ? 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' : 'from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700',
+      border: isVial ? 'border-blue-500' : 'border-pink-500',
+      badge: isVial ? 'from-blue-600 to-blue-700' : 'from-pink-600 to-rose-600',
+      indicator: isVial ? 'bg-blue-600' : 'bg-pink-600',
+      priceBg: isVial ? 'from-blue-50 to-blue-100' : 'from-pink-50 to-rose-100',
+    };
+  };
+
   const getIcon = (categoryType: string) => {
     switch (categoryType?.toUpperCase()) {
-      case 'ROADSIDE': return <Truck className="text-red-500" size={32} />;
-      case 'HEALTH': return <Heart className="text-pink-500" size={32} />;
-      default: return <Star className="text-yellow-500" size={32} />;
+      case 'ROADSIDE': return <Car className="text-blue-600" size={32} />;
+      case 'HEALTH': return <Heart className="text-pink-600" size={32} />;
+      default: return <Star className="text-purple-600" size={32} />;
     }
   };
 
@@ -619,56 +634,62 @@ export const Subscriptions: React.FC = () => {
               </button>
             </div>
 
-            {/* Current Plan Card */}
-            <div className={`card relative mx-auto max-w-2xl transition-all duration-300 ${
-              currentPlan.is_featured ? 'border-2 border-blue-500 shadow-xl' : 'shadow-lg'
-            }`}>
-              {currentPlan.is_featured && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
-                    ⭐ Más Popular
-                  </span>
-                </div>
-              )}
+            {/* Current Plan Card - Color-coded by plan type */}
+            {(() => {
+              const colors = getPlanColors(currentPlan.category_type);
+              return (
+                <div className={`card relative mx-auto max-w-2xl transition-all duration-300 ${
+                  currentPlan.is_featured ? `border-2 ${colors.border} shadow-xl` : 'shadow-lg'
+                }`}>
+                  {currentPlan.is_featured && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className={`bg-gradient-to-r ${colors.badge} text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg`}>
+                        ⭐ Más Popular
+                      </span>
+                    </div>
+                  )}
 
-              <div className="text-center mb-6 pt-4">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  {getIcon(currentPlan.category_type)}
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">{currentPlan.name}</h3>
-                <p className="text-gray-500 mt-1">{currentPlan.description}</p>
-              </div>
+                  <div className="text-center mb-6 pt-4">
+                    <div className={`w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${colors.iconBg} flex items-center justify-center`}>
+                      {getIcon(currentPlan.category_type)}
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">{currentPlan.name}</h3>
+                    <p className="text-gray-500 mt-1">{currentPlan.description}</p>
+                    <span className={`inline-block mt-2 text-xs font-medium px-3 py-1 rounded-full ${colors.isVial ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}>
+                      {colors.isVial ? '🚗 Asistencia Vial' : '💊 Asistencia Médica'}
+                    </span>
+                  </div>
 
-              {/* Price Display */}
-              <div className="text-center mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-5xl font-bold text-blue-900">
-                    Q{billingCycle === 'monthly' ? currentPlan.price_monthly : currentPlan.price_yearly}
-                  </span>
-                  <span className="text-gray-500 text-lg">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
-                </div>
-                {billingCycle === 'yearly' && (
-                  <p className="text-sm text-green-600 mt-2 font-medium">
-                    Q{(parseFloat(String(currentPlan.price_yearly)) / 12).toFixed(2)}/mes · Ahorras Q{(parseFloat(String(currentPlan.price_monthly)) * 12 - parseFloat(String(currentPlan.price_yearly))).toFixed(0)} al año
-                  </p>
-                )}
-              </div>
+                  {/* Price Display */}
+                  <div className={`text-center mb-6 p-4 bg-gradient-to-r ${colors.priceBg} rounded-xl`}>
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className={`text-5xl font-bold ${colors.isVial ? 'text-blue-900' : 'text-pink-900'}`}>
+                        Q{billingCycle === 'monthly' ? currentPlan.price_monthly : currentPlan.price_yearly}
+                      </span>
+                      <span className="text-gray-500 text-lg">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
+                    </div>
+                    {billingCycle === 'yearly' && (
+                      <p className="text-sm text-green-600 mt-2 font-medium">
+                        Q{(parseFloat(String(currentPlan.price_yearly)) / 12).toFixed(2)}/mes · Ahorras Q{(parseFloat(String(currentPlan.price_monthly)) * 12 - parseFloat(String(currentPlan.price_yearly))).toFixed(0)} al año
+                      </p>
+                    )}
+                  </div>
 
-              {/* Coverage Stats */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{currentBenefits.coberturaKm === 999 ? '∞' : currentBenefits.coberturaKm}</div>
-                  <div className="text-xs text-gray-500">KM Grúa</div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{currentBenefits.eventosAnuales}</div>
-                  <div className="text-xs text-gray-500">Eventos/Año</div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{currentBenefits.tiempoRespuesta}</div>
-                  <div className="text-xs text-gray-500">Respuesta</div>
-                </div>
-              </div>
+                  {/* Coverage Stats */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                      <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.coberturaKm === 999 ? '∞' : currentBenefits.coberturaKm}</div>
+                      <div className="text-xs text-gray-500">{colors.isVial ? 'KM Grúa' : 'KM Cobertura'}</div>
+                    </div>
+                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                      <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.eventosAnuales}</div>
+                      <div className="text-xs text-gray-500">Eventos/Año</div>
+                    </div>
+                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                      <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.tiempoRespuesta}</div>
+                      <div className="text-xs text-gray-500">Respuesta</div>
+                    </div>
+                  </div>
 
               {/* Servicios Incluidos - ABOVE payment button */}
               <div className="mb-6">
@@ -763,6 +784,8 @@ export const Subscriptions: React.FC = () => {
                 </button>
               </div>
             </div>
+              );
+            })()}
           </div>
         )}
 
@@ -1147,34 +1170,35 @@ export const Subscriptions: React.FC = () => {
                 </div>
 
                 <div className="p-6">
-                  {/* AI Prompt Input - Cleaner */}
-                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                    <div className="flex-1 relative">
-                      <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                      <input
-                        type="text"
+                  {/* AI Prompt Input - Mobile-First with Large Text Area */}
+                  <div className="space-y-3 mb-4">
+                    <div className="relative">
+                      <MessageSquare className="absolute left-4 top-4 text-gray-400" size={18} />
+                      <textarea
                         value={aiPrompt}
                         onChange={(e) => setAiPrompt(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && !aiLoading && getAIPlanSuggestion()}
-                        placeholder="¿Qué tipo de protección necesitas?"
-                        className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all text-gray-700 bg-gray-50"
+                        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && !aiLoading && getAIPlanSuggestion()}
+                        placeholder="Cuéntanos sobre tus necesidades de protección. Por ejemplo: 'Tengo un carro nuevo y quiero protegerlo' o 'Busco cobertura médica para mi familia de 4 personas'..."
+                        className="w-full pl-11 pr-4 py-4 min-h-[120px] sm:min-h-[100px] border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all text-gray-700 bg-gray-50 resize-none text-base leading-relaxed"
                         disabled={aiLoading}
+                        rows={4}
                       />
+                      <p className="absolute bottom-3 right-3 text-xs text-gray-400">Shift+Enter para nueva línea</p>
                     </div>
                     <button
                       onClick={getAIPlanSuggestion}
                       disabled={aiLoading || !aiPrompt.trim()}
-                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[140px]"
+                      className="w-full sm:w-auto px-6 py-4 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {aiLoading ? (
                         <>
                           <Loader2 className="animate-spin" size={18} />
-                          <span className="hidden sm:inline">Analizando...</span>
+                          <span>Analizando tu situación...</span>
                         </>
                       ) : (
                         <>
                           <Send size={18} />
-                          Recomendar
+                          Obtener Recomendación Personalizada
                         </>
                       )}
                     </button>
@@ -1616,7 +1640,7 @@ export const Subscriptions: React.FC = () => {
 
               {/* Trust Badges - Cleaner Design */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-xl flex items-center justify-center">
                       <Shield className="text-blue-600" size={24} />
@@ -1637,13 +1661,6 @@ export const Subscriptions: React.FC = () => {
                     </div>
                     <h5 className="font-bold text-gray-900 text-sm">Cobertura Nacional</h5>
                     <p className="text-xs text-gray-500 mt-1">En toda Guatemala</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 mx-auto mb-3 bg-emerald-100 rounded-xl flex items-center justify-center">
-                      <Wallet className="text-emerald-600" size={24} />
-                    </div>
-                    <h5 className="font-bold text-gray-900 text-sm">Pago PAQ Wallet</h5>
-                    <p className="text-xs text-gray-500 mt-1">Seguro y fácil</p>
                   </div>
                 </div>
               </div>

@@ -132,7 +132,7 @@ export const UserDashboard: React.FC = () => {
           </div>
 
           {/* E-Learning Credits */}
-          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0">
+          <div className="card bg-gradient-to-br from-green-500 to-emerald-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(50%-0.5rem)] max-w-xs mx-auto sm:mx-0">
             <div className="flex items-center justify-between mb-3">
               <Gift size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Créditos</span>
@@ -141,19 +141,6 @@ export const UserDashboard: React.FC = () => {
             <p className="text-green-100 text-sm">Por aprendizaje</p>
             <Link to="/app/learning" className="mt-3 text-xs text-white/80 hover:text-white flex items-center gap-1">
               Aprender más <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          {/* Active Subscriptions */}
-          <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] max-w-xs mx-auto sm:mx-0 sm:last:mx-auto lg:last:mx-0">
-            <div className="flex items-center justify-between mb-3">
-              <Shield size={24} className="opacity-80" />
-              <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Planes</span>
-            </div>
-            <p className="text-3xl font-bold">{subscription?.active_count || 0}</p>
-            <p className="text-blue-100 text-sm">Planes activos</p>
-            <Link to="/app/subscriptions" className="mt-3 text-xs text-white/80 hover:text-white flex items-center gap-1">
-              Ver planes <ChevronRight size={14} />
             </Link>
           </div>
         </div>
