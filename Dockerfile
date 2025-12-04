@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-04-v4 - Re-seed plans and rebrand to remove ALL MAPFRE
+# Cache bust: 2025-12-04-v5 - Cleanup duplicates, only 3 active plans
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
@@ -48,5 +48,5 @@ RUN mkdir -p /app/staticfiles && \
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Start command - run migrations, seed plans, rebrand, then gunicorn
-CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && python manage.py rebrand_to_segurifai && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
+# Start command - run migrations, seed plans, rebrand, cleanup duplicates, then gunicorn
+CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && python manage.py rebrand_to_segurifai && python manage.py cleanup_duplicate_plans && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
