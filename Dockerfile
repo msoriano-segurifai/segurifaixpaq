@@ -2,7 +2,7 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-04-v2 - aggressive MAPFRE removal and improved rebrand command
+# Cache bust: 2025-12-04-v3 - FORCE rebrand ALL plans by category type
 ARG CACHEBUST=1
 
 WORKDIR /app/frontend
