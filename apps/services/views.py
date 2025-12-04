@@ -167,7 +167,7 @@ Para COMPARACIONES:
 Para RECOMENDACIONES:
 {{
     "is_comparison": false,
-    "recommended_plan": "Asistencia Vial (Inclusión)" | "Asistencia Vial (Opcional)" | "Asistencia Médica (Inclusión)" | "Asistencia Médica (Opcional)" | "Combo",
+    "recommended_plan": "Plan Asistencia Vial" | "Plan Asistencia Médica" | "Plan Seguro Accidentes" | "Combo Vial + Médica",
     "confidence": "alta" | "media" | "baja",
     "reason": "Explicación breve de por qué este plan es ideal",
     "key_services": ["Servicio 1", "Servicio 2", "Servicio 3"],
@@ -212,7 +212,7 @@ Para RECOMENDACIONES:
             return Response({
                 'success': True,
                 'recommendation': {
-                    'recommended_plan': 'Combo',
+                    'recommended_plan': 'Plan Asistencia Vial',
                     'confidence': 'media',
                     'reason': 'Basado en tu consulta, te recomendamos revisar nuestros planes.',
                     'key_services': [],
@@ -225,11 +225,11 @@ Para RECOMENDACIONES:
         return Response({
             'success': True,
             'recommendation': {
-                'recommended_plan': 'Combo',
+                'recommended_plan': 'Plan Asistencia Vial',
                 'confidence': 'baja',
                 'reason': 'Servicio de IA no disponible temporalmente.',
-                'key_services': ['Grúa del Vehículo', 'Consulta Médica', 'Ambulancia'],
-                'message': 'Te recomendamos el Plan Combo que incluye protección vial y de salud para ti y tu familia.'
+                'key_services': ['Grúa del Vehículo', 'Paso de Corriente', 'Ambulancia'],
+                'message': 'Te recomendamos el Plan Asistencia Vial que incluye grúa, paso de corriente y ambulancia 24/7.'
             }
         })
 
@@ -238,11 +238,11 @@ Para RECOMENDACIONES:
         return Response({
             'success': True,
             'recommendation': {
-                'recommended_plan': 'Combo',
+                'recommended_plan': 'Plan Asistencia Vial',
                 'confidence': 'baja',
                 'reason': 'Error al procesar tu consulta.',
-                'key_services': ['Grúa del Vehículo', 'Consulta Médica', 'Ambulancia'],
-                'message': 'Te recomendamos el Plan Combo que ofrece protección integral para vehículo y salud.'
+                'key_services': ['Grúa del Vehículo', 'Paso de Corriente', 'Ambulancia'],
+                'message': 'Te recomendamos revisar nuestros planes de asistencia vial y médica.'
             }
         })
 
