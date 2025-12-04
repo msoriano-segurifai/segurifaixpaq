@@ -217,14 +217,14 @@ class Command(BaseCommand):
 
             # Create SegurifAI provider
             self.stdout.write('Creating SegurifAI Guatemala provider...')
-            mapfre = Provider.objects.create(
+            segurifai_provider = Provider.objects.create(
                 user=admin,
                 company_name='SegurifAI Guatemala',
                 business_license='SegurifAI-GT-2024',
                 tax_id='12345678-9',
                 business_phone='+502 2328 0000',
-                business_email='asistencia@mapfre.com.gt',
-                website='https://www.mapfre.com.gt',
+                business_email='asistencia@segurifai.com.gt',
+                website='https://www.segurifai.com',
                 address='7a Avenida 5-10, Zona 4, Edificio Centro Financiero',
                 city='Ciudad de Guatemala',
                 state='Guatemala',
@@ -242,7 +242,7 @@ class Command(BaseCommand):
             )
 
             # Set working hours (24/7)
-            mapfre.working_hours = {
+            segurifai_provider.working_hours = {
                 'monday': {'start': '00:00', 'end': '23:59'},
                 'tuesday': {'start': '00:00', 'end': '23:59'},
                 'wednesday': {'start': '00:00', 'end': '23:59'},
@@ -251,12 +251,12 @@ class Command(BaseCommand):
                 'saturday': {'start': '00:00', 'end': '23:59'},
                 'sunday': {'start': '00:00', 'end': '23:59'}
             }
-            mapfre.save()
+            segurifai_provider.save()
 
             # Add all service categories to provider
-            mapfre.service_categories.add(roadside_cat, health_cat, card_cat)
+            segurifai_provider.service_categories.add(roadside_cat, health_cat, card_cat)
 
-            self.stdout.write(self.style.SUCCESS(f'Created provider: {mapfre.company_name}'))
+            self.stdout.write(self.style.SUCCESS(f'Created provider: {segurifai_provider.company_name}'))
 
             self.stdout.write(
                 self.style.SUCCESS(
@@ -267,10 +267,10 @@ class Command(BaseCommand):
                     '  Email: admin@segurifai.com\n'
                     '  Password: Admin123!\n\n'
                     'Provider:\n'
-                    f'  Company: {mapfre.company_name}\n'
-                    f'  Status: {mapfre.status}\n'
+                    f'  Company: {segurifai_provider.company_name}\n'
+                    f'  Status: {segurifai_provider.status}\n'
                     f'  Location: Ciudad de Guatemala, Guatemala\n'
-                    f'  Available: {mapfre.is_available}\n\n'
+                    f'  Available: {segurifai_provider.is_available}\n\n'
                     f'Service Categories: {ServiceCategory.objects.count()}\n'
                     f'Service Plans: {ServicePlan.objects.count()} plans created (GTQ)\n\n'
                     'PAQ Wallet Integration: Configured\n'
