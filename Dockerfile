@@ -49,4 +49,4 @@ RUN mkdir -p /app/staticfiles && \
 EXPOSE 8000
 
 # Start command - run migrations, seed plans, rebrand, cleanup duplicates, then gunicorn
-CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && python manage.py rebrand_to_segurifai && python manage.py cleanup_duplicate_plans && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
+CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && python manage.py rebrand_to_segurifai && python manage.py rebrand_educational_modules && python manage.py cleanup_duplicate_plans && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info

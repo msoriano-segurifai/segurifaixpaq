@@ -522,25 +522,6 @@ export const ELearning: React.FC = () => {
                   <>
                     {/* Module Content - Carousel UI */}
                     <div className="mb-4 sm:mb-8">
-                      {/* Progress Header */}
-                      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-2 sm:py-3 px-3 sm:px-4 -mx-4 sm:-mx-4 mb-4 sm:mb-6 border-b shadow-sm">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-xs sm:text-sm font-medium text-gray-600 whitespace-nowrap">
-                            Tarjeta {contentSlide + 1} de {contentSlides.length}
-                          </span>
-                          <div className="flex-1 max-w-[200px] sm:max-w-xs">
-                            <div className="h-2 sm:h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 rounded-full"
-                                style={{ width: `${((contentSlide + 1) / contentSlides.length) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                          <span className="text-xs sm:text-sm font-bold text-blue-600 whitespace-nowrap">
-                            {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
-                          </span>
-                        </div>
-                      </div>
 
                       {/* Carousel Card */}
                       <div className="relative">
@@ -1037,7 +1018,28 @@ export const ELearning: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-3 sm:p-4 md:p-6 border-t bg-gray-50 flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
+              <div className="border-t bg-gray-50 flex-shrink-0">
+                {/* Progress Bar - Only shown during content reading */}
+                {!showQuiz && !quizResult && (
+                  <div className="px-3 sm:px-4 md:px-6 pt-3 sm:pt-4">
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">
+                        Tarjeta {contentSlide + 1} de {contentSlides.length}
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-blue-600">
+                        {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
+                      </span>
+                    </div>
+                    <div className="h-2 sm:h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 rounded-full"
+                        style={{ width: `${((contentSlide + 1) / contentSlides.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {/* Buttons */}
+                <div className="p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
                 {/* Close/Cancel Button */}
                 <button
                   onClick={() => {
