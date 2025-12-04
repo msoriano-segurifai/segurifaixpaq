@@ -6,9 +6,8 @@ import {
   ChevronLeft, ChevronRight, Phone, MapPin,
   Ambulance, Home, Scale, Car, Fuel, Key,
   Users, FileText, Zap, Loader2, X, AlertCircle, Table2, Minus, Tag, Gift,
-  Sparkles, Send, MessageSquare, Lock, BarChart3, Download
+  Sparkles, Send, MessageSquare, Lock, BarChart3
 } from 'lucide-react';
-import { generateTermsAndConditionsPDF, getPlanTypeFromName } from '../../utils/termsAndConditions';
 
 // Helper to normalize Guatemala phone numbers to 8 digits
 const normalizePhoneNumber = (phone: string): string => {
@@ -768,21 +767,6 @@ export const Subscriptions: React.FC = () => {
                 </p>
               </div>
 
-              {/* Download T&Cs Button */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={() => generateTermsAndConditionsPDF({
-                    name: currentPlan.name,
-                    type: getPlanTypeFromName(currentPlan.name),
-                    price_monthly: currentPlan.price_monthly,
-                    price_yearly: currentPlan.price_yearly
-                  })}
-                  className="w-full py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-2"
-                >
-                  <Download size={18} />
-                  Descargar Terminos y Condiciones
-                </button>
-              </div>
             </div>
               );
             })()}
