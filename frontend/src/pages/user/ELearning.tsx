@@ -522,29 +522,10 @@ export const ELearning: React.FC = () => {
                   <>
                     {/* Module Content - Carousel UI */}
                     <div className="mb-4 sm:mb-8">
-
-                      {/* Carousel Card */}
+                      {/* Carousel Card - Progress bar is in the footer */}
                       <div className="relative">
                         <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border-2 border-blue-200 min-h-[250px] sm:min-h-[350px] md:min-h-[400px] shadow-lg">
-                          {/* Slide Counter */}
-                          <div className="flex items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                              <div className="p-1.5 sm:p-2 bg-white/80 rounded-lg sm:rounded-xl shadow flex-shrink-0">
-                                <BookOpen className="text-blue-600" size={18} />
-                              </div>
-                              <div>
-                                <h3 className="text-sm sm:text-lg md:text-xl font-bold text-blue-900">
-                                  Tarjeta {contentSlide + 1}/{contentSlides.length}
-                                </h3>
-                                <p className="text-xs sm:text-sm text-blue-700 hidden sm:block">Lee cada tarjeta para continuar</p>
-                              </div>
-                            </div>
-                            <div className="text-[10px] sm:text-xs md:text-sm font-bold text-blue-600 bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow whitespace-nowrap">
-                              {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
-                            </div>
-                          </div>
-
-                          {/* Carousel Content */}
+                          {/* Carousel Content - Progress shown in footer */}
                           <div className="prose max-w-none">
                             <div className="text-gray-800 leading-relaxed text-sm sm:text-base md:text-lg space-y-3 sm:space-y-4 bg-white/70 p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl">
                               {(contentSlides[contentSlide] || '').split('\n\n').map((paragraph, index) => {
@@ -690,15 +671,6 @@ export const ELearning: React.FC = () => {
                             return null;
                               }).filter(Boolean)}
                             </div>
-                          </div>
-
-                          {/* Progress indicator */}
-                          <div className="flex items-center justify-center mt-6 pt-4 border-t border-blue-200">
-                            <p className="text-sm text-blue-700 font-medium">
-                              {contentSlide < contentSlides.length - 1
-                                ? `Tarjeta ${contentSlide + 1} de ${contentSlides.length} - Usa los botones de abajo para navegar`
-                                : '¡Has completado la lectura! Continúa al quiz'}
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -1017,29 +989,8 @@ export const ELearning: React.FC = () => {
                 )}
               </div>
 
-              {/* Modal Footer - Sticky at bottom */}
-              <div className="border-t bg-gray-50 flex-shrink-0 sticky bottom-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                {/* Progress Bar - Always visible during content reading */}
-                {!showQuiz && !quizResult && (
-                  <div className="px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100">
-                    <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-xs sm:text-sm font-semibold text-gray-700">
-                        📖 Tarjeta {contentSlide + 1} de {contentSlides.length}
-                      </span>
-                      <span className="text-xs sm:text-sm font-bold text-blue-600 bg-white px-2 py-0.5 rounded-full">
-                        {Math.round(((contentSlide + 1) / contentSlides.length) * 100)}%
-                      </span>
-                    </div>
-                    <div className="h-3 sm:h-3.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500 rounded-full shadow-lg"
-                        style={{ width: `${((contentSlide + 1) / contentSlides.length) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-                {/* Buttons */}
-                <div className="p-3 sm:p-4 md:p-6 flex flex-col sm:flex-row gap-2 sm:gap-3 bg-gray-50">
+              {/* Modal Footer */}
+              <div className="p-3 sm:p-4 md:p-6 border-t bg-gray-50 flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
                 {/* Close/Cancel Button */}
                 <button
                   onClick={() => {
