@@ -346,11 +346,13 @@ export const ELearning: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {modules.map((module, index) => {
+            {[...modules].sort((a, b) => a.orden - b.orden).map((module, index, sortedModules) => {
               const status = getModuleStatus(module.id);
               const isCompleted = status === 'COMPLETADO';
               const isInProgress = status === 'EN_PROGRESO';
-              const isLocked = index > 0 && getModuleStatus(modules[index - 1].id) !== 'COMPLETADO';
+              // Module is locked if it's not the first one AND the previous module (by orden) is not completed
+              const previousModule = index > 0 ? sortedModules[index - 1] : null;
+              const isLocked = previousModule ? getModuleStatus(previousModule.id) !== 'COMPLETADO' : false;
 
               return (
                 <div
