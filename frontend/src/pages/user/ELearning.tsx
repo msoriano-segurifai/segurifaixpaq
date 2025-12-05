@@ -1042,10 +1042,10 @@ export const ELearning: React.FC = () => {
                 )}
 
                 {/* Submit Quiz Button */}
-                {showQuiz && !quizResult && (
+                {showQuiz && !quizResult && selectedModule?.preguntas?.length > 0 && (
                   <button
                     onClick={submitQuiz}
-                    disabled={completing || Object.keys(quizAnswers).length < selectedModule.preguntas.length}
+                    disabled={completing || Object.keys(quizAnswers).length < (selectedModule?.preguntas?.length || 0)}
                     className="btn btn-primary flex-1 text-sm sm:text-base md:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {completing ? (
@@ -1056,8 +1056,8 @@ export const ELearning: React.FC = () => {
                     ) : (
                       <>
                         <CheckCircle size={20} />
-                        <span className="hidden sm:inline">Enviar ({Object.keys(quizAnswers).length}/{selectedModule.preguntas.length})</span>
-                        <span className="sm:hidden">Enviar ({Object.keys(quizAnswers).length}/{selectedModule.preguntas.length})</span>
+                        <span className="hidden sm:inline">Enviar ({Object.keys(quizAnswers).length}/{selectedModule?.preguntas?.length || 0})</span>
+                        <span className="sm:hidden">Enviar ({Object.keys(quizAnswers).length}/{selectedModule?.preguntas?.length || 0})</span>
                       </>
                     )}
                   </button>
