@@ -610,8 +610,8 @@ export const Subscriptions: React.FC = () => {
   };
 
   const currentPlan = plans[currentPlanIndex];
-  const benefitKey = currentPlan ? getPlanBenefitKey(currentPlan.name) : 'Basico';
-  const currentBenefits = SEGURIFAI_BENEFITS[benefitKey];
+  const benefitKey = currentPlan ? getPlanBenefitKey(currentPlan.name) : 'Ruta';
+  const currentBenefits = SEGURIFAI_BENEFITS[benefitKey] || SEGURIFAI_BENEFITS['Ruta'];
   const yearlyDiscount = 20;
 
   if (loading) {
@@ -629,8 +629,8 @@ export const Subscriptions: React.FC = () => {
       <div className="space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Planes SegurifAI</h1>
-          <p className="text-gray-500 mt-2">Asistencia vial, médica y en hogar respaldada por SegurifAI</p>
+          <h1 className="text-3xl font-bold text-gray-900">Planes de Protección</h1>
+          <p className="text-gray-500 mt-2">Protege tu Tarjeta, tu Salud y tu Ruta con PAQ x MAPFRE x SegurifAI</p>
         </div>
 
         {/* Billing Toggle */}

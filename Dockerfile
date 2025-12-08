@@ -48,5 +48,5 @@ RUN mkdir -p /app/staticfiles && \
 # Expose port (Railway will set $PORT)
 EXPOSE 8000
 
-# Start command - run migrations, then gunicorn (other commands run via Railway cron or manually)
-CMD python manage.py migrate --noinput && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
+# Start command - run migrations, seed plans, then gunicorn
+CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
