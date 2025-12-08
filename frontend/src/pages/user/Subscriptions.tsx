@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '../../components/shared/Layout';
 import { servicesAPI, userAPI, promoCodesAPI, elearningAPI, aiAPI } from '../../services/api';
 import {
-  Check, Star, Shield, Truck, Heart, Clock, Wallet,
+  Check, Star, Shield, Truck, Heart, Clock, Wallet, CreditCard,
   ChevronLeft, ChevronRight, Phone, MapPin,
   Ambulance, Home, Scale, Car, Fuel, Key,
   Users, FileText, Zap, Loader2, X, AlertCircle, Table2, Minus, Tag, Gift,
@@ -32,68 +32,69 @@ interface Plan {
   category_name: string;
 }
 
-// SegurifAI Benefits Data - Based on official SegurifAI PAQ Wallet document (Oct 2025)
+// PAQ x MAPFRE x SegurifAI Benefits Data - Dec 2025
 // Prices in GTQ (Quetzales guatemaltecos)
-// Plan Drive: Q24.41/month (Q292.86/year) | Plan Health: Q22.48/month (Q269.70/year)
+// Protege tu Tarjeta: Q34.99/mes | Protege tu Salud: Q34.99/mes | Protege tu Ruta: Q39.99/mes
 
-// Complete service list for comparison table - matching PDF exactly
-// Now includes Combo plan (Drive + Health combined)
+// Complete service list for comparison table - PAQ x MAPFRE x SegurifAI Dec 2025
+// Three plans: Protege tu Tarjeta, Protege tu Salud, Protege tu Ruta
 interface ServiceItem {
   id: string;
   name: string;
-  category: 'vial' | 'salud' | 'insurance' | 'both';
-  driveLimit: string;
-  driveValue: string;
-  healthLimit: string;
-  healthValue: string;
-  comboLimit: string;
-  comboValue: string;
-  insuranceLimit?: string;
-  insuranceValue?: string;
+  category: 'vial' | 'salud' | 'tarjeta';
+  tarjetaLimit: string;
+  tarjetaValue: string;
+  saludLimit: string;
+  saludValue: string;
+  rutaLimit: string;
+  rutaValue: string;
 }
 
 const ALL_SERVICES: ServiceItem[] = [
-  // VIAL SERVICES (Plan Asistencia Vial) - Values in Quetzales
-  // Combo plan includes ALL Vial services
-  { id: 'muerte_vial', name: 'Seguro Muerte Accidental', category: 'vial', driveLimit: 'Incluido', driveValue: 'Q3,000', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Q6,000' },
-  { id: 'grua', name: 'Grúa del Vehículo (Accidente o falla mecánica)', category: 'vial', driveLimit: '3/año', driveValue: 'Q1,175', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,175' },
-  { id: 'combustible', name: 'Abasto de Combustible (1 galón)', category: 'vial', driveLimit: '3/año', driveValue: 'Q1,175 comb.', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,175 comb.' },
-  { id: 'neumaticos', name: 'Cambio de Neumáticos', category: 'vial', driveLimit: '3/año', driveValue: 'Q1,175 comb.', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,175 comb.' },
-  { id: 'corriente', name: 'Paso de Corriente', category: 'vial', driveLimit: '3/año', driveValue: 'Q1,175 comb.', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,175 comb.' },
-  { id: 'cerrajeria', name: 'Cerrajería Vehicular', category: 'vial', driveLimit: '3/año', driveValue: 'Q1,175 comb.', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,175 comb.' },
-  { id: 'ambulancia_vial', name: 'Ambulancia por Accidente', category: 'vial', driveLimit: '1/año', driveValue: 'Q785', healthLimit: '-', healthValue: '-', comboLimit: '3/año', comboValue: 'Q1,960' },
-  { id: 'conductor', name: 'Conductor Profesional (enfermedad/embriaguez)', category: 'vial', driveLimit: '1/año', driveValue: 'Q470', healthLimit: '-', healthValue: '-', comboLimit: '1/año', comboValue: 'Q470' },
-  { id: 'taxi_aeropuerto', name: 'Taxi al Aeropuerto (viaje al extranjero)', category: 'vial', driveLimit: '1/año', driveValue: 'Q470', healthLimit: '-', healthValue: '-', comboLimit: '1/año', comboValue: 'Q470' },
-  { id: 'legal', name: 'Asistencia Legal Telefónica', category: 'vial', driveLimit: '1/año', driveValue: 'Q1,570', healthLimit: '-', healthValue: '-', comboLimit: '1/año', comboValue: 'Q1,570' },
-  { id: 'emergencia_hospital', name: 'Apoyo Emergencia Hospital', category: 'vial', driveLimit: '1/año', driveValue: 'Q7,850', healthLimit: '-', healthValue: '-', comboLimit: '1/año', comboValue: 'Q7,850' },
-  { id: 'rayos_x', name: 'Rayos X', category: 'vial', driveLimit: '1/año', driveValue: 'Q2,355', healthLimit: '-', healthValue: '-', comboLimit: '1/año', comboValue: 'Q2,355' },
-  { id: 'descuentos', name: 'Descuentos en Red de Proveedores', category: 'vial', driveLimit: 'Incluido', driveValue: 'Hasta 20%', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Hasta 20%' },
-  { id: 'asistentes', name: 'Asistentes Telefónicos (Cotización, Referencias)', category: 'vial', driveLimit: 'Incluido', driveValue: 'Incluido', healthLimit: '-', healthValue: '-', comboLimit: 'Incluido', comboValue: 'Incluido' },
+  // TARJETA SERVICES (Protege tu Tarjeta - Q34.99/mes) - Card Protection
+  { id: 'muerte_tarjeta', name: 'Seguro Muerte Accidental', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Q3,000', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'tarjeta_perdida', name: 'Tarjetas Perdidas o Robadas', category: 'tarjeta', tarjetaLimit: '48hrs', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'clonacion', name: 'Protección contra Clonación', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'banda_magnetica', name: 'Falsificación Banda Magnética', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'ingenieria_social', name: 'Cobertura Ingeniería Social', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'phishing', name: 'Cobertura Phishing', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'robo_identidad', name: 'Robo de Identidad Digital', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'spoofing', name: 'Suplantación (Spoofing)', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'vishing', name: 'Fraude Telefónico (Vishing)', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
+  { id: 'compras_internet', name: 'Compras Fraudulentas por Internet', category: 'tarjeta', tarjetaLimit: 'Incluido', tarjetaValue: 'Incluido', saludLimit: '-', saludValue: '-', rutaLimit: '-', rutaValue: '-' },
 
-  // SALUD SERVICES (Plan Asistencia Médica) - Values in Quetzales
-  // Combo plan includes ALL Médica services with enhanced limits
-  { id: 'muerte_medica', name: 'Seguro Muerte Accidental', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Incluido', healthValue: 'Q3,000', comboLimit: 'Incluido', comboValue: 'Q6,000' },
-  { id: 'orientacion_medica', name: 'Orientación Médica Telefónica 24/7', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Ilimitado', healthValue: 'Incluido', comboLimit: 'Ilimitado', comboValue: 'Incluido' },
-  { id: 'especialistas', name: 'Conexión con Especialistas', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Ilimitado', healthValue: 'Incluido', comboLimit: 'Ilimitado', comboValue: 'Incluido' },
-  { id: 'medicamentos', name: 'Coordinación Medicamentos a Domicilio', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: 'Ilimitado', healthValue: 'Incluido', comboLimit: 'Ilimitado', comboValue: 'Incluido' },
-  { id: 'consulta_presencial', name: 'Consulta Presencial (General/Ginecólogo/Pediatra)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '3/año', healthValue: 'Q1,175', comboLimit: '6/año', comboValue: 'Q2,355' },
-  { id: 'enfermera', name: 'Cuidados Post-Op Enfermera', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '1/año', healthValue: 'Q785', comboLimit: '1/año', comboValue: 'Q785' },
-  { id: 'aseo', name: 'Artículos de Aseo Hospitalización', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '1/año', healthValue: 'Q785', comboLimit: '1/año', comboValue: 'Q785' },
-  { id: 'lab_basico', name: 'Exámenes Lab Básicos (Heces, Orina, Hematología)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q785', comboLimit: '2/año', comboValue: 'Q785' },
-  { id: 'lab_especial', name: 'Exámenes Especializados (Papanicoláu/Mamografía/Antígeno)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q785', comboLimit: '2/año', comboValue: 'Q785' },
-  { id: 'nutricionista', name: 'Nutricionista Video Consulta (Grupo Familiar)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '4/año', healthValue: 'Q1,175', comboLimit: '8/año', comboValue: 'Q2,355' },
-  { id: 'psicologia', name: 'Psicología Video Consulta (Núcleo Familiar)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '4/año', healthValue: 'Q1,175', comboLimit: '8/año', comboValue: 'Q2,355' },
-  { id: 'mensajeria', name: 'Mensajería Hospitalización', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q470', comboLimit: '2/año', comboValue: 'Q470' },
-  { id: 'taxi_familiar', name: 'Taxi Familiar Hospitalización', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q785', comboLimit: '2/año', comboValue: 'Q785' },
-  { id: 'ambulancia_salud', name: 'Ambulancia Accidente', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '2/año', healthValue: 'Q1,175', comboLimit: '2/año', comboValue: 'Q1,175' },
-  { id: 'taxi_alta', name: 'Taxi Post-Alta (al domicilio)', category: 'salud', driveLimit: '-', driveValue: '-', healthLimit: '1/año', healthValue: 'Q785', comboLimit: '1/año', comboValue: 'Q785' },
+  // SALUD SERVICES (Protege tu Salud - Q34.99/mes) - Health Assistance
+  { id: 'muerte_salud', name: 'Seguro Muerte Accidental', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: 'Incluido', saludValue: 'Q3,000', rutaLimit: '-', rutaValue: '-' },
+  { id: 'orientacion_medica', name: 'Orientación Médica Telefónica 24/7', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: 'Ilimitado', saludValue: 'Incluido', rutaLimit: '-', rutaValue: '-' },
+  { id: 'especialistas', name: 'Conexión con Especialistas de la Red', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: 'Ilimitado', saludValue: 'Incluido', rutaLimit: '-', rutaValue: '-' },
+  { id: 'medicamentos', name: 'Coordinación Medicamentos a Domicilio', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: 'Ilimitado', saludValue: 'Incluido', rutaLimit: '-', rutaValue: '-' },
+  { id: 'consulta_presencial', name: 'Consulta Presencial (General/Ginecólogo/Pediatra)', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '3/año', saludValue: '$150', rutaLimit: '-', rutaValue: '-' },
+  { id: 'enfermera', name: 'Cuidados Post-Op Enfermera', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '1/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
+  { id: 'aseo', name: 'Artículos de Aseo por Hospitalización', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '1/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
+  { id: 'lab_basico', name: 'Exámenes Lab (Heces, Orina, Hematología)', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '2/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
+  { id: 'lab_especial', name: 'Exámenes (Papanicoláu/Mamografía/Antígeno)', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '2/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
+  { id: 'nutricionista', name: 'Nutricionista Video Consulta (Grupo Familiar)', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '4/año', saludValue: '$150', rutaLimit: '-', rutaValue: '-' },
+  { id: 'psicologia', name: 'Psicología Video Consulta (Núcleo Familiar)', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '4/año', saludValue: '$150', rutaLimit: '-', rutaValue: '-' },
+  { id: 'mensajeria', name: 'Mensajería por Hospitalización', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '2/año', saludValue: '$60', rutaLimit: '-', rutaValue: '-' },
+  { id: 'taxi_familiar', name: 'Taxi Familiar por Hospitalización', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '2/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
+  { id: 'ambulancia_salud', name: 'Traslado en Ambulancia por Accidente', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '2/año', saludValue: '$150', rutaLimit: '-', rutaValue: '-' },
+  { id: 'taxi_alta', name: 'Taxi al Domicilio tras Alta', category: 'salud', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '1/año', saludValue: '$100', rutaLimit: '-', rutaValue: '-' },
 
-  // INSURANCE SERVICES (Seguro de Accidentes Personales) - Values in Quetzales
-  { id: 'seguro_muerte', name: 'Seguro por Muerte Accidental', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q10,000' },
-  { id: 'seguro_invalidez', name: 'Invalidez Total y Permanente', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q10,000' },
-  { id: 'gastos_funerarios', name: 'Gastos Funerarios', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q2,000' },
-  { id: 'gastos_medicos', name: 'Gastos Médicos por Accidente', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Incluido', insuranceValue: 'Q3,000' },
-  { id: 'incapacidad_temporal', name: 'Incapacidad Temporal (por día)', category: 'insurance', driveLimit: '-', driveValue: '-', healthLimit: '-', healthValue: '-', comboLimit: '-', comboValue: '-', insuranceLimit: 'Hasta 30 días', insuranceValue: 'Q50/día' },
+  // RUTA SERVICES (Protege tu Ruta - Q39.99/mes) - Roadside Assistance
+  { id: 'muerte_ruta', name: 'Seguro Muerte Accidental', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: 'Incluido', rutaValue: 'Q3,000' },
+  { id: 'grua', name: 'Grúa del Vehículo (Accidente o falla)', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '3/año', rutaValue: '$150' },
+  { id: 'combustible', name: 'Abasto de Combustible (1 galón)', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '3/año', rutaValue: '$150 comb.' },
+  { id: 'neumaticos', name: 'Cambio de Neumáticos', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '3/año', rutaValue: '$150 comb.' },
+  { id: 'corriente', name: 'Paso de Corriente', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '3/año', rutaValue: '$150 comb.' },
+  { id: 'cerrajeria', name: 'Emergencia de Cerrajería', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '3/año', rutaValue: '$150 comb.' },
+  { id: 'ambulancia_vial', name: 'Servicio de Ambulancia por Accidente', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$100' },
+  { id: 'conductor', name: 'Conductor Profesional (enfermedad/embriaguez)', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$60' },
+  { id: 'taxi_aeropuerto', name: 'Taxi al Aeropuerto (viaje al extranjero)', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$60' },
+  { id: 'legal', name: 'Asistencia Legal Telefónica', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$200' },
+  { id: 'emergencia_hospital', name: 'Apoyo Económico Sala Emergencia', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$1,000' },
+  { id: 'rayos_x', name: 'Rayos X', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: '1/año', rutaValue: '$300' },
+  { id: 'descuentos', name: 'Descuentos en Red de Proveedores', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: 'Incluido', rutaValue: 'Hasta 20%' },
+  { id: 'asistentes', name: 'Asistentes Telefónicos (Repuestos, Médicos)', category: 'vial', tarjetaLimit: '-', tarjetaValue: '-', saludLimit: '-', saludValue: '-', rutaLimit: 'Incluido', rutaValue: 'Incluido' },
 ];
 
 const SEGURIFAI_BENEFITS: Record<string, {
@@ -102,74 +103,100 @@ const SEGURIFAI_BENEFITS: Record<string, {
   coberturaKm: number;
   eventosAnuales: number | string;
   tiempoRespuesta: string;
-  planType: 'vial' | 'salud';
+  planType: 'vial' | 'salud' | 'tarjeta';
 }> = {
-  // Plan Asistencia Vial (Q36.88/mes Inclusion, Q38.93/mes Opcional)
-  'Drive': {
-    planType: 'vial',
+  // Protege tu Tarjeta (Q34.99/mes) - Card Protection
+  'Tarjeta': {
+    planType: 'tarjeta',
     serviciosIncluidos: [
       { icon: <Shield size={20} />, title: 'Seguro Muerte Accidental', description: 'Cobertura por fallecimiento', limit: 'Q3,000' },
-      { icon: <Truck size={20} />, title: 'Grúa del Vehículo', description: 'Por accidente o falla mecánica', limit: '3/año - Q1,175' },
-      { icon: <Fuel size={20} />, title: 'Abasto de Combustible', description: '1 galón de emergencia', limit: '3/año - Q1,175 comb.' },
-      { icon: <Car size={20} />, title: 'Cambio de Neumáticos', description: 'Instalación de llanta de repuesto', limit: '3/año - Q1,175 comb.' },
-      { icon: <Zap size={20} />, title: 'Paso de Corriente', description: 'Servicio de arranque de batería', limit: '3/año - Q1,175 comb.' },
-      { icon: <Key size={20} />, title: 'Cerrajería Vehicular', description: 'Apertura de vehículo 24/7', limit: '3/año - Q1,175 comb.' },
-      { icon: <Ambulance size={20} />, title: 'Ambulancia por Accidente', description: 'Traslado médico de emergencia', limit: '1/año - Q785' },
-      { icon: <Users size={20} />, title: 'Conductor Profesional', description: 'Por enfermedad o embriaguez', limit: '1/año - Q470' },
-      { icon: <Car size={20} />, title: 'Taxi al Aeropuerto', description: 'Por viaje del titular al extranjero', limit: '1/año - Q470' },
-      { icon: <Scale size={20} />, title: 'Asistencia Legal Telefónica', description: 'Asesoría legal por accidente', limit: '1/año - Q1,570' },
-      { icon: <Heart size={20} />, title: 'Apoyo Emergencia Hospital', description: 'Pago directo al hospital por accidente', limit: '1/año - Q7,850' },
-      { icon: <FileText size={20} />, title: 'Rayos X', description: 'Servicio de radiografía', limit: '1/año - Q2,355' },
+      { icon: <Wallet size={20} />, title: 'Tarjetas Perdidas o Robadas', description: 'Protección ante pérdida o robo', limit: '48hrs notificar' },
+      { icon: <Shield size={20} />, title: 'Protección Clonación', description: 'Falsificación de tarjeta', limit: 'Incluido' },
+      { icon: <Shield size={20} />, title: 'Banda Magnética', description: 'Falsificación de banda magnética', limit: 'Incluido' },
+      { icon: <Users size={20} />, title: 'Ingeniería Social', description: 'Protección contra manipulación', limit: 'Incluido' },
+      { icon: <Shield size={20} />, title: 'Phishing', description: 'Protección contra phishing', limit: 'Incluido' },
+      { icon: <Shield size={20} />, title: 'Robo de Identidad', description: 'Protección de identidad digital', limit: 'Incluido' },
+      { icon: <Shield size={20} />, title: 'Spoofing', description: 'Suplantación de identidad', limit: 'Incluido' },
+      { icon: <Phone size={20} />, title: 'Vishing', description: 'Fraude telefónico', limit: 'Incluido' },
+      { icon: <Wallet size={20} />, title: 'Compras Fraudulentas', description: 'Compras no autorizadas por internet', limit: 'Incluido' },
     ],
     beneficiosPremium: [
-      { icon: <Star size={20} />, title: 'Descuentos en Red', description: 'Hasta 20% en proveedores asociados' },
-      { icon: <Phone size={20} />, title: 'Asistentes Telefónicos', description: 'Cotización repuestos y referencias médicas' },
-      { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Central telefónica siempre disponible' },
-      { icon: <Shield size={20} />, title: 'Proveedor SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
+      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
+      { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Reporte de fraude siempre disponible' },
+      { icon: <MapPin size={20} />, title: 'Cobertura Nacional', description: 'Válido en toda Guatemala' },
+      { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
-    coberturaKm: 150,
-    eventosAnuales: '14+',
-    tiempoRespuesta: '30 min'
+    coberturaKm: 999,
+    eventosAnuales: 'Ilimitado',
+    tiempoRespuesta: '48hrs'
   },
-  // Plan Asistencia Médica (Q34.26/mes Inclusión, Q36.31/mes Opcional)
-  'Health': {
+  // Protege tu Salud (Q34.99/mes) - Health Assistance
+  'Salud': {
     planType: 'salud',
     serviciosIncluidos: [
       { icon: <Shield size={20} />, title: 'Seguro Muerte Accidental', description: 'Cobertura por fallecimiento', limit: 'Q3,000' },
       { icon: <Phone size={20} />, title: 'Orientación Médica Telefónica', description: 'Consulta médica por teléfono 24/7', limit: 'Ilimitado' },
       { icon: <Users size={20} />, title: 'Conexión con Especialistas', description: 'Referencia a médicos de la red', limit: 'Ilimitado' },
       { icon: <Truck size={20} />, title: 'Medicamentos a Domicilio', description: 'Coordinación de envío de medicamentos', limit: 'Ilimitado' },
-      { icon: <Heart size={20} />, title: 'Consulta Presencial', description: 'Médico general, ginecólogo o pediatra', limit: '3/año - Q1,175' },
-      { icon: <Home size={20} />, title: 'Cuidados Post-Op Enfermera', description: 'Enfermera a domicilio', limit: '1/año - Q785' },
-      { icon: <FileText size={20} />, title: 'Artículos de Aseo', description: 'Envío por hospitalización', limit: '1/año - Q785' },
-      { icon: <FileText size={20} />, title: 'Exámenes Lab Básicos', description: 'Heces, orina y hematología', limit: '2/año - Q785' },
-      { icon: <FileText size={20} />, title: 'Exámenes Especializados', description: 'Papanicolau, mamografía, antígeno', limit: '2/año - Q785' },
-      { icon: <Users size={20} />, title: 'Nutricionista Video', description: 'Video consulta (grupo familiar)', limit: '4/año - Q1,175' },
-      { icon: <Heart size={20} />, title: 'Psicología Video', description: 'Video consulta (núcleo familiar)', limit: '4/año - Q1,175' },
-      { icon: <Truck size={20} />, title: 'Mensajería Hospitalización', description: 'Servicio de mensajería por emergencia', limit: '2/año - Q470' },
-      { icon: <Car size={20} />, title: 'Taxi Familiar', description: 'Por hospitalización del titular', limit: '2/año - Q785' },
-      { icon: <Ambulance size={20} />, title: 'Ambulancia por Accidente', description: 'Traslado del titular', limit: '2/año - Q1,175' },
-      { icon: <Car size={20} />, title: 'Taxi Post Alta', description: 'Traslado al domicilio', limit: '1/año - Q785' },
+      { icon: <Heart size={20} />, title: 'Consulta Presencial', description: 'Médico general, ginecólogo o pediatra', limit: '3/año - $150' },
+      { icon: <Home size={20} />, title: 'Cuidados Post-Op Enfermera', description: 'Enfermera a domicilio', limit: '1/año - $100' },
+      { icon: <FileText size={20} />, title: 'Artículos de Aseo', description: 'Envío por hospitalización', limit: '1/año - $100' },
+      { icon: <FileText size={20} />, title: 'Exámenes Lab Básicos', description: 'Heces, orina y hematología', limit: '2/año - $100' },
+      { icon: <FileText size={20} />, title: 'Exámenes Especializados', description: 'Papanicoláu, mamografía, antígeno', limit: '2/año - $100' },
+      { icon: <Users size={20} />, title: 'Nutricionista Video', description: 'Video consulta (grupo familiar)', limit: '4/año - $150' },
+      { icon: <Heart size={20} />, title: 'Psicología Video', description: 'Video consulta (núcleo familiar)', limit: '4/año - $150' },
+      { icon: <Truck size={20} />, title: 'Mensajería Hospitalización', description: 'Servicio de mensajería por emergencia', limit: '2/año - $60' },
+      { icon: <Car size={20} />, title: 'Taxi Familiar', description: 'Por hospitalización del titular', limit: '2/año - $100' },
+      { icon: <Ambulance size={20} />, title: 'Ambulancia por Accidente', description: 'Traslado del titular', limit: '2/año - $150' },
+      { icon: <Car size={20} />, title: 'Taxi Post Alta', description: 'Traslado al domicilio', limit: '1/año - $100' },
     ],
     beneficiosPremium: [
       { icon: <Users size={20} />, title: 'Cobertura Familiar', description: 'Incluye grupo familiar y núcleo familiar' },
+      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
       { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Orientación médica siempre disponible' },
-      { icon: <MapPin size={20} />, title: 'Cobertura Nacional', description: 'Válido en toda Guatemala' },
-      { icon: <Shield size={20} />, title: 'Proveedor SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
+      { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 15,
     eventosAnuales: '15+',
     tiempoRespuesta: '24hrs'
   },
+  // Protege tu Ruta (Q39.99/mes) - Roadside Assistance
+  'Ruta': {
+    planType: 'vial',
+    serviciosIncluidos: [
+      { icon: <Shield size={20} />, title: 'Seguro Muerte Accidental', description: 'Cobertura por fallecimiento', limit: 'Q3,000' },
+      { icon: <Truck size={20} />, title: 'Grúa del Vehículo', description: 'Por accidente o falla mecánica', limit: '3/año - $150' },
+      { icon: <Fuel size={20} />, title: 'Abasto de Combustible', description: '1 galón de emergencia', limit: '3/año - $150 comb.' },
+      { icon: <Car size={20} />, title: 'Cambio de Neumáticos', description: 'Instalación de llanta de repuesto', limit: '3/año - $150 comb.' },
+      { icon: <Zap size={20} />, title: 'Paso de Corriente', description: 'Servicio de arranque de batería', limit: '3/año - $150 comb.' },
+      { icon: <Key size={20} />, title: 'Cerrajería Vehicular', description: 'Apertura de vehículo 24/7', limit: '3/año - $150 comb.' },
+      { icon: <Ambulance size={20} />, title: 'Ambulancia por Accidente', description: 'Traslado médico de emergencia', limit: '1/año - $100' },
+      { icon: <Users size={20} />, title: 'Conductor Profesional', description: 'Por enfermedad o embriaguez', limit: '1/año - $60' },
+      { icon: <Car size={20} />, title: 'Taxi al Aeropuerto', description: 'Por viaje del titular al extranjero', limit: '1/año - $60' },
+      { icon: <Scale size={20} />, title: 'Asistencia Legal Telefónica', description: 'Asesoría legal por accidente', limit: '1/año - $200' },
+      { icon: <Heart size={20} />, title: 'Apoyo Emergencia Hospital', description: 'Pago directo al hospital por accidente', limit: '1/año - $1,000' },
+      { icon: <FileText size={20} />, title: 'Rayos X', description: 'Servicio de radiografía', limit: '1/año - $300' },
+    ],
+    beneficiosPremium: [
+      { icon: <Star size={20} />, title: 'Descuentos en Red', description: 'Hasta 20% en proveedores asociados' },
+      { icon: <Phone size={20} />, title: 'Asistentes Telefónicos', description: 'Cotización repuestos y referencias médicas' },
+      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
+      { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
+    ],
+    coberturaKm: 150,
+    eventosAnuales: '14+',
+    tiempoRespuesta: '30 min'
+  },
 };
 
-// Map plan names to benefit keys based on SegurifAI products
+// Map plan names to benefit keys based on new PAQ x MAPFRE x SegurifAI products
 const getPlanBenefitKey = (planName: string): string => {
   const name = planName.toLowerCase();
-  if (name.includes('health') || name.includes('salud') || name.includes('médic')) return 'Health';
-  if (name.includes('drive') || name.includes('vial') || name.includes('vehicul') || name.includes('road')) return 'Drive';
-  // Default to Drive for roadside plans
-  return 'Drive';
+  if (name.includes('tarjeta') || name.includes('card')) return 'Tarjeta';
+  if (name.includes('salud') || name.includes('health') || name.includes('médic')) return 'Salud';
+  if (name.includes('ruta') || name.includes('vial') || name.includes('drive') || name.includes('road')) return 'Ruta';
+  // Default to Ruta for roadside plans
+  return 'Ruta';
 };
 
 export const Subscriptions: React.FC = () => {
@@ -181,7 +208,7 @@ export const Subscriptions: React.FC = () => {
   const [showPAQModal, setShowPAQModal] = useState(false);
   const [selectedPlanForPurchase, setSelectedPlanForPurchase] = useState<Plan | null>(null);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
-  const [serviceFilter, setServiceFilter] = useState<'all' | 'vial' | 'salud' | 'insurance'>('all');
+  const [serviceFilter, setServiceFilter] = useState<'all' | 'vial' | 'salud' | 'tarjeta'>('all');
 
   // User Profile State (for PAQ phone number)
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -517,16 +544,16 @@ export const Subscriptions: React.FC = () => {
     }
   };
 
-  // Consistent plan colors: Blue for Vial, Pink for Health, Purple for Insurance/Accidents
+  // Consistent plan colors: Blue for Vial (Ruta), Pink for Health (Salud), Green for Card (Tarjeta)
   const getPlanColors = (categoryType: string) => {
     const type = categoryType?.toUpperCase();
     const isVial = type === 'ROADSIDE';
-    const isInsurance = type === 'INSURANCE';
+    const isCardInsurance = type === 'CARD_INSURANCE';
 
     if (isVial) {
       return {
         isVial: true,
-        isInsurance: false,
+        isCardInsurance: false,
         iconBg: 'from-blue-100 to-blue-200',
         accent: 'text-blue-600',
         button: 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800',
@@ -537,24 +564,24 @@ export const Subscriptions: React.FC = () => {
       };
     }
 
-    if (isInsurance) {
+    if (isCardInsurance) {
       return {
         isVial: false,
-        isInsurance: true,
-        iconBg: 'from-purple-100 to-purple-200',
-        accent: 'text-purple-600',
-        button: 'from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800',
-        border: 'border-purple-500',
-        badge: 'from-purple-600 to-purple-700',
-        indicator: 'bg-purple-600',
-        priceBg: 'from-purple-50 to-purple-100',
+        isCardInsurance: true,
+        iconBg: 'from-emerald-100 to-green-200',
+        accent: 'text-emerald-600',
+        button: 'from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700',
+        border: 'border-emerald-500',
+        badge: 'from-emerald-600 to-green-600',
+        indicator: 'bg-emerald-600',
+        priceBg: 'from-emerald-50 to-green-100',
       };
     }
 
     // Default: Health (Pink)
     return {
       isVial: false,
-      isInsurance: false,
+      isCardInsurance: false,
       iconBg: 'from-pink-100 to-rose-200',
       accent: 'text-pink-600',
       button: 'from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700',
@@ -568,7 +595,7 @@ export const Subscriptions: React.FC = () => {
   const getIcon = (categoryType: string) => {
     switch (categoryType?.toUpperCase()) {
       case 'ROADSIDE': return <Car className="text-blue-600" size={32} />;
-      case 'INSURANCE': return <Shield className="text-purple-600" size={32} />;
+      case 'CARD_INSURANCE': return <CreditCard className="text-emerald-600" size={32} />;
       case 'HEALTH': return <Heart className="text-pink-600" size={32} />;
       default: return <Star className="text-purple-600" size={32} />;
     }
@@ -694,8 +721,12 @@ export const Subscriptions: React.FC = () => {
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">{currentPlan.name}</h3>
                     <p className="text-gray-500 mt-1">{currentPlan.description}</p>
-                    <span className={`inline-block mt-2 text-xs font-medium px-3 py-1 rounded-full ${colors.isVial ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}>
-                      {colors.isVial ? '🚗 Asistencia Vial' : '💊 Asistencia Médica'}
+                    <span className={`inline-block mt-2 text-xs font-medium px-3 py-1 rounded-full ${
+                      colors.isVial ? 'bg-blue-100 text-blue-700' :
+                      colors.isCardInsurance ? 'bg-emerald-100 text-emerald-700' :
+                      'bg-pink-100 text-pink-700'
+                    }`}>
+                      {colors.isVial ? '🚗 Protege tu Ruta' : colors.isCardInsurance ? '💳 Protege tu Tarjeta' : '💊 Protege tu Salud'}
                     </span>
                   </div>
 
@@ -1479,15 +1510,15 @@ export const Subscriptions: React.FC = () => {
                         Todos
                       </button>
                       <button
-                        onClick={() => setServiceFilter('vial')}
+                        onClick={() => setServiceFilter('tarjeta')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-                          serviceFilter === 'vial'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white text-blue-600 hover:bg-blue-50 border border-blue-200'
+                          serviceFilter === 'tarjeta'
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-white text-emerald-600 hover:bg-emerald-50 border border-emerald-200'
                         }`}
                       >
-                        <Car size={14} />
-                        Vial
+                        <CreditCard size={14} />
+                        Tarjeta
                       </button>
                       <button
                         onClick={() => setServiceFilter('salud')}
@@ -1501,15 +1532,15 @@ export const Subscriptions: React.FC = () => {
                         Salud
                       </button>
                       <button
-                        onClick={() => setServiceFilter('insurance')}
+                        onClick={() => setServiceFilter('vial')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-                          serviceFilter === 'insurance'
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-white text-purple-600 hover:bg-purple-50 border border-purple-200'
+                          serviceFilter === 'vial'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-blue-600 hover:bg-blue-50 border border-blue-200'
                         }`}
                       >
-                        <Shield size={14} />
-                        Seguro
+                        <Car size={14} />
+                        Ruta
                       </button>
                     </div>
                   </div>
@@ -1540,10 +1571,10 @@ export const Subscriptions: React.FC = () => {
                           {/* Dynamic columns for ALL database plans */}
                           {plans.map((plan) => {
                             const colors = getPlanColors(plan.category_type);
-                            const bgColor = colors.isVial ? 'bg-blue-50' : colors.isInsurance ? 'bg-purple-50' : 'bg-pink-50';
-                            const iconBg = colors.isVial ? 'bg-blue-100' : colors.isInsurance ? 'bg-purple-100' : 'bg-pink-100';
-                            const textColor = colors.isVial ? 'text-blue-900' : colors.isInsurance ? 'text-purple-900' : 'text-pink-900';
-                            const iconColor = colors.isVial ? 'text-blue-600' : colors.isInsurance ? 'text-purple-600' : 'text-pink-600';
+                            const bgColor = colors.isVial ? 'bg-blue-50' : colors.isCardInsurance ? 'bg-emerald-50' : 'bg-pink-50';
+                            const iconBg = colors.isVial ? 'bg-blue-100' : colors.isCardInsurance ? 'bg-emerald-100' : 'bg-pink-100';
+                            const textColor = colors.isVial ? 'text-blue-900' : colors.isCardInsurance ? 'text-emerald-900' : 'text-pink-900';
+                            const iconColor = colors.isVial ? 'text-blue-600' : colors.isCardInsurance ? 'text-emerald-600' : 'text-pink-600';
                             return (
                               <th
                                 key={plan.id}
@@ -1551,7 +1582,7 @@ export const Subscriptions: React.FC = () => {
                               >
                                 <div className="flex flex-col items-center gap-1">
                                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
-                                    {colors.isVial ? <Car size={16} className={iconColor} /> : colors.isInsurance ? <Shield size={16} className={iconColor} /> : <Heart size={16} className={iconColor} />}
+                                    {colors.isVial ? <Car size={16} className={iconColor} /> : colors.isCardInsurance ? <CreditCard size={16} className={iconColor} /> : <Heart size={16} className={iconColor} />}
                                   </div>
                                   <span className={`text-xs font-bold leading-tight ${textColor}`}>{plan.name}</span>
                                 </div>
@@ -1572,7 +1603,7 @@ export const Subscriptions: React.FC = () => {
                               <div className="flex items-center gap-2">
                                 <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
                                   service.category === 'vial' ? 'bg-blue-500' :
-                                  service.category === 'insurance' ? 'bg-purple-500' : 'bg-pink-500'
+                                  service.category === 'tarjeta' ? 'bg-emerald-500' : 'bg-pink-500'
                                 }`}></span>
                                 <span className="text-xs leading-tight">{service.name}</span>
                               </div>
@@ -1583,17 +1614,17 @@ export const Subscriptions: React.FC = () => {
                               // Determine if this plan has this service
                               const hasService =
                                 (colors.isVial && service.category === 'vial') ||
-                                (!colors.isVial && !colors.isInsurance && service.category === 'salud') ||
-                                (colors.isInsurance && service.category === 'insurance');
+                                (!colors.isVial && !colors.isCardInsurance && service.category === 'salud') ||
+                                (colors.isCardInsurance && service.category === 'tarjeta');
                               // Get the appropriate limit based on plan type
                               const limit = colors.isVial
-                                ? service.driveLimit
-                                : colors.isInsurance
-                                  ? (service.insuranceLimit || '-')
-                                  : service.healthLimit;
-                              const checkBg = colors.isVial ? 'bg-blue-100' : colors.isInsurance ? 'bg-purple-100' : 'bg-pink-100';
-                              const checkColor = colors.isVial ? 'text-blue-600' : colors.isInsurance ? 'text-purple-600' : 'text-pink-600';
-                              const textColor = colors.isVial ? 'text-blue-700' : colors.isInsurance ? 'text-purple-700' : 'text-pink-700';
+                                ? service.rutaLimit
+                                : colors.isCardInsurance
+                                  ? service.tarjetaLimit
+                                  : service.saludLimit;
+                              const checkBg = colors.isVial ? 'bg-blue-100' : colors.isCardInsurance ? 'bg-emerald-100' : 'bg-pink-100';
+                              const checkColor = colors.isVial ? 'text-blue-600' : colors.isCardInsurance ? 'text-emerald-600' : 'text-pink-600';
+                              const textColor = colors.isVial ? 'text-blue-700' : colors.isCardInsurance ? 'text-emerald-700' : 'text-pink-700';
                               return (
                                 <td key={plan.id} className="p-2 text-center">
                                   {hasService && limit !== '-' ? (
@@ -1623,7 +1654,7 @@ export const Subscriptions: React.FC = () => {
                           </td>
                           {plans.map((plan) => {
                             const colors = getPlanColors(plan.category_type);
-                            const priceColor = colors.isVial ? 'text-blue-700' : colors.isInsurance ? 'text-purple-700' : 'text-pink-700';
+                            const priceColor = colors.isVial ? 'text-blue-700' : colors.isCardInsurance ? 'text-emerald-700' : 'text-pink-700';
                             const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
                             return (
                               <td key={plan.id} className="p-3 text-center bg-gray-100">
@@ -1644,8 +1675,8 @@ export const Subscriptions: React.FC = () => {
                             const colors = getPlanColors(plan.category_type);
                             const buttonClass = colors.isVial
                               ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                              : colors.isInsurance
-                              ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                              : colors.isCardInsurance
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                               : 'bg-pink-600 hover:bg-pink-700 text-white';
                             return (
                               <td key={plan.id} className="p-3 text-center border-t border-gray-200">
@@ -1675,16 +1706,16 @@ export const Subscriptions: React.FC = () => {
                 {/* Legend - More compact */}
                 <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap justify-center gap-4 sm:gap-6 text-xs">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span className="text-gray-600">Servicios Viales</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span className="text-gray-600">Protege tu Tarjeta</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-pink-500"></span>
-                    <span className="text-gray-600">Servicios de Salud</span>
+                    <span className="text-gray-600">Protege tu Salud</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                    <span className="text-gray-600">Seguro Accidentes</span>
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span className="text-gray-600">Protege tu Ruta</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Check size={12} className="text-green-600" />

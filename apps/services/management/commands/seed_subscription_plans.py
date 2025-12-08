@@ -45,8 +45,18 @@ class Command(BaseCommand):
                 }
             )
 
-            # Deactivate any card insurance category (not a MAWDY service)
-            ServiceCategory.objects.filter(category_type='CARD_INSURANCE').update(is_active=False)
+            # Create or get card insurance category for Protege tu Tarjeta
+            card_cat, _ = ServiceCategory.objects.get_or_create(
+                category_type='CARD_INSURANCE',
+                defaults={
+                    'name': 'Protección de Tarjeta',
+                    'description': 'Protección contra fraude y robo de tarjetas',
+                    'icon': 'credit-card',
+                    'is_active': True
+                }
+            )
+            # Ensure card category is active
+            ServiceCategory.objects.filter(category_type='CARD_INSURANCE').update(is_active=True)
 
             self.stdout.write('  Created service categories')
 
@@ -54,96 +64,97 @@ class Command(BaseCommand):
             ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
             ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
 
-            # Update or create plans (SegurifAI standard pricing)
+            # Update or create plans (PAQ x MAPFRE x SegurifAI pricing - Dec 2025)
             plans_data = [
-                # ROADSIDE ASSISTANCE PLAN (AP Muerte Accidental + Asistencia Vial)
+                # PROTEGE TU TARJETA (PRF - Card Protection) - Q34.99
                 {
-                    'category': roadside_cat,
-                    'name': 'Plan Asistencia Vial',
-                    'description': 'Plan de asistencia vial con seguro de muerte accidental',
-                    'price_monthly': 36.88,
-                    'price_yearly': 442.56,
+                    'category': card_cat,
+                    'name': 'Protege tu Tarjeta',
+                    'description': 'Protección contra fraude, clonación y robo de tarjetas',
+                    'price_monthly': 34.99,
+                    'price_yearly': 419.88,
                     'duration_days': 30,
                     'features': [
                         'Seguro Muerte Accidental Q3,000.00',
-                        'Grua del Vehiculo (3/ano, limite $150 USD)',
-                        'Abasto de Combustible (3/ano, limite combinado $150)',
-                        'Cambio de Neumaticos (3/ano, limite combinado $150)',
-                        'Paso de Corriente (3/ano, limite combinado $150)',
-                        'Emergencia de Cerrajeria (3/ano, limite combinado $150)',
-                        'Servicio de Ambulancia por Accidente (1/ano, $100 USD)',
-                        'Servicio de Conductor Profesional (1/ano, $60 USD)',
-                        'Taxi al Aeropuerto (1/ano, $60 USD)',
-                        'Asistencia Legal Telefonica (1/ano, $200 USD)',
-                        'Apoyo Economico Sala Emergencia (1/ano, $1,000 USD)',
-                        'Rayos X (1/ano, $300 USD)',
-                        'Descuentos en Red de Proveedores (hasta 20%)',
-                        'Asistente Telefonico Cotizacion Repuestos',
-                        'Asistente Telefonico Referencias Medicas'
+                        'Tarjetas Perdidas o Robadas (48hrs para notificar)',
+                        'Protección contra Clonación de Tarjeta',
+                        'Protección contra Falsificación de Banda Magnética',
+                        'Cobertura Digital: Ingeniería Social',
+                        'Cobertura Digital: Phishing',
+                        'Cobertura Digital: Robo de Identidad',
+                        'Cobertura Digital: Suplantación (Spoofing)',
+                        'Cobertura Digital: Vishing',
+                        'Cobertura compras fraudulentas por internet',
+                        'Asistencias MAWDY incluidas'
                     ],
                     'max_requests_per_month': 3,
-                    'coverage_amount': 2920.00,  # Sum of all USD limits
-                    'is_active': True,
-                    'is_featured': True
-                },
-
-                # HEALTH ASSISTANCE PLAN (AP Muerte Accidental + Asistencia Medica)
-                {
-                    'category': health_cat,
-                    'name': 'Plan Asistencia Médica',
-                    'description': 'Plan de asistencia medica con seguro de muerte accidental',
-                    'price_monthly': 34.26,
-                    'price_yearly': 411.12,
-                    'duration_days': 30,
-                    'features': [
-                        'Seguro Muerte Accidental Q3,000.00',
-                        'Orientacion Medica Telefonica (Ilimitado)',
-                        'Conexion con Especialistas de la Red (Ilimitado)',
-                        'Consulta Presencial Medico/Ginecologo/Pediatra (3/ano, $150 USD)',
-                        'Coordinacion de Medicamentos a Domicilio (Ilimitado)',
-                        'Cuidados Post Operatorios Enfermera (1/ano, $100 USD)',
-                        'Envio Articulos Aseo por Hospitalizacion (1/ano, $100 USD)',
-                        'Examenes Lab: Heces, Orina, Hematologia (2/ano, $100 USD)',
-                        'Examenes: Papanicolau/Mamografia/Antigeno (2/ano, $100 USD)',
-                        'Nutricionista Video Consulta (4/ano, $150 USD)',
-                        'Psicologia Video Consulta (4/ano, $150 USD)',
-                        'Servicio de Mensajeria por Hospitalizacion (2/ano, $60 USD)',
-                        'Taxi Familiar por Hospitalizacion (2/ano, $100 USD)',
-                        'Traslado en Ambulancia por Accidente (2/ano, $150 USD)',
-                        'Taxi al Domicilio tras Alta (1/ano, $100 USD)'
-                    ],
-                    'max_requests_per_month': 3,
-                    'coverage_amount': 1360.00,  # Sum of all USD limits
-                    'is_active': True,
-                    'is_featured': True
-                },
-
-                # BASE PERSONAL ACCIDENT INSURANCE (Seguro de Accidentes Personales)
-                {
-                    'category': insurance_cat,
-                    'name': 'Plan Seguro Accidentes',
-                    'description': 'Seguro basico de accidentes personales con cobertura de muerte accidental',
-                    'price_monthly': 4.12,
-                    'price_yearly': 49.44,
-                    'duration_days': 30,
-                    'features': [
-                        'Muerte Accidental Q3,000.00',
-                        'Cobertura por explosiones y descargas electricas',
-                        'Cobertura por quemaduras (fuego, vapor, acidos)',
-                        'Cobertura por asfixia accidental',
-                        'Cobertura por infecciones de accidentes cubiertos',
-                        'Cobertura por mordeduras de animales',
-                        'Cobertura por fenomenos naturales',
-                        'Cobertura por intoxicacion alimentaria',
-                        'Cobertura en legitima defensa',
-                        'Cobertura en accidentes aereos comerciales',
-                        'Edad de ingreso: 18-61 anos',
-                        'Edad de terminacion: 70 anos'
-                    ],
-                    'max_requests_per_month': 1,
-                    'coverage_amount': 3000.00,  # Q3,000 death benefit
+                    'coverage_amount': 3000.00,
                     'is_active': True,
                     'is_featured': False
+                },
+
+                # PROTEGE TU SALUD (Asistencia Médica) - Q34.99
+                {
+                    'category': health_cat,
+                    'name': 'Protege tu Salud',
+                    'description': 'Asistencia médica completa con seguro de muerte accidental',
+                    'price_monthly': 34.99,
+                    'price_yearly': 419.88,
+                    'duration_days': 30,
+                    'features': [
+                        'Seguro Muerte Accidental Q3,000.00',
+                        'Orientación Médica Telefónica (Ilimitado)',
+                        'Conexión con Especialistas de la Red (Ilimitado)',
+                        'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, $150 USD)',
+                        'Coordinación de Medicamentos a Domicilio (Ilimitado)',
+                        'Cuidados Post Operatorios Enfermera (1/año, $100 USD)',
+                        'Envío Artículos Aseo por Hospitalización (1/año, $100 USD)',
+                        'Exámenes Lab: Heces, Orina, Hematología (2/año, $100 USD)',
+                        'Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, $100 USD)',
+                        'Nutricionista Video Consulta Familiar (4/año, $150 USD)',
+                        'Psicología Video Consulta Familiar (4/año, $150 USD)',
+                        'Servicio de Mensajería por Hospitalización (2/año, $60 USD)',
+                        'Taxi Familiar por Hospitalización (2/año, $100 USD)',
+                        'Traslado en Ambulancia por Accidente (2/año, $150 USD)',
+                        'Taxi al Domicilio tras Alta (1/año, $100 USD)',
+                        'Asistencias MAWDY incluidas'
+                    ],
+                    'max_requests_per_month': 3,
+                    'coverage_amount': 1360.00,
+                    'is_active': True,
+                    'is_featured': True
+                },
+
+                # PROTEGE TU RUTA (Asistencia Vial) - Q39.99
+                {
+                    'category': roadside_cat,
+                    'name': 'Protege tu Ruta',
+                    'description': 'Asistencia vial completa con seguro de muerte accidental',
+                    'price_monthly': 39.99,
+                    'price_yearly': 479.88,
+                    'duration_days': 30,
+                    'features': [
+                        'Seguro Muerte Accidental Q3,000.00',
+                        'Grúa del Vehículo (3/año, $150 USD)',
+                        'Abasto de Combustible 1 galón (3/año, $150 USD combinado)',
+                        'Cambio de Neumáticos (3/año, $150 USD combinado)',
+                        'Paso de Corriente (3/año, $150 USD combinado)',
+                        'Emergencia de Cerrajería (3/año, $150 USD combinado)',
+                        'Servicio de Ambulancia por Accidente (1/año, $100 USD)',
+                        'Servicio de Conductor Profesional (1/año, $60 USD)',
+                        'Taxi al Aeropuerto (1/año, $60 USD)',
+                        'Asistencia Legal Telefónica (1/año, $200 USD)',
+                        'Apoyo Económico Sala Emergencia (1/año, $1,000 USD)',
+                        'Rayos X (1/año, $300 USD, hasta 20% descuento)',
+                        'Descuentos en Red de Proveedores (hasta 20%)',
+                        'Asistente Telefónico Cotización Repuestos',
+                        'Asistente Telefónico Referencias Médicas por Accidente',
+                        'Asistencias MAWDY incluidas'
+                    ],
+                    'max_requests_per_month': 3,
+                    'coverage_amount': 2920.00,
+                    'is_active': True,
+                    'is_featured': True
                 }
             ]
 
