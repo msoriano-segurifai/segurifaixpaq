@@ -7,7 +7,7 @@ import {
   Navigation, CheckCircle, Loader2, Clock, Car, AlertCircle,
   Fuel, Key, Zap, Ambulance, User, Plane, Scale, LifeBuoy,
   Stethoscope, Pill, Activity, TestTube, Apple, Brain,
-  Package, HeartPulse, Lock, X
+  Package, HeartPulse, Lock, X, CreditCard, Users
 } from 'lucide-react';
 
 // Use Car icon as Taxi alias since Taxi is not available in this version
@@ -30,13 +30,14 @@ interface SegurifAIService {
   name: string;
   description: string;
   icon: React.ReactNode;
-  planType: 'DRIVE' | 'HEALTH';
+  planType: 'DRIVE' | 'HEALTH' | 'CARD';
   limitPerYear: number | null; // null = unlimited
-  coverageAmount: number; // in USD
+  coverageAmount: number; // in GTQ
   requiresVehicleInfo?: boolean;
   requiresHealthInfo?: boolean;
+  requiresCardInfo?: boolean;
   requiresSpecificForm?: boolean;
-  formType?: 'vehicle' | 'health' | 'legal' | 'taxi' | 'generic' | 'consultation' | 'video_consultation' | 'lab_exam' | 'medication' | 'delivery';
+  formType?: 'vehicle' | 'health' | 'legal' | 'taxi' | 'generic' | 'consultation' | 'video_consultation' | 'lab_exam' | 'medication' | 'delivery' | 'card_claim';
   // Service flow categorization
   serviceFlow: ServiceFlowType;
   // Follow-up questions for AI chatbot
@@ -212,8 +213,20 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     serviceFlow: 'CALLBACK',
     followUpQuestions: ['¿Qué tipo de especialista necesita?', '¿Tiene diagnóstico previo?']
   },
+  {
+    id: 'accidental_death_drive',
+    name: 'Seguro Muerte Accidental',
+    description: 'Cobertura de Q3,000 por fallecimiento accidental del titular',
+    icon: <Shield className="text-gray-600" size={24} />,
+    planType: 'DRIVE',
+    limitPerYear: 1,
+    coverageAmount: 3000,
+    formType: 'generic',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
+  },
 
-  // === PLAN ASISTENCIA MEDICA (SegurifAI) - Q34.26-36.31/mes ===
+  // === PLAN ASISTENCIA MEDICA (SegurifAI) - Q34.99/mes ===
   // CALLBACK SERVICES
   {
     id: 'medical_orientation',
@@ -396,6 +409,150 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     serviceFlow: 'SCHEDULED',
     followUpQuestions: ['¿De qué hospital?', '¿Fecha y hora de alta?', '¿Necesita silla de ruedas?']
   },
+  {
+    id: 'accidental_death_health',
+    name: 'Seguro Muerte Accidental',
+    description: 'Cobertura de Q3,000 por fallecimiento accidental del titular',
+    icon: <Shield className="text-gray-600" size={24} />,
+    planType: 'HEALTH',
+    limitPerYear: 1,
+    coverageAmount: 3000,
+    formType: 'generic',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
+  },
+
+  // === PLAN PROTEGE TU TARJETA (SegurifAI) - Q34.99/mes ===
+  // CLAIM SERVICES - Card fraud protection and digital security
+  {
+    id: 'card_lost_stolen',
+    name: 'Tarjeta Perdida o Robada',
+    description: 'Reporte y protección por tarjeta perdida o robada (48hrs para notificar)',
+    icon: <CreditCard className="text-red-500" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Cuándo se dio cuenta de la pérdida?', '¿Ya bloqueó la tarjeta?', '¿Hubo transacciones no autorizadas?']
+  },
+  {
+    id: 'card_cloning',
+    name: 'Clonación de Tarjeta',
+    description: 'Reclamo por transacciones fraudulentas debido a clonación de tarjeta',
+    icon: <Shield className="text-orange-500" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Detectó transacciones sospechosas?', '¿Aún tiene la tarjeta física?', '¿Cuándo fue la última transacción legítima?']
+  },
+  {
+    id: 'magnetic_band_fraud',
+    name: 'Falsificación Banda Magnética',
+    description: 'Protección contra adulteración o falsificación de banda magnética',
+    icon: <Shield className="text-amber-500" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Dónde usó la tarjeta por última vez?', '¿Notó algo sospechoso en el terminal?']
+  },
+  {
+    id: 'social_engineering',
+    name: 'Fraude por Ingeniería Social',
+    description: 'Cobertura contra fraude por manipulación o engaño (llamadas, mensajes falsos)',
+    icon: <Users className="text-purple-500" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Cómo lo contactaron?', '¿Qué información proporcionó?', '¿Tiene capturas de pantalla o grabaciones?']
+  },
+  {
+    id: 'phishing_fraud',
+    name: 'Fraude por Phishing',
+    description: 'Protección contra sitios web o correos falsos que roban datos',
+    icon: <AlertTriangle className="text-red-600" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Tiene el correo o URL sospechosa?', '¿Ingresó datos en el sitio falso?', '¿Cuándo ocurrió?']
+  },
+  {
+    id: 'identity_theft',
+    name: 'Robo de Identidad Digital',
+    description: 'Cobertura por suplantación de identidad y uso fraudulento de datos personales',
+    icon: <Lock className="text-gray-700" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Qué tipo de datos fueron comprometidos?', '¿Se abrieron cuentas a su nombre?', '¿Ya presentó denuncia?']
+  },
+  {
+    id: 'spoofing_fraud',
+    name: 'Suplantación (Spoofing)',
+    description: 'Fraude por suplantación de identidad de instituciones o empresas',
+    icon: <AlertCircle className="text-orange-600" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Qué institución supuestamente lo contactó?', '¿Por qué medio (llamada, SMS, email)?', '¿Qué le solicitaron?']
+  },
+  {
+    id: 'vishing_fraud',
+    name: 'Fraude Telefónico (Vishing)',
+    description: 'Protección contra estafas telefónicas que solicitan datos de tarjeta',
+    icon: <Phone className="text-red-500" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿De qué número lo llamaron?', '¿Qué información le solicitaron?', '¿Proporcionó algún dato?']
+  },
+  {
+    id: 'online_purchase_fraud',
+    name: 'Compras Fraudulentas por Internet',
+    description: 'Cobertura por compras no autorizadas realizadas en línea con su tarjeta',
+    icon: <CreditCard className="text-blue-600" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 3,
+    coverageAmount: 3000,
+    requiresCardInfo: true,
+    formType: 'card_claim',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿En qué sitio se realizó la compra?', '¿Cuál fue el monto?', '¿Ya contactó a su banco?']
+  },
+  {
+    id: 'accidental_death_card',
+    name: 'Seguro Muerte Accidental',
+    description: 'Cobertura de Q3,000 por fallecimiento accidental del titular',
+    icon: <Shield className="text-gray-600" size={24} />,
+    planType: 'CARD',
+    limitPerYear: 1,
+    coverageAmount: 3000,
+    formType: 'generic',
+    serviceFlow: 'CLAIM',
+    followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
+  },
 ];
 
 export const RequestAssistance: React.FC = () => {
@@ -413,13 +570,29 @@ export const RequestAssistance: React.FC = () => {
   const [locating, setLocating] = useState(false);
 
   // New state for SegurifAI service selection
-  const [selectedPlanType, setSelectedPlanType] = useState<'DRIVE' | 'HEALTH' | null>(null);
+  const [selectedPlanType, setSelectedPlanType] = useState<'DRIVE' | 'HEALTH' | 'CARD' | null>(null);
   const [selectedService, setSelectedService] = useState<SegurifAIService | null>(null);
   const [validatingService, setValidatingService] = useState(false);
   const [serviceValidation, setServiceValidation] = useState<any>(null);
 
   // User profile state for auto-fill
   const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Card claim form data (for Protege tu Tarjeta services)
+  const [cardClaimFormData, setCardClaimFormData] = useState({
+    card_last_four: '',
+    card_issuer: '', // Bank/issuer name
+    incident_type: '', // lost, stolen, cloning, phishing, etc.
+    incident_date: '',
+    incident_description: '',
+    fraudulent_amount: '',
+    has_blocked_card: false,
+    has_police_report: false,
+    police_report_number: '',
+    suspicious_transactions: '',
+    contact_method: '', // For social engineering/vishing
+    additional_evidence: '',
+  });
 
   // Additional form data for specific service types
   const [taxiFormData, setTaxiFormData] = useState({
@@ -729,39 +902,56 @@ export const RequestAssistance: React.FC = () => {
            selectedCat?.category_type?.toUpperCase() === 'MEDICAL';
   };
 
+  const isCardAssistance = () => {
+    // Check based on selected SegurifAI service
+    if (selectedService) {
+      return selectedService.requiresCardInfo === true;
+    }
+    const selectedCat = categories.find(c => c.id === selectedCategory);
+    return selectedCat?.category_type?.toUpperCase() === 'CARD_INSURANCE';
+  };
+
   // Check if user has a specific plan type subscription
-  // SegurifAI Dec 2025: Protege tu Ruta (vial) or Protege tu Salud (health)
-  const hasPlanType = (planType: 'DRIVE' | 'HEALTH'): boolean => {
-    const keywords = planType === 'DRIVE'
-      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta']
-      : ['health', 'salud', 'medical', 'medica', 'protege tu salud'];
+  // SegurifAI Dec 2025: Protege tu Ruta (vial), Protege tu Salud (health), Protege tu Tarjeta (card)
+  const hasPlanType = (planType: 'DRIVE' | 'HEALTH' | 'CARD'): boolean => {
+    const keywordsMap: Record<string, string[]> = {
+      'DRIVE': ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta'],
+      'HEALTH': ['health', 'salud', 'medical', 'medica', 'protege tu salud'],
+      'CARD': ['card', 'tarjeta', 'card_insurance', 'protege tu tarjeta', 'prf'],
+    };
+    const keywords = keywordsMap[planType] || [];
 
     return userSubscriptions.some(sub => {
       if (sub.status !== 'ACTIVE') return false;
       const planName = (sub.plan_name || sub.plan?.name || '').toLowerCase();
-      const category = (sub.category || sub.plan?.category?.name || '').toLowerCase();
-      return keywords.some(k => planName.includes(k) || category.includes(k));
+      const category = (sub.plan_category || sub.category || sub.plan?.category?.name || '').toLowerCase();
+      const categoryType = (sub.plan?.category?.category_type || '').toLowerCase();
+      return keywords.some(k => planName.includes(k) || category.includes(k) || categoryType.includes(k));
     });
   };
 
   // Get available services based on user's subscriptions
-  const getAvailableServices = (planType: 'DRIVE' | 'HEALTH'): SegurifAIService[] => {
+  const getAvailableServices = (planType: 'DRIVE' | 'HEALTH' | 'CARD'): SegurifAIService[] => {
     if (!hasPlanType(planType)) return [];
     return SEGURIFAI_SERVICES.filter(s => s.planType === planType);
   };
 
   // Get the subscription that matches a plan type
-  // SegurifAI Dec 2025: Protege tu Ruta (vial) or Protege tu Salud (health)
-  const getMatchingSubscription = (planType: 'DRIVE' | 'HEALTH') => {
-    const keywords = planType === 'DRIVE'
-      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta']
-      : ['health', 'salud', 'medical', 'medica', 'protege tu salud'];
+  // SegurifAI Dec 2025: Protege tu Ruta (vial), Protege tu Salud (health), Protege tu Tarjeta (card)
+  const getMatchingSubscription = (planType: 'DRIVE' | 'HEALTH' | 'CARD') => {
+    const keywordsMap: Record<string, string[]> = {
+      'DRIVE': ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta'],
+      'HEALTH': ['health', 'salud', 'medical', 'medica', 'protege tu salud'],
+      'CARD': ['card', 'tarjeta', 'card_insurance', 'protege tu tarjeta', 'prf'],
+    };
+    const keywords = keywordsMap[planType] || [];
 
     return userSubscriptions.find(sub => {
       if (sub.status !== 'ACTIVE') return false;
       const planName = (sub.plan_name || sub.plan?.name || '').toLowerCase();
-      const category = (sub.category || sub.plan?.category?.name || '').toLowerCase();
-      return keywords.some(k => planName.includes(k) || category.includes(k));
+      const category = (sub.plan_category || sub.category || sub.plan?.category?.name || '').toLowerCase();
+      const categoryType = (sub.plan?.category?.category_type || '').toLowerCase();
+      return keywords.some(k => planName.includes(k) || category.includes(k) || categoryType.includes(k));
     });
   };
 
@@ -872,7 +1062,7 @@ export const RequestAssistance: React.FC = () => {
       setServiceValidation(response.data);
 
       if (response.data.validation_status === 'APPROVED' || response.data.validation_status === 'PENDING_REVIEW') {
-        setStep(isRoadsideAssistance() || isHealthAssistance() ? 4 : 3);
+        setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3));
       }
     } catch (error: any) {
       console.error('Service validation error:', error);
@@ -883,13 +1073,13 @@ export const RequestAssistance: React.FC = () => {
           validation_message: 'Servicio validado automáticamente',
           auto_approved: true,
         });
-        setStep(isRoadsideAssistance() || isHealthAssistance() ? 4 : 3);
+        setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3));
       } else {
         setServiceValidation({
           validation_status: 'PENDING_REVIEW',
           validation_message: 'Tu solicitud será revisada por un agente SegurifAI',
         });
-        setStep(isRoadsideAssistance() || isHealthAssistance() ? 4 : 3);
+        setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3));
       }
     } finally {
       setValidatingService(false);
@@ -899,7 +1089,7 @@ export const RequestAssistance: React.FC = () => {
   // Check if service requires specific form (not vehicle or health questionnaire)
   const requiresSpecificForm = () => {
     if (!selectedService) return false;
-    return ['taxi', 'legal', 'generic', 'consultation', 'video_consultation', 'lab_exam', 'medication', 'delivery'].includes(selectedService.formType || '');
+    return ['taxi', 'legal', 'generic', 'consultation', 'video_consultation', 'lab_exam', 'medication', 'delivery', 'card_claim'].includes(selectedService.formType || '');
   };
 
   // Check if service requires location step (IMMEDIATE services need location, others handle it in their own forms)
@@ -1140,6 +1330,26 @@ export const RequestAssistance: React.FC = () => {
         };
       }
 
+      // Add card claim info if card assistance (Protege tu Tarjeta)
+      if (isCardAssistance()) {
+        requestData.card_claim_info = {
+          card_last_four: cardClaimFormData.card_last_four,
+          card_issuer: cardClaimFormData.card_issuer,
+          incident_type: cardClaimFormData.incident_type,
+          incident_date: cardClaimFormData.incident_date,
+          incident_description: cardClaimFormData.incident_description,
+          fraudulent_amount: cardClaimFormData.fraudulent_amount ? parseFloat(cardClaimFormData.fraudulent_amount) : null,
+          has_blocked_card: cardClaimFormData.has_blocked_card,
+          has_police_report: cardClaimFormData.has_police_report,
+          police_report_number: cardClaimFormData.police_report_number,
+          suspicious_transactions: cardClaimFormData.suspicious_transactions,
+          contact_method: cardClaimFormData.contact_method,
+          additional_evidence: cardClaimFormData.additional_evidence,
+          validation_status: serviceValidation?.validation_status,
+          validation_id: serviceValidation?.id,
+        };
+      }
+
       // Add service-specific validation if available
       if (serviceValidation) {
         requestData.service_validation = {
@@ -1214,8 +1424,9 @@ export const RequestAssistance: React.FC = () => {
             { num: 2, label: 'Ubicación' },
             ...(isRoadsideAssistance() ? [{ num: 3, label: 'Vehículo' }] : []),
             ...(isHealthAssistance() ? [{ num: 3, label: 'Salud' }] : []),
-            { num: isRoadsideAssistance() || isHealthAssistance() ? 4 : 3, label: 'Detalles' },
-            { num: isRoadsideAssistance() || isHealthAssistance() ? 5 : 4, label: 'Confirmar' }
+            ...(isCardAssistance() ? [{ num: 3, label: 'Tarjeta' }] : []),
+            { num: isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3), label: 'Detalles' },
+            { num: isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 5 : (requiresSpecificForm() ? 5 : 4), label: 'Confirmar' }
           ].map((s, idx, arr) => (
             <React.Fragment key={s.num}>
               <div className="flex flex-col items-center">
@@ -1242,7 +1453,7 @@ export const RequestAssistance: React.FC = () => {
                 <h2 className="text-lg font-bold mb-2">¿Qué tipo de asistencia necesitas?</h2>
                 <p className="text-sm text-gray-500 mb-4">Selecciona el tipo de plan para ver los servicios disponibles</p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Protege tu Ruta (Vial) */}
                   <button
                     onClick={() => hasPlanType('DRIVE') && setSelectedPlanType('DRIVE')}
@@ -1302,10 +1513,40 @@ export const RequestAssistance: React.FC = () => {
                       )}
                     </div>
                   </button>
+
+                  {/* Protege tu Tarjeta (Card Protection) */}
+                  <button
+                    onClick={() => hasPlanType('CARD') && setSelectedPlanType('CARD')}
+                    disabled={!hasPlanType('CARD')}
+                    className={`p-5 rounded-xl border-2 transition-all text-left ${
+                      hasPlanType('CARD')
+                        ? 'border-green-200 hover:border-green-400 hover:bg-green-50 cursor-pointer'
+                        : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-3 bg-green-100 rounded-xl">
+                        <CreditCard className="text-green-600" size={28} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg">Protege tu Tarjeta</h3>
+                        <p className="text-xs text-gray-500">Protección Digital</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">Fraude, clonación, phishing, robo de identidad y más...</p>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">10 servicios</span>
+                      {hasPlanType('CARD') ? (
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">Activo</span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">Sin suscripción</span>
+                      )}
+                    </div>
+                  </button>
                 </div>
 
                 {/* No subscriptions warning */}
-                {!hasPlanType('DRIVE') && !hasPlanType('HEALTH') && (
+                {!hasPlanType('DRIVE') && !hasPlanType('HEALTH') && !hasPlanType('CARD') && (
                   <div className="mt-4 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
                     <div className="flex items-start gap-3">
                       <AlertTriangle className="text-yellow-600 flex-shrink-0" size={24} />
@@ -1337,15 +1578,23 @@ export const RequestAssistance: React.FC = () => {
                     >
                       <X className="text-gray-500" size={20} />
                     </button>
-                    <div className={`p-2 rounded-lg ${selectedPlanType === 'DRIVE' ? 'bg-red-100' : 'bg-pink-100'}`}>
+                    <div className={`p-2 rounded-lg ${
+                      selectedPlanType === 'DRIVE' ? 'bg-blue-100' :
+                      selectedPlanType === 'HEALTH' ? 'bg-pink-100' : 'bg-green-100'
+                    }`}>
                       {selectedPlanType === 'DRIVE' ? (
-                        <Truck className="text-red-600" size={24} />
-                      ) : (
+                        <Truck className="text-blue-600" size={24} />
+                      ) : selectedPlanType === 'HEALTH' ? (
                         <Heart className="text-pink-600" size={24} />
+                      ) : (
+                        <CreditCard className="text-green-600" size={24} />
                       )}
                     </div>
                     <div>
-                      <h2 className="font-bold">{selectedPlanType === 'DRIVE' ? 'Protege tu Ruta' : 'Protege tu Salud'}</h2>
+                      <h2 className="font-bold">{
+                        selectedPlanType === 'DRIVE' ? 'Protege tu Ruta' :
+                        selectedPlanType === 'HEALTH' ? 'Protege tu Salud' : 'Protege tu Tarjeta'
+                      }</h2>
                       <p className="text-xs text-gray-500">Selecciona un servicio</p>
                     </div>
                   </div>
@@ -1360,22 +1609,28 @@ export const RequestAssistance: React.FC = () => {
                         // Use the exact service name for tracking display (no prefix)
                         setFormData(prev => ({ ...prev, title: service.name }));
                         // Also set the category based on plan type for backend compatibility
+                        const categoryTypeMap: Record<string, string> = {
+                          'DRIVE': 'ROADSIDE',
+                          'HEALTH': 'HEALTH',
+                          'CARD': 'CARD_INSURANCE'
+                        };
+                        const targetCategoryType = categoryTypeMap[selectedPlanType || ''];
                         const matchingCat = categories.find(c =>
-                          selectedPlanType === 'DRIVE'
-                            ? c.category_type?.toUpperCase() === 'ROADSIDE'
-                            : c.category_type?.toUpperCase() === 'HEALTH'
+                          c.category_type?.toUpperCase() === targetCategoryType
                         );
                         if (matchingCat) setSelectedCategory(matchingCat.id);
                       }}
                       className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
                         selectedService?.id === service.id
-                          ? selectedPlanType === 'DRIVE' ? 'border-red-500 bg-red-50' : 'border-pink-500 bg-pink-50'
+                          ? selectedPlanType === 'DRIVE' ? 'border-blue-500 bg-blue-50' :
+                            selectedPlanType === 'HEALTH' ? 'border-pink-500 bg-pink-50' : 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
                       <div className={`p-2 rounded-lg flex-shrink-0 ${
                         selectedService?.id === service.id
-                          ? selectedPlanType === 'DRIVE' ? 'bg-red-100' : 'bg-pink-100'
+                          ? selectedPlanType === 'DRIVE' ? 'bg-blue-100' :
+                            selectedPlanType === 'HEALTH' ? 'bg-pink-100' : 'bg-green-100'
                           : 'bg-gray-100'
                       }`}>
                         {service.icon}
@@ -3930,8 +4185,272 @@ export const RequestAssistance: React.FC = () => {
           </div>
         )}
 
+        {/* Step 3: Card Claim Form (for Protege tu Tarjeta services) */}
+        {step === 3 && selectedService?.formType === 'card_claim' && !isRoadsideAssistance() && !isHealthAssistance() && (
+          <div className="card">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-3 bg-green-100 rounded-xl">
+                  <CreditCard className="text-green-600" size={28} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold">Reporte de Incidente - Protege tu Tarjeta</h2>
+                  <p className="text-sm text-gray-600">Completa la información para procesar tu reclamo</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Incident Type Selection */}
+              <div>
+                <label className="label">Tipo de Incidente *</label>
+                <select
+                  value={cardClaimFormData.incident_type}
+                  onChange={(e) => setCardClaimFormData(prev => ({ ...prev, incident_type: e.target.value }))}
+                  className="input"
+                >
+                  <option value="">Selecciona el tipo de incidente</option>
+                  <option value="lost">Tarjeta Perdida</option>
+                  <option value="stolen">Tarjeta Robada</option>
+                  <option value="cloning">Clonación de Tarjeta</option>
+                  <option value="magnetic_fraud">Falsificación de Banda Magnética</option>
+                  <option value="social_engineering">Ingeniería Social</option>
+                  <option value="phishing">Phishing</option>
+                  <option value="identity_theft">Robo de Identidad</option>
+                  <option value="spoofing">Suplantación de Identidad (Spoofing)</option>
+                  <option value="vishing">Vishing (Fraude Telefónico)</option>
+                  <option value="online_fraud">Compra Fraudulenta por Internet</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Últimos 4 Dígitos de la Tarjeta *</label>
+                  <input
+                    type="text"
+                    value={cardClaimFormData.card_last_four}
+                    onChange={(e) => setCardClaimFormData(prev => ({ ...prev, card_last_four: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
+                    className="input"
+                    placeholder="1234"
+                    maxLength={4}
+                  />
+                </div>
+                <div>
+                  <label className="label">Emisor/Banco *</label>
+                  <input
+                    type="text"
+                    value={cardClaimFormData.card_issuer}
+                    onChange={(e) => setCardClaimFormData(prev => ({ ...prev, card_issuer: e.target.value }))}
+                    className="input"
+                    placeholder="Ej: Banrural, BI, BAC"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="label">Fecha del Incidente *</label>
+                <input
+                  type="date"
+                  value={cardClaimFormData.incident_date}
+                  onChange={(e) => setCardClaimFormData(prev => ({ ...prev, incident_date: e.target.value }))}
+                  className="input"
+                  max={new Date().toISOString().split('T')[0]}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  <AlertTriangle className="inline text-orange-500 mr-1" size={12} />
+                  Recuerda: Para tarjetas perdidas/robadas tienes 48 horas desde el incidente para notificar
+                </p>
+              </div>
+
+              <div>
+                <label className="label">Descripción del Incidente *</label>
+                <textarea
+                  value={cardClaimFormData.incident_description}
+                  onChange={(e) => setCardClaimFormData(prev => ({ ...prev, incident_description: e.target.value }))}
+                  className="input min-h-[100px]"
+                  placeholder="Describe cómo ocurrió el incidente, qué sucedió, y cualquier detalle relevante..."
+                />
+              </div>
+
+              {/* Fraud Amount - Only show for fraud-related incidents */}
+              {['cloning', 'magnetic_fraud', 'social_engineering', 'phishing', 'identity_theft', 'spoofing', 'vishing', 'online_fraud', 'stolen'].includes(cardClaimFormData.incident_type) && (
+                <div>
+                  <label className="label">Monto Fraudulento (si aplica)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">Q</span>
+                    <input
+                      type="number"
+                      value={cardClaimFormData.fraudulent_amount}
+                      onChange={(e) => setCardClaimFormData(prev => ({ ...prev, fraudulent_amount: e.target.value }))}
+                      className="input pl-8"
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Suspicious Transactions */}
+              {['cloning', 'magnetic_fraud', 'online_fraud', 'stolen'].includes(cardClaimFormData.incident_type) && (
+                <div>
+                  <label className="label">Transacciones Sospechosas</label>
+                  <textarea
+                    value={cardClaimFormData.suspicious_transactions}
+                    onChange={(e) => setCardClaimFormData(prev => ({ ...prev, suspicious_transactions: e.target.value }))}
+                    className="input min-h-[80px]"
+                    placeholder="Lista las transacciones no reconocidas: fecha, monto, comercio..."
+                  />
+                </div>
+              )}
+
+              {/* Contact Method - For social engineering/vishing */}
+              {['social_engineering', 'phishing', 'vishing', 'spoofing'].includes(cardClaimFormData.incident_type) && (
+                <div>
+                  <label className="label">Método de Contacto del Fraude</label>
+                  <input
+                    type="text"
+                    value={cardClaimFormData.contact_method}
+                    onChange={(e) => setCardClaimFormData(prev => ({ ...prev, contact_method: e.target.value }))}
+                    className="input"
+                    placeholder="Ej: Llamada telefónica, correo electrónico, SMS, sitio web falso..."
+                  />
+                </div>
+              )}
+
+              {/* Card Status */}
+              <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                <h3 className="font-bold text-green-900 mb-3 flex items-center gap-2">
+                  <Shield className="text-green-600" size={18} />
+                  Estado de la Tarjeta y Denuncia
+                </h3>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={cardClaimFormData.has_blocked_card}
+                      onChange={(e) => setCardClaimFormData(prev => ({ ...prev, has_blocked_card: e.target.checked }))}
+                      className="w-5 h-5 text-green-600 rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Ya bloqueé la tarjeta con el banco</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={cardClaimFormData.has_police_report}
+                      onChange={(e) => setCardClaimFormData(prev => ({ ...prev, has_police_report: e.target.checked }))}
+                      className="w-5 h-5 text-green-600 rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Realicé denuncia policial (recomendado para robos)</span>
+                  </label>
+                  {cardClaimFormData.has_police_report && (
+                    <div className="ml-8">
+                      <label className="text-sm text-gray-600 block mb-1">Número de Denuncia</label>
+                      <input
+                        type="text"
+                        value={cardClaimFormData.police_report_number}
+                        onChange={(e) => setCardClaimFormData(prev => ({ ...prev, police_report_number: e.target.value }))}
+                        className="input"
+                        placeholder="Ej: DEN-2024-123456"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Additional Evidence */}
+              <div>
+                <label className="label">Evidencia Adicional (opcional)</label>
+                <textarea
+                  value={cardClaimFormData.additional_evidence}
+                  onChange={(e) => setCardClaimFormData(prev => ({ ...prev, additional_evidence: e.target.value }))}
+                  className="input min-h-[80px]"
+                  placeholder="¿Tienes capturas de pantalla, correos, o alguna otra evidencia? Descríbela aquí..."
+                />
+              </div>
+
+              {/* Coverage Info */}
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <h3 className="font-bold text-blue-900 mb-2">Cobertura Protege tu Tarjeta</h3>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• <strong>Muerte Accidental:</strong> Q3,000.00</li>
+                  <li>• <strong>Tarjetas Perdidas/Robadas:</strong> Cobertura débitos 48hrs antes de notificación</li>
+                  <li>• <strong>Clonación y Fraude Digital:</strong> Phishing, vishing, robo de identidad</li>
+                  <li>• <strong>Compras Fraudulentas Online:</strong> Ingeniería social, spoofing</li>
+                </ul>
+              </div>
+
+              {/* AI Validation Result */}
+              {serviceValidation && (
+                <div className={`p-4 rounded-xl border ${
+                  serviceValidation.validation_status === 'APPROVED' ? 'bg-green-50 border-green-200' :
+                  serviceValidation.validation_status === 'PENDING_REVIEW' ? 'bg-yellow-50 border-yellow-200' :
+                  'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start gap-3">
+                    {serviceValidation.validation_status === 'APPROVED' && (
+                      <>
+                        <CheckCircle className="text-green-600 flex-shrink-0" size={24} />
+                        <div>
+                          <p className="font-bold text-green-900">✓ Reclamo Pre-Aprobado</p>
+                          <p className="text-sm text-green-700 mt-1">{serviceValidation.validation_message || 'Tu reclamo cumple con las condiciones de cobertura.'}</p>
+                        </div>
+                      </>
+                    )}
+                    {serviceValidation.validation_status === 'PENDING_REVIEW' && (
+                      <>
+                        <AlertCircle className="text-yellow-600 flex-shrink-0" size={24} />
+                        <div>
+                          <p className="font-bold text-yellow-900">⏳ Revisión Requerida</p>
+                          <p className="text-sm text-yellow-700 mt-1">{serviceValidation.validation_message || 'Un agente de SegurifAI revisará tu caso.'}</p>
+                        </div>
+                      </>
+                    )}
+                    {serviceValidation.validation_status === 'FAILED' && (
+                      <>
+                        <AlertCircle className="text-red-600 flex-shrink-0" size={24} />
+                        <div>
+                          <p className="font-bold text-red-900">✗ Requiere Información Adicional</p>
+                          <p className="text-sm text-red-700 mt-1">{serviceValidation.validation_message}</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setStep(2)} className="btn btn-outline flex-1">Atrás</button>
+              <button
+                onClick={() => {
+                  const desc = `Reclamo ${cardClaimFormData.incident_type}: Tarjeta ****${cardClaimFormData.card_last_four} (${cardClaimFormData.card_issuer}). Fecha: ${cardClaimFormData.incident_date}. ${cardClaimFormData.incident_description}${cardClaimFormData.fraudulent_amount ? ` Monto: Q${cardClaimFormData.fraudulent_amount}` : ''}`;
+                  setFormData(prev => ({ ...prev, description: desc }));
+                  if (serviceValidation && (serviceValidation.validation_status === 'APPROVED' || serviceValidation.validation_status === 'PENDING_REVIEW')) {
+                    setStep(4);
+                  } else {
+                    validateServiceRequest();
+                  }
+                }}
+                disabled={!cardClaimFormData.incident_type || !cardClaimFormData.card_last_four || !cardClaimFormData.card_issuer || !cardClaimFormData.incident_date || !cardClaimFormData.incident_description || validatingService}
+                className="btn btn-primary flex-1 flex items-center justify-center gap-2"
+              >
+                {validatingService ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Evaluando Reclamo...
+                  </>
+                ) : serviceValidation && (serviceValidation.validation_status === 'APPROVED' || serviceValidation.validation_status === 'PENDING_REVIEW') ? (
+                  'Continuar'
+                ) : (
+                  'Evaluar Reclamo'
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Step 3/4: Details */}
-        {step === (isRoadsideAssistance() || isHealthAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3)) && (
+        {step === (isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3)) && (
           <div className="card">
             <h2 className="text-lg font-bold mb-4">Detalles de la solicitud</h2>
 
@@ -3984,13 +4503,13 @@ export const RequestAssistance: React.FC = () => {
 
             <div className="flex gap-3 mt-6">
               <button
-                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() ? 3 : (requiresSpecificForm() ? 3 : 2))}
+                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 3 : (requiresSpecificForm() ? 3 : 2))}
                 className="btn btn-outline flex-1"
               >
                 Atrás
               </button>
               <button
-                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() ? 5 : (requiresSpecificForm() ? 5 : 4))}
+                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 5 : (requiresSpecificForm() ? 5 : 4))}
                 disabled={!formData.description || !formData.phone}
                 className="btn btn-primary flex-1"
               >
@@ -4001,7 +4520,7 @@ export const RequestAssistance: React.FC = () => {
         )}
 
         {/* Step 4/5: Confirmation */}
-        {step === (isRoadsideAssistance() || isHealthAssistance() ? 5 : (requiresSpecificForm() ? 5 : 4)) && (
+        {step === (isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 5 : (requiresSpecificForm() ? 5 : 4)) && (
           <div className="card">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
               <Shield className="text-green-600" />
@@ -4013,16 +4532,19 @@ export const RequestAssistance: React.FC = () => {
               {/* SegurifAI Service Details */}
               <div className={`p-4 rounded-xl ${
                 selectedPlanType === 'DRIVE'
-                  ? 'bg-gradient-to-r from-red-50 to-orange-50'
+                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50'
                   : selectedPlanType === 'HEALTH'
                   ? 'bg-gradient-to-r from-pink-50 to-purple-50'
+                  : selectedPlanType === 'CARD'
+                  ? 'bg-gradient-to-r from-green-50 to-emerald-50'
                   : 'bg-gradient-to-r from-blue-50 to-purple-50'
               }`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-start gap-3">
                     {selectedService && (
                       <div className={`p-2 rounded-lg ${
-                        selectedPlanType === 'DRIVE' ? 'bg-red-100' : 'bg-pink-100'
+                        selectedPlanType === 'DRIVE' ? 'bg-blue-100' :
+                        selectedPlanType === 'HEALTH' ? 'bg-pink-100' : 'bg-green-100'
                       }`}>
                         {selectedService.icon}
                       </div>
@@ -4032,8 +4554,9 @@ export const RequestAssistance: React.FC = () => {
                         {selectedService?.name || categories.find(c => c.id === selectedCategory)?.name}
                       </h3>
                       <p className="text-xs text-gray-500">
-                        {selectedPlanType === 'DRIVE' ? 'Plan Drive (Vial)' :
-                         selectedPlanType === 'HEALTH' ? 'Plan Health (Salud)' :
+                        {selectedPlanType === 'DRIVE' ? 'Protege tu Ruta' :
+                         selectedPlanType === 'HEALTH' ? 'Protege tu Salud' :
+                         selectedPlanType === 'CARD' ? 'Protege tu Tarjeta' :
                          categories.find(c => c.id === selectedCategory)?.description}
                       </p>
                       <p className="text-sm text-gray-600 mt-2">{formData.description}</p>
@@ -4171,6 +4694,56 @@ export const RequestAssistance: React.FC = () => {
                 </div>
               )}
 
+              {/* Card Claim Info (if card assistance) */}
+              {isCardAssistance() && (
+                <div className="p-4 bg-white border-2 border-green-200 rounded-xl">
+                  <h4 className="font-bold mb-3 flex items-center gap-2">
+                    <CreditCard className="text-green-600" size={18} />
+                    Información del Reclamo de Tarjeta
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-gray-600">Tipo de Incidente:</span>
+                      <p className="font-medium capitalize">{cardClaimFormData.incident_type.replace(/_/g, ' ')}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Tarjeta:</span>
+                      <p className="font-medium">****{cardClaimFormData.card_last_four} ({cardClaimFormData.card_issuer})</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Fecha del Incidente:</span>
+                      <p className="font-medium">{cardClaimFormData.incident_date}</p>
+                    </div>
+                    {cardClaimFormData.fraudulent_amount && (
+                      <div>
+                        <span className="text-gray-600">Monto Fraudulento:</span>
+                        <p className="font-medium text-red-600">Q{cardClaimFormData.fraudulent_amount}</p>
+                      </div>
+                    )}
+                    <div className="col-span-2 flex flex-wrap gap-2">
+                      {cardClaimFormData.has_blocked_card && (
+                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">✓ Tarjeta Bloqueada</span>
+                      )}
+                      {cardClaimFormData.has_police_report && (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">✓ Denuncia Policial</span>
+                      )}
+                    </div>
+                    {serviceValidation && (
+                      <div className="col-span-2 mt-2">
+                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${
+                          serviceValidation.validation_status === 'APPROVED'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {serviceValidation.validation_status === 'APPROVED' && '✓ Reclamo Pre-Aprobado'}
+                          {serviceValidation.validation_status === 'PENDING_REVIEW' && '⏳ Revisión SegurifAI en proceso'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* What to Expect */}
               <div className="p-4 bg-white border-2 border-blue-200 rounded-xl">
                 <h4 className="font-bold mb-3 flex items-center gap-2">
@@ -4180,7 +4753,7 @@ export const RequestAssistance: React.FC = () => {
                 <div className="space-y-2 text-sm text-gray-700">
                   <div className="flex items-start gap-2">
                     <CheckCircle size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Técnico asignado en menos de 2 minutos</span>
+                    <span>{isCardAssistance() ? 'Tu reclamo será procesado en 24-48 horas' : 'Técnico asignado en menos de 2 minutos'}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
@@ -4210,7 +4783,7 @@ export const RequestAssistance: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex gap-3">
               <button
-                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3))}
+                onClick={() => setStep(isRoadsideAssistance() || isHealthAssistance() || isCardAssistance() ? 4 : (requiresSpecificForm() ? 4 : 3))}
                 className="btn btn-outline flex-1"
               >
                 Atrás

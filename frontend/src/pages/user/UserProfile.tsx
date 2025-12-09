@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/shared/Layout';
-import { userAPI, servicesAPI } from '../../services/api';
+import { userAPI, servicesAPI, assistanceAPI } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   User, Mail, Phone, MapPin, Calendar, Shield, Star, Edit2,
@@ -52,6 +52,16 @@ interface Subscription {
   days_remaining?: number;
   plan_price?: number;
   plan_features?: string[];
+}
+
+interface AssistanceRequest {
+  id: number;
+  title: string;
+  status: string;
+  priority: string;
+  created_at: string;
+  service_category_name?: string;
+  incident_type?: string;
 }
 
 // Plan benefits data for the details modal - SegurifAI Dec 2025 - All limits in GTQ
@@ -145,9 +155,14 @@ export const UserProfile: React.FC = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
 
+  // Recent requests state
+  const [recentRequests, setRecentRequests] = useState<AssistanceRequest[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+
   useEffect(() => {
     loadProfile();
     loadSubscriptions();
+    loadRecentRequests();
   }, []);
 
   const loadSubscriptions = async () => {
@@ -160,6 +175,44 @@ export const UserProfile: React.FC = () => {
       setSubscriptions([]);
     } finally {
       setLoadingSubscriptions(false);
+    }
+  };
+
+  const loadRecentRequests = async () => {
+    try {
+      const response = await assistanceAPI.getMyRequests();
+      const requests = response.data.requests || response.data || [];
+      // Get only the 5 most recent requests
+      setRecentRequests(requests.slice(0, 5));
+    } catch (error) {
+      console.error('Failed to load recent requests:', error);
+      setRecentRequests([]);
+    } finally {
+      setLoadingRequests(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'PENDING': return 'bg-yellow-100 text-yellow-700';
+      case 'ACCEPTED': return 'bg-blue-100 text-blue-700';
+      case 'IN_PROGRESS': return 'bg-purple-100 text-purple-700';
+      case 'COMPLETED': return 'bg-green-100 text-green-700';
+      case 'CANCELLED': return 'bg-gray-100 text-gray-700';
+      case 'REJECTED': return 'bg-red-100 text-red-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'PENDING': return 'Pendiente';
+      case 'ACCEPTED': return 'Aceptado';
+      case 'IN_PROGRESS': return 'En Progreso';
+      case 'COMPLETED': return 'Completado';
+      case 'CANCELLED': return 'Cancelado';
+      case 'REJECTED': return 'Rechazado';
+      default: return status;
     }
   };
 
@@ -604,6 +657,82 @@ export const UserProfile: React.FC = () => {
                         </button>
                       </div>
                     )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Requests Section */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2">
+              <Clock size={18} />
+              Mis Solicitudes Recientes
+            </h3>
+            <button
+              onClick={() => navigate('/app/requests')}
+              className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800"
+            >
+              Ver Todas
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          {loadingRequests ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="animate-spin text-blue-600" size={24} />
+            </div>
+          ) : recentRequests.length === 0 ? (
+            <div className="text-center py-6">
+              <Clock className="mx-auto text-gray-300 mb-3" size={48} />
+              <p className="text-gray-500 mb-4">No tienes solicitudes recientes</p>
+              <button
+                onClick={() => navigate('/app/assistance')}
+                className="btn btn-primary"
+              >
+                Solicitar Asistencia
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentRequests.map((request) => (
+                <div
+                  key={request.id}
+                  onClick={() => navigate(`/app/requests/${request.id}`)}
+                  className="p-4 rounded-xl border border-gray-200 hover:border-blue-300 cursor-pointer transition-all hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 truncate">
+                        {request.title || request.incident_type || 'Solicitud de Asistencia'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {request.service_category_name || 'Asistencia General'}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(request.created_at).toLocaleDateString('es-GT', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 ml-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                        {getStatusLabel(request.status)}
+                      </span>
+                      {request.priority && request.priority !== 'MEDIUM' && (
+                        <span className={`px-2 py-0.5 rounded text-xs ${
+                          request.priority === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                        }`}>
+                          {request.priority === 'HIGH' ? 'Alta Prioridad' : 'Baja Prioridad'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
