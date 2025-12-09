@@ -112,23 +112,6 @@ const PLAN_BENEFITS: Record<string, { price: number; benefits: string[] }> = {
       'Asistente Telefónico Referencias Médicas por Accidente',
       'Asistencias SegurifAI incluidas'
     ]
-  },
-  'Plan Seguro Accidentes': {
-    price: 4.12,
-    benefits: [
-      'Muerte Accidental Q3,000.00',
-      'Cobertura por explosiones y descargas eléctricas',
-      'Cobertura por quemaduras (fuego, vapor, ácidos)',
-      'Cobertura por asfixia accidental',
-      'Cobertura por infecciones de accidentes cubiertos',
-      'Cobertura por mordeduras de animales',
-      'Cobertura por fenómenos naturales',
-      'Cobertura por intoxicación alimentaria',
-      'Cobertura en legítima defensa',
-      'Cobertura en accidentes aéreos comerciales',
-      'Edad de ingreso: 18-61 años',
-      'Edad de terminación: 70 años'
-    ]
   }
 };
 

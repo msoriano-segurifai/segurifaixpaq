@@ -60,17 +60,10 @@ class Command(BaseCommand):
 
             self.stdout.write('  Created service categories')
 
-            # Deactivate ALL old plans - only keep new Protege tu... plans
-            ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Plan Asistencia').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Plan Seguro').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Drive').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Health').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='Combo').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='SegurifAI Asistencia').update(is_active=False)
-            ServicePlan.objects.filter(name__icontains='SegurifAI Seguro').update(is_active=False)
-            self.stdout.write('  Deactivated old plans')
+            # AGGRESSIVE: Deactivate ALL existing plans first
+            # Only the 3 new SegurifAI plans will be activated below
+            deactivated_count = ServicePlan.objects.all().update(is_active=False)
+            self.stdout.write(f'  Deactivated {deactivated_count} existing plans')
 
             # Terms and Conditions per PDF document
             TARJETA_TERMS = """PROTEGE TU TARJETA - TÉRMINOS Y CONDICIONES

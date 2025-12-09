@@ -730,10 +730,11 @@ export const RequestAssistance: React.FC = () => {
   };
 
   // Check if user has a specific plan type subscription
+  // SegurifAI Dec 2025: Protege tu Ruta (vial) or Protege tu Salud (health)
   const hasPlanType = (planType: 'DRIVE' | 'HEALTH'): boolean => {
     const keywords = planType === 'DRIVE'
-      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto']
-      : ['health', 'salud', 'medical', 'medica'];
+      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta']
+      : ['health', 'salud', 'medical', 'medica', 'protege tu salud'];
 
     return userSubscriptions.some(sub => {
       if (sub.status !== 'ACTIVE') return false;
@@ -750,10 +751,11 @@ export const RequestAssistance: React.FC = () => {
   };
 
   // Get the subscription that matches a plan type
+  // SegurifAI Dec 2025: Protege tu Ruta (vial) or Protege tu Salud (health)
   const getMatchingSubscription = (planType: 'DRIVE' | 'HEALTH') => {
     const keywords = planType === 'DRIVE'
-      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto']
-      : ['health', 'salud', 'medical', 'medica'];
+      ? ['drive', 'vial', 'roadside', 'vehicular', 'auto', 'ruta', 'protege tu ruta']
+      : ['health', 'salud', 'medical', 'medica', 'protege tu salud'];
 
     return userSubscriptions.find(sub => {
       if (sub.status !== 'ACTIVE') return false;
@@ -1013,11 +1015,12 @@ export const RequestAssistance: React.FC = () => {
         const selectedCat = categories.find(c => c.id === selectedCategory);
         const categoryType = selectedCat?.category_type?.toUpperCase() || '';
 
+        // SegurifAI Dec 2025: Include new plan name keywords
         const categoryKeywords: Record<string, string[]> = {
-          'ROADSIDE': ['drive', 'roadside', 'vial', 'vehicular', 'auto', 'carro'],
-          'VEHICULAR': ['drive', 'roadside', 'vial', 'vehicular', 'auto', 'carro'],
-          'HEALTH': ['health', 'salud', 'medical', 'medica'],
-          'MEDICAL': ['health', 'salud', 'medical', 'medica'],
+          'ROADSIDE': ['drive', 'roadside', 'vial', 'vehicular', 'auto', 'carro', 'ruta', 'protege tu ruta'],
+          'VEHICULAR': ['drive', 'roadside', 'vial', 'vehicular', 'auto', 'carro', 'ruta', 'protege tu ruta'],
+          'HEALTH': ['health', 'salud', 'medical', 'medica', 'protege tu salud'],
+          'MEDICAL': ['health', 'salud', 'medical', 'medica', 'protege tu salud'],
           'HOME': ['home', 'hogar', 'casa'],
           'LEGAL': ['legal', 'juridico', 'juridica'],
         };
