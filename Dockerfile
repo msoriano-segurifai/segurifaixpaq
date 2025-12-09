@@ -2,8 +2,9 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-08-v4 - Add startup logging to verify seed command
-ARG CACHEBUST=202512084
+# Cache bust: 2025-12-08-v5 - FORCE FRESH BUILD - seed command must run
+ARG CACHEBUST=20251208v5
+ENV FORCE_REBUILD=20251208v5
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
@@ -13,6 +14,9 @@ RUN echo "Building frontend at $(date)" && npm run build
 
 # Stage 2: Python application
 FROM python:3.11-slim
+
+# Force rebuild - this ENV change invalidates cache
+ENV FORCE_REBUILD=20251208v5
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
