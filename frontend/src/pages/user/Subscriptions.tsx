@@ -32,11 +32,11 @@ interface Plan {
   category_name: string;
 }
 
-// PAQ x MAPFRE x SegurifAI Benefits Data - Dec 2025
+// SegurifAI Benefits Data - Dec 2025
 // Prices in GTQ (Quetzales guatemaltecos)
 // Protege tu Tarjeta: Q34.99/mes | Protege tu Salud: Q34.99/mes | Protege tu Ruta: Q39.99/mes
 
-// Complete service list for comparison table - PAQ x MAPFRE x SegurifAI Dec 2025
+// Complete service list for comparison table - SegurifAI Dec 2025
 // Three plans: Protege tu Tarjeta, Protege tu Salud, Protege tu Ruta
 interface ServiceItem {
   id: string;
@@ -121,7 +121,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
       { icon: <Wallet size={20} />, title: 'Compras Fraudulentas', description: 'Compras no autorizadas por internet', limit: 'Incluido' },
     ],
     beneficiosPremium: [
-      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
+      { icon: <Shield size={20} />, title: 'Asistencias SegurifAI', description: 'Red de asistencias incluida' },
       { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Reporte de fraude siempre disponible' },
       { icon: <MapPin size={20} />, title: 'Cobertura Nacional', description: 'Válido en toda Guatemala' },
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
@@ -152,7 +152,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
     ],
     beneficiosPremium: [
       { icon: <Users size={20} />, title: 'Cobertura Familiar', description: 'Incluye grupo familiar y núcleo familiar' },
-      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
+      { icon: <Shield size={20} />, title: 'Asistencias SegurifAI', description: 'Red de asistencias incluida' },
       { icon: <Clock size={20} />, title: 'Disponibilidad 24/7', description: 'Orientación médica siempre disponible' },
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
@@ -180,7 +180,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
     beneficiosPremium: [
       { icon: <Star size={20} />, title: 'Descuentos en Red', description: 'Hasta 20% en proveedores asociados' },
       { icon: <Phone size={20} />, title: 'Asistentes Telefónicos', description: 'Cotización repuestos y referencias médicas' },
-      { icon: <Shield size={20} />, title: 'Asistencias MAWDY', description: 'Red de asistencias incluida' },
+      { icon: <Shield size={20} />, title: 'Asistencias SegurifAI', description: 'Red de asistencias incluida' },
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 150,
@@ -189,7 +189,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
   },
 };
 
-// Map plan names to benefit keys based on new PAQ x MAPFRE x SegurifAI products
+// Map plan names to benefit keys based on SegurifAI products
 const getPlanBenefitKey = (planName: string): string => {
   const name = planName.toLowerCase();
   if (name.includes('tarjeta') || name.includes('card')) return 'Tarjeta';
@@ -630,7 +630,7 @@ export const Subscriptions: React.FC = () => {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Planes de Protección</h1>
-          <p className="text-gray-500 mt-2">Protege tu Tarjeta, tu Salud y tu Ruta con PAQ x MAPFRE x SegurifAI</p>
+          <p className="text-gray-500 mt-2">Protege tu Tarjeta, tu Salud y tu Ruta con SegurifAI</p>
         </div>
 
         {/* Billing Toggle */}

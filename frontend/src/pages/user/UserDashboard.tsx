@@ -186,7 +186,7 @@ export const UserDashboard: React.FC = () => {
                 <ShoppingCart className="text-purple-600" size={28} />
               </div>
               <p className="font-bold text-gray-900">Planes</p>
-              <p className="text-xs text-gray-500 mt-1">SegurifAI Drive & Health</p>
+              <p className="text-xs text-gray-500 mt-1">Planes de Protección</p>
             </Link>
             <Link to="/app/requests" className="card card-hover text-center group p-6">
               <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-green-100 flex items-center justify-center group-hover:bg-green-200 group-hover:scale-110 transition-all">

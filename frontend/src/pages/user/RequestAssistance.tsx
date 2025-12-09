@@ -1240,28 +1240,28 @@ export const RequestAssistance: React.FC = () => {
                 <p className="text-sm text-gray-500 mb-4">Selecciona el tipo de plan para ver los servicios disponibles</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Plan Drive (Vial) */}
+                  {/* Protege tu Ruta (Vial) */}
                   <button
                     onClick={() => hasPlanType('DRIVE') && setSelectedPlanType('DRIVE')}
                     disabled={!hasPlanType('DRIVE')}
                     className={`p-5 rounded-xl border-2 transition-all text-left ${
                       hasPlanType('DRIVE')
-                        ? 'border-red-200 hover:border-red-400 hover:bg-red-50 cursor-pointer'
+                        ? 'border-blue-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
                         : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-3 bg-red-100 rounded-xl">
-                        <Truck className="text-red-600" size={28} />
+                      <div className="p-3 bg-blue-100 rounded-xl">
+                        <Truck className="text-blue-600" size={28} />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg">Plan Drive</h3>
+                        <h3 className="font-bold text-lg">Protege tu Ruta</h3>
                         <p className="text-xs text-gray-500">Asistencia Vial</p>
                       </div>
                     </div>
                     <p className="text-sm text-gray-600 mb-3">Grúa, combustible, cerrajería, conductor profesional y más...</p>
                     <div className="flex flex-wrap gap-1">
-                      <span className="px-2 py-0.5 bg-red-50 text-red-700 text-xs rounded">13 servicios</span>
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">14 servicios</span>
                       {hasPlanType('DRIVE') ? (
                         <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">Activo</span>
                       ) : (
@@ -1270,7 +1270,7 @@ export const RequestAssistance: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Plan Health (Salud) */}
+                  {/* Protege tu Salud (Médica) */}
                   <button
                     onClick={() => hasPlanType('HEALTH') && setSelectedPlanType('HEALTH')}
                     disabled={!hasPlanType('HEALTH')}
@@ -1285,13 +1285,13 @@ export const RequestAssistance: React.FC = () => {
                         <Heart className="text-pink-600" size={28} />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg">Plan Health</h3>
+                        <h3 className="font-bold text-lg">Protege tu Salud</h3>
                         <p className="text-xs text-gray-500">Asistencia Médica</p>
                       </div>
                     </div>
                     <p className="text-sm text-gray-600 mb-3">Consultas, laboratorios, nutrición, psicología y más...</p>
                     <div className="flex flex-wrap gap-1">
-                      <span className="px-2 py-0.5 bg-pink-50 text-pink-700 text-xs rounded">14 servicios</span>
+                      <span className="px-2 py-0.5 bg-pink-50 text-pink-700 text-xs rounded">15 servicios</span>
                       {hasPlanType('HEALTH') ? (
                         <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">Activo</span>
                       ) : (
@@ -1342,7 +1342,7 @@ export const RequestAssistance: React.FC = () => {
                       )}
                     </div>
                     <div>
-                      <h2 className="font-bold">{selectedPlanType === 'DRIVE' ? 'Plan Drive' : 'Plan Health'}</h2>
+                      <h2 className="font-bold">{selectedPlanType === 'DRIVE' ? 'Protege tu Ruta' : 'Protege tu Salud'}</h2>
                       <p className="text-xs text-gray-500">Selecciona un servicio</p>
                     </div>
                   </div>

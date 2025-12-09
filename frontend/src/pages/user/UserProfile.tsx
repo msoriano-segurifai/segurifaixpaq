@@ -53,46 +53,64 @@ interface Subscription {
   plan_price?: number;
 }
 
-// Plan benefits data for the details modal
+// Plan benefits data for the details modal - SegurifAI Dec 2025
 const PLAN_BENEFITS: Record<string, { price: number; benefits: string[] }> = {
-  'Plan Asistencia Vial': {
-    price: 36.88,
+  'Protege tu Tarjeta': {
+    price: 34.99,
     benefits: [
       'Seguro Muerte Accidental Q3,000.00',
-      'Grúa del Vehículo (3/año, límite Q1,175.00)',
-      'Abasto de Combustible (3/año, límite combinado Q1,175.00)',
-      'Cambio de Neumáticos (3/año, límite combinado Q1,175.00)',
-      'Paso de Corriente (3/año, límite combinado Q1,175.00)',
-      'Emergencia de Cerrajería (3/año, límite combinado Q1,175.00)',
-      'Servicio de Ambulancia por Accidente (1/año, Q785.00)',
-      'Servicio de Conductor Profesional (1/año, Q470.00)',
-      'Taxi al Aeropuerto (1/año, Q470.00)',
-      'Asistencia Legal Telefónica (1/año, Q1,570.00)',
-      'Apoyo Económico Sala Emergencia (1/año, Q7,850.00)',
-      'Rayos X (1/año, Q2,355.00)',
-      'Descuentos en Red de Proveedores (hasta 20%)',
-      'Asistente Telefónico Cotización Repuestos',
-      'Asistente Telefónico Referencias Médicas'
+      'Tarjetas Perdidas o Robadas (48hrs para notificar)',
+      'Protección contra Clonación de Tarjeta',
+      'Protección contra Falsificación de Banda Magnética',
+      'Cobertura Digital: Ingeniería Social',
+      'Cobertura Digital: Phishing',
+      'Cobertura Digital: Robo de Identidad',
+      'Cobertura Digital: Suplantación (Spoofing)',
+      'Cobertura Digital: Vishing',
+      'Cobertura compras fraudulentas por internet',
+      'Asistencias SegurifAI incluidas'
     ]
   },
-  'Plan Asistencia Médica': {
-    price: 34.26,
+  'Protege tu Salud': {
+    price: 34.99,
     benefits: [
       'Seguro Muerte Accidental Q3,000.00',
       'Orientación Médica Telefónica (Ilimitado)',
       'Conexión con Especialistas de la Red (Ilimitado)',
-      'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, Q1,175.00)',
+      'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, $150 USD)',
       'Coordinación de Medicamentos a Domicilio (Ilimitado)',
-      'Cuidados Post Operatorios Enfermera (1/año, Q785.00)',
-      'Envío Artículos Aseo por Hospitalización (1/año, Q785.00)',
-      'Exámenes Lab: Heces, Orina, Hematología (2/año, Q785.00)',
-      'Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, Q785.00)',
-      'Nutricionista Video Consulta (4/año, Q1,175.00)',
-      'Psicología Video Consulta (4/año, Q1,175.00)',
-      'Servicio de Mensajería por Hospitalización (2/año, Q470.00)',
-      'Taxi Familiar por Hospitalización (2/año, Q785.00)',
-      'Traslado en Ambulancia por Accidente (2/año, Q1,175.00)',
-      'Taxi al Domicilio tras Alta (1/año, Q785.00)'
+      'Cuidados Post Operatorios Enfermera (1/año, $100 USD)',
+      'Envío Artículos Aseo por Hospitalización (1/año, $100 USD)',
+      'Exámenes Lab: Heces, Orina, Hematología (2/año, $100 USD)',
+      'Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, $100 USD)',
+      'Nutricionista Video Consulta Familiar (4/año, $150 USD)',
+      'Psicología Video Consulta Familiar (4/año, $150 USD)',
+      'Servicio de Mensajería por Hospitalización (2/año, $60 USD)',
+      'Taxi Familiar por Hospitalización (2/año, $100 USD)',
+      'Traslado en Ambulancia por Accidente (2/año, $150 USD)',
+      'Taxi al Domicilio tras Alta (1/año, $100 USD)',
+      'Asistencias SegurifAI incluidas'
+    ]
+  },
+  'Protege tu Ruta': {
+    price: 39.99,
+    benefits: [
+      'Seguro Muerte Accidental Q3,000.00',
+      'Grúa del Vehículo (3/año, $150 USD)',
+      'Abasto de Combustible 1 galón (3/año, $150 USD combinado)',
+      'Cambio de Neumáticos (3/año, $150 USD combinado)',
+      'Paso de Corriente (3/año, $150 USD combinado)',
+      'Emergencia de Cerrajería (3/año, $150 USD combinado)',
+      'Servicio de Ambulancia por Accidente (1/año, $100 USD)',
+      'Servicio de Conductor Profesional (1/año, $60 USD)',
+      'Taxi al Aeropuerto (1/año, $60 USD)',
+      'Asistencia Legal Telefónica (1/año, $200 USD)',
+      'Apoyo Económico Sala Emergencia (1/año, $1,000 USD)',
+      'Rayos X (1/año, $300 USD, hasta 20% descuento)',
+      'Descuentos en Red de Proveedores (hasta 20%)',
+      'Asistente Telefónico Cotización Repuestos',
+      'Asistente Telefónico Referencias Médicas por Accidente',
+      'Asistencias SegurifAI incluidas'
     ]
   },
   'Plan Seguro Accidentes': {
@@ -534,12 +552,12 @@ export const UserProfile: React.FC = () => {
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${
-                        sub.plan_category === 'ROADSIDE' ? 'bg-blue-100' : sub.plan_category === 'INSURANCE' ? 'bg-purple-100' : 'bg-pink-100'
+                        sub.plan_category === 'ROADSIDE' ? 'bg-blue-100' : sub.plan_category === 'CARD_INSURANCE' ? 'bg-emerald-100' : 'bg-pink-100'
                       }`}>
                         {sub.plan_category === 'ROADSIDE' ? (
                           <Car className="text-blue-600" size={20} />
-                        ) : sub.plan_category === 'INSURANCE' ? (
-                          <Shield className="text-purple-600" size={20} />
+                        ) : sub.plan_category === 'CARD_INSURANCE' ? (
+                          <Shield className="text-emerald-600" size={20} />
                         ) : (
                           <Heart className="text-pink-600" size={20} />
                         )}
@@ -549,7 +567,7 @@ export const UserProfile: React.FC = () => {
                           {sub.plan_name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {sub.plan_category === 'ROADSIDE' ? 'Asistencia Vial' : sub.plan_category === 'INSURANCE' ? 'Seguro Accidentes' : 'Asistencia Salud'}
+                          {sub.plan_category === 'ROADSIDE' ? 'Protege tu Ruta' : sub.plan_category === 'CARD_INSURANCE' ? 'Protege tu Tarjeta' : 'Protege tu Salud'}
                         </p>
                       </div>
                     </div>
@@ -1010,14 +1028,14 @@ export const UserProfile: React.FC = () => {
                 <div className={`p-3 rounded-lg ${
                   selectedSubscription.plan_category === 'ROADSIDE'
                     ? 'bg-blue-100'
-                    : selectedSubscription.plan_category === 'INSURANCE'
-                    ? 'bg-purple-100'
+                    : selectedSubscription.plan_category === 'CARD_INSURANCE'
+                    ? 'bg-emerald-100'
                     : 'bg-pink-100'
                 }`}>
                   {selectedSubscription.plan_category === 'ROADSIDE' ? (
                     <Car className="text-blue-600" size={28} />
-                  ) : selectedSubscription.plan_category === 'INSURANCE' ? (
-                    <Shield className="text-purple-600" size={28} />
+                  ) : selectedSubscription.plan_category === 'CARD_INSURANCE' ? (
+                    <Shield className="text-emerald-600" size={28} />
                   ) : (
                     <Heart className="text-pink-600" size={28} />
                   )}
@@ -1028,10 +1046,10 @@ export const UserProfile: React.FC = () => {
                   </h4>
                   <p className="text-sm text-gray-600">
                     {selectedSubscription.plan_category === 'ROADSIDE'
-                      ? 'Asistencia Vial'
-                      : selectedSubscription.plan_category === 'INSURANCE'
-                      ? 'Seguro de Accidentes'
-                      : 'Asistencia Médica'}
+                      ? 'Protege tu Ruta'
+                      : selectedSubscription.plan_category === 'CARD_INSURANCE'
+                      ? 'Protege tu Tarjeta'
+                      : 'Protege tu Salud'}
                   </p>
                   {selectedSubscription.days_remaining !== undefined && selectedSubscription.days_remaining >= 0 && (
                     <p className={`text-sm font-medium mt-1 ${selectedSubscription.days_remaining <= 7 ? 'text-orange-600' : 'text-green-600'}`}>

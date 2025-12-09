@@ -64,7 +64,7 @@ class Command(BaseCommand):
             ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
             ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
 
-            # Update or create plans (PAQ x MAPFRE x SegurifAI pricing - Dec 2025)
+            # Update or create plans (SegurifAI pricing - Dec 2025)
             plans_data = [
                 # PROTEGE TU TARJETA (PRF - Card Protection) - Q34.99
                 {
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                         'Cobertura Digital: Suplantación (Spoofing)',
                         'Cobertura Digital: Vishing',
                         'Cobertura compras fraudulentas por internet',
-                        'Asistencias MAWDY incluidas'
+                        'Asistencias SegurifAI incluidas'
                     ],
                     'max_requests_per_month': 3,
                     'coverage_amount': 3000.00,
@@ -117,7 +117,7 @@ class Command(BaseCommand):
                         'Taxi Familiar por Hospitalización (2/año, $100 USD)',
                         'Traslado en Ambulancia por Accidente (2/año, $150 USD)',
                         'Taxi al Domicilio tras Alta (1/año, $100 USD)',
-                        'Asistencias MAWDY incluidas'
+                        'Asistencias SegurifAI incluidas'
                     ],
                     'max_requests_per_month': 3,
                     'coverage_amount': 1360.00,
@@ -149,7 +149,7 @@ class Command(BaseCommand):
                         'Descuentos en Red de Proveedores (hasta 20%)',
                         'Asistente Telefónico Cotización Repuestos',
                         'Asistente Telefónico Referencias Médicas por Accidente',
-                        'Asistencias MAWDY incluidas'
+                        'Asistencias SegurifAI incluidas'
                     ],
                     'max_requests_per_month': 3,
                     'coverage_amount': 2920.00,
