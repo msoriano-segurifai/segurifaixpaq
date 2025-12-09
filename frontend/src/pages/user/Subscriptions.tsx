@@ -1361,95 +1361,126 @@ export const Subscriptions: React.FC = () => {
                           )}
                         </div>
                       ) : (
-                        /* RECOMMENDATION VIEW - Enhanced */
-                        <div>
-                          <div className="flex items-start gap-4">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
-                              aiSuggestion.is_combo ? 'bg-gradient-to-br from-blue-100 to-pink-100' :
-                              aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
-                              aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' :
-                              aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-100' : 'bg-purple-100'
-                            }`}>
-                              {aiSuggestion.is_combo ? (
-                                <Sparkles className="text-purple-600" size={24} />
-                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? (
-                                <Car className="text-blue-600" size={24} />
-                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? (
-                                <Heart className="text-pink-600" size={24} />
-                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? (
-                                <CreditCard className="text-green-600" size={24} />
-                              ) : (
-                                <Shield className="text-purple-600" size={24} />
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h5 className="font-bold text-gray-900">Plan Recomendado: {aiSuggestion.recommended_plan}</h5>
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                  aiSuggestion.confidence === 'alta' ? 'bg-green-100 text-green-700' :
-                                  aiSuggestion.confidence === 'media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-                                }`}>
-                                  {aiSuggestion.confidence === 'alta' ? '✓ Alta confianza' :
-                                   aiSuggestion.confidence === 'media' ? 'Confianza media' : 'Sugerencia'}
-                                </span>
+                        /* RECOMMENDATION VIEW - Enhanced & Organized */
+                        <div className="space-y-4">
+                          {/* Header Section */}
+                          <div className={`p-4 rounded-xl ${
+                            aiSuggestion.is_combo ? 'bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200' :
+                            aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') ? 'bg-blue-50 border border-blue-200' :
+                            aiSuggestion.recommended_plan?.toLowerCase().includes('salud') ? 'bg-pink-50 border border-pink-200' :
+                            aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-50 border border-green-200' :
+                            'bg-purple-50 border border-purple-200'
+                          }`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-sm ${
+                                aiSuggestion.is_combo ? 'bg-gradient-to-br from-purple-500 to-blue-500' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') ? 'bg-blue-500' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('salud') ? 'bg-pink-500' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-500' : 'bg-purple-500'
+                              }`}>
+                                {aiSuggestion.is_combo ? (
+                                  <Sparkles className="text-white" size={28} />
+                                ) : aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') ? (
+                                  <Car className="text-white" size={28} />
+                                ) : aiSuggestion.recommended_plan?.toLowerCase().includes('salud') ? (
+                                  <Heart className="text-white" size={28} />
+                                ) : aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? (
+                                  <CreditCard className="text-white" size={28} />
+                                ) : (
+                                  <Shield className="text-white" size={28} />
+                                )}
                               </div>
-                              {/* Price display */}
-                              {aiSuggestion.price_monthly && (
-                                <p className="text-lg font-bold text-green-600 mb-2">
-                                  {aiSuggestion.price_monthly}/mes
-                                  {aiSuggestion.price_yearly && <span className="text-sm font-normal text-gray-500 ml-2">({aiSuggestion.price_yearly}/año)</span>}
-                                </p>
-                              )}
-                              {/* Combo: Show included plans */}
-                              {aiSuggestion.is_combo && aiSuggestion.included_plans && (
-                                <div className="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                  <p className="text-xs font-semibold text-purple-700 mb-2">Planes incluidos:</p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {aiSuggestion.included_plans.map((plan: string, idx: number) => (
-                                      <span key={idx} className="bg-white text-purple-700 px-3 py-1 rounded-full text-sm font-medium border border-purple-200">
-                                        {plan}
-                                      </span>
-                                    ))}
-                                  </div>
-                                  {aiSuggestion.individual_prices && (
-                                    <p className="text-xs text-purple-600 mt-2">
-                                      Precios individuales: {aiSuggestion.individual_prices.join(' + ')}
-                                    </p>
-                                  )}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                    aiSuggestion.confidence === 'alta' ? 'bg-green-500 text-white' :
+                                    aiSuggestion.confidence === 'media' ? 'bg-yellow-500 text-white' : 'bg-gray-500 text-white'
+                                  }`}>
+                                    {aiSuggestion.confidence === 'alta' ? '✓ RECOMENDADO' :
+                                     aiSuggestion.confidence === 'media' ? 'SUGERIDO' : 'OPCIÓN'}
+                                  </span>
                                 </div>
-                              )}
-                              <p className="text-gray-700 text-sm mb-3">{aiSuggestion.message}</p>
-                              {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
-                                <div className="mb-3">
-                                  <p className="text-xs font-medium text-gray-500 mb-2">Servicios clave para ti:</p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {aiSuggestion.key_services.map((service, idx) => (
-                                      <span key={idx} className="bg-white text-gray-700 px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 border border-gray-200 shadow-sm">
-                                        <Check size={12} className="text-green-500" />
-                                        {service}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                              {aiSuggestion.reason && (
-                                <p className="text-xs text-gray-500 italic bg-white/50 rounded-lg p-2">{aiSuggestion.reason}</p>
-                              )}
+                                <h4 className="text-xl font-bold text-gray-900 mt-1">{aiSuggestion.recommended_plan}</h4>
+                                {aiSuggestion.price_monthly && (
+                                  <p className="text-2xl font-bold text-green-600 mt-1">
+                                    {aiSuggestion.price_monthly}<span className="text-sm font-normal text-gray-500">/mes</span>
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-green-200 flex justify-end">
+
+                          {/* Combo: Included Plans */}
+                          {aiSuggestion.is_combo && aiSuggestion.included_plans && (
+                            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                              <h5 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <Sparkles size={16} className="text-purple-500" />
+                                Planes Incluidos en el Combo
+                              </h5>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {aiSuggestion.included_plans.map((plan: string, idx: number) => (
+                                  <div key={idx} className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg border border-purple-100">
+                                    <Check size={16} className="text-purple-600" />
+                                    <span className="text-sm font-medium text-purple-800">{plan}</span>
+                                  </div>
+                                ))}
+                              </div>
+                              {aiSuggestion.individual_prices && (
+                                <p className="text-xs text-gray-500 mt-3 pt-2 border-t border-gray-100">
+                                  Precios por separado: {aiSuggestion.individual_prices.join(' + ')}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Why This Plan */}
+                          <div className="bg-white rounded-xl border border-gray-200 p-4">
+                            <h5 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                              <MessageSquare size={16} className="text-blue-500" />
+                              ¿Por qué este plan?
+                            </h5>
+                            <p className="text-gray-600 text-sm leading-relaxed">{aiSuggestion.message}</p>
+                            {aiSuggestion.reason && (
+                              <p className="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100 italic">
+                                💡 {aiSuggestion.reason}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Key Services */}
+                          {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
+                            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                              <h5 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <Check size={16} className="text-green-500" />
+                                Servicios Clave Para Ti
+                              </h5>
+                              <div className="space-y-2">
+                                {aiSuggestion.key_services.map((service, idx) => (
+                                  <div key={idx} className="flex items-center gap-3 p-2 bg-green-50 rounded-lg">
+                                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                      <Check size={14} className="text-white" />
+                                    </div>
+                                    <span className="text-sm text-gray-700">{service}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Action Button */}
+                          <div className="pt-2">
                             <button
                               onClick={() => setShowComparisonModal(false)}
-                              className={`px-5 py-2 font-semibold rounded-lg transition-all flex items-center gap-2 shadow-sm ${
+                              className={`w-full py-3 font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg ${
                                 aiSuggestion.is_combo ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white' :
-                                aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                                aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('salud') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
                                 aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-600 hover:bg-green-700 text-white' :
                                 'bg-purple-600 hover:bg-purple-700 text-white'
                               }`}
                             >
-                              {aiSuggestion.is_combo ? 'Ver Planes' : 'Ver Plan'}
-                              <ChevronRight size={16} />
+                              {aiSuggestion.is_combo ? 'Ver Todos los Planes' : 'Ver Detalles del Plan'}
+                              <ChevronRight size={18} />
                             </button>
                           </div>
                         </div>
