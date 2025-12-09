@@ -7,7 +7,7 @@ import {
   Navigation, CheckCircle, Loader2, Clock, Car, AlertCircle,
   Fuel, Key, Zap, Ambulance, User, Plane, Scale, LifeBuoy,
   Stethoscope, Pill, Activity, TestTube, Apple, Brain,
-  Package, HeartPulse, Lock, X, CreditCard, Users
+  Package, HeartPulse, Lock, X, CreditCard, Users, Upload, Trash2, FileText, Image
 } from 'lucide-react';
 
 // Use Car icon as Taxi alias since Taxi is not available in this version
@@ -593,6 +593,44 @@ export const RequestAssistance: React.FC = () => {
     contact_method: '', // For social engineering/vishing
     additional_evidence: '',
   });
+
+  // Evidence files state (for roadside and card claims)
+  const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const maxFileSize = 10 * 1024 * 1024; // 10MB
+  const acceptedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!acceptedFileTypes.includes(file.type)) {
+        alert(`Archivo "${file.name}" no es válido. Solo se permiten imágenes (JPG, PNG, GIF, WebP) y PDF.`);
+        continue;
+      }
+      if (file.size > maxFileSize) {
+        alert(`Archivo "${file.name}" es demasiado grande. Máximo 10MB.`);
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    // Limit to 5 files total
+    if (evidenceFiles.length + validFiles.length > 5) {
+      alert('Máximo 5 archivos de evidencia permitidos.');
+      return;
+    }
+
+    setEvidenceFiles(prev => [...prev, ...validFiles]);
+    e.target.value = ''; // Reset input
+  };
+
+  const removeFile = (index: number) => {
+    setEvidenceFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   // Additional form data for specific service types
   const [taxiFormData, setTaxiFormData] = useState({
@@ -2635,6 +2673,57 @@ export const RequestAssistance: React.FC = () => {
                     placeholder="Cualquier información adicional que nos ayude a asistirte mejor..."
                   />
                 </div>
+
+                {/* Evidence File Upload */}
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                  <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                    <Upload className="text-blue-600" size={18} />
+                    Adjuntar Evidencia (Opcional)
+                  </h3>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Sube fotos del vehículo o daños para agilizar tu servicio. Máximo 5 archivos, 10MB cada uno.
+                  </p>
+
+                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-blue-50 transition-colors">
+                    <div className="flex flex-col items-center justify-center pt-3 pb-4">
+                      <Upload className="w-8 h-8 mb-2 text-blue-500" />
+                      <p className="text-sm text-blue-600"><span className="font-semibold">Toca para subir</span></p>
+                      <p className="text-xs text-blue-500">Imágenes (JPG, PNG) o PDF</p>
+                    </div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      multiple
+                      accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+                      onChange={handleFileSelect}
+                    />
+                  </label>
+
+                  {/* File Preview */}
+                  {evidenceFiles.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {evidenceFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border border-blue-200">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            {file.type.startsWith('image/') ? (
+                              <Image className="text-blue-500 flex-shrink-0" size={18} />
+                            ) : (
+                              <FileText className="text-red-500 flex-shrink-0" size={18} />
+                            )}
+                            <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                            <span className="text-xs text-gray-400">({(file.size / 1024).toFixed(0)} KB)</span>
+                          </div>
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="p-1 text-red-500 hover:bg-red-100 rounded"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Validation Result */}
@@ -4357,15 +4446,66 @@ export const RequestAssistance: React.FC = () => {
                 </div>
               </div>
 
-              {/* Additional Evidence */}
+              {/* Additional Evidence Description */}
               <div>
-                <label className="label">Evidencia Adicional (opcional)</label>
+                <label className="label">Descripción de Evidencia (opcional)</label>
                 <textarea
                   value={cardClaimFormData.additional_evidence}
                   onChange={(e) => setCardClaimFormData(prev => ({ ...prev, additional_evidence: e.target.value }))}
                   className="input min-h-[80px]"
                   placeholder="¿Tienes capturas de pantalla, correos, o alguna otra evidencia? Descríbela aquí..."
                 />
+              </div>
+
+              {/* Evidence File Upload */}
+              <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                <h3 className="font-bold text-green-900 mb-3 flex items-center gap-2">
+                  <Upload className="text-green-600" size={18} />
+                  Adjuntar Archivos de Evidencia
+                </h3>
+                <p className="text-sm text-green-700 mb-3">
+                  Sube capturas de pantalla, correos, estados de cuenta o cualquier evidencia del fraude. Máximo 5 archivos, 10MB cada uno.
+                </p>
+
+                <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-green-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-green-50 transition-colors">
+                  <div className="flex flex-col items-center justify-center pt-3 pb-4">
+                    <Upload className="w-8 h-8 mb-2 text-green-500" />
+                    <p className="text-sm text-green-600"><span className="font-semibold">Toca para subir</span></p>
+                    <p className="text-xs text-green-500">Imágenes (JPG, PNG) o PDF</p>
+                  </div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    multiple
+                    accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+                    onChange={handleFileSelect}
+                  />
+                </label>
+
+                {/* File Preview */}
+                {evidenceFiles.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {evidenceFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          {file.type.startsWith('image/') ? (
+                            <Image className="text-green-500 flex-shrink-0" size={18} />
+                          ) : (
+                            <FileText className="text-red-500 flex-shrink-0" size={18} />
+                          )}
+                          <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                          <span className="text-xs text-gray-400">({(file.size / 1024).toFixed(0)} KB)</span>
+                        </div>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="p-1 text-red-500 hover:bg-red-100 rounded"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Coverage Info */}

@@ -620,7 +620,6 @@ export const Subscriptions: React.FC = () => {
   const currentPlan = plans[currentPlanIndex];
   const benefitKey = currentPlan ? getPlanBenefitKey(currentPlan.name) : 'Ruta';
   const currentBenefits = SEGURIFAI_BENEFITS[benefitKey] || SEGURIFAI_BENEFITS['Ruta'];
-  const yearlyDiscount = 20;
 
   if (loading) {
     return (
@@ -656,16 +655,13 @@ export const Subscriptions: React.FC = () => {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+              className={`px-6 py-2 rounded-lg font-medium transition-all ${
                 billingCycle === 'yearly'
                   ? 'bg-white shadow text-blue-900'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Anual
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                -{yearlyDiscount}%
-              </span>
             </button>
           </div>
         </div>
@@ -759,12 +755,14 @@ export const Subscriptions: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Coverage Stats */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-3 bg-gray-50 rounded-lg">
-                      <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.coberturaKm === 999 ? '∞' : currentBenefits.coberturaKm}</div>
-                      <div className="text-xs text-gray-500">{colors.isVial ? 'KM Grúa' : 'KM Cobertura'}</div>
-                    </div>
+                  {/* Coverage Stats - Hide KM for Card plans */}
+                  <div className={`grid ${colors.isCardInsurance ? 'grid-cols-2' : 'grid-cols-3'} gap-4 mb-6`}>
+                    {!colors.isCardInsurance && (
+                      <div className="text-center p-3 bg-gray-50 rounded-lg">
+                        <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.coberturaKm === 999 ? '∞' : currentBenefits.coberturaKm}</div>
+                        <div className="text-xs text-gray-500">{colors.isVial ? 'KM Grúa' : 'KM Cobertura'}</div>
+                      </div>
+                    )}
                     <div className="text-center p-3 bg-gray-50 rounded-lg">
                       <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.eventosAnuales}</div>
                       <div className="text-xs text-gray-500">Eventos/Año</div>
@@ -1548,14 +1546,13 @@ export const Subscriptions: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setBillingCycle('yearly')}
-                    className={`px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                    className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
                       billingCycle === 'yearly'
                         ? 'bg-gray-900 text-white shadow-md'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     Anual
-                    <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">-20%</span>
                   </button>
                 </div>
               </div>
