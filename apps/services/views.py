@@ -23,86 +23,84 @@ logger = logging.getLogger(__name__)
 # AI PLAN SUGGESTION ENDPOINT
 # =============================================================================
 
-# SegurifAI Plan Information for AI Context - PAQ Wallet Integration
+# SegurifAI Plan Information for AI Context - December 2025
+# All prices and limits in GTQ (Quetzales guatemaltecos)
 MAWDY_PLANS_CONTEXT = """
-SegurifAI ofrece planes de asistencia en Guatemala a través de PAQ Wallet con las siguientes opciones:
+SegurifAI ofrece 3 planes de asistencia en Guatemala a través de PAQ Wallet:
 
-=== PLAN ASISTENCIA VIAL ===
+=== PROTEGE TU TARJETA (PRF - Protección de Tarjeta) ===
+Precio: Q34.99/mes (Q419.88/año)
+Incluye Seguro de Muerte Accidental: Q3,000
 
-## Plan Asistencia Vial (Inclusión PAQ) - Q36.88/mes (Q442.56/año)
-Plan preferencial para usuarios de PAQ Wallet.
-Incluye seguro de Muerte Accidental: Q3,000
+SERVICIOS:
+- Tarjetas Perdidas o Robadas (48 horas para notificar)
+- Protección contra Clonación de Tarjeta
+- Falsificación de Banda Magnética
+- Cobertura Digital: Ingeniería Social
+- Cobertura Digital: Phishing
+- Cobertura Digital: Robo de Identidad
+- Cobertura Digital: Suplantación (Spoofing)
+- Cobertura Digital: Vishing
+- Compras Fraudulentas por Internet
+- Asistencias SegurifAI incluidas
 
-## Plan Asistencia Vial (Opcional) - Q38.93/mes (Q467.16/año)
-Plan independiente para cualquier persona.
-Incluye seguro de Muerte Accidental: Q3,000
+IDEAL PARA: Personas que usan tarjetas de débito/crédito y quieren protección contra fraude digital.
 
-SERVICIOS DEL PLAN ASISTENCIA VIAL:
-- Grúa del Vehículo (3/año, límite $150 USD) - Por accidente o falla mecánica
-- Abasto de Combustible (3/año, límite combinado $150) - 1 galón de emergencia
-- Cambio de Neumáticos (3/año, límite combinado $150) - Instalación de llanta
-- Paso de Corriente (3/año, límite combinado $150) - Arranque de batería
-- Cerrajería Vehicular (3/año, límite combinado $150) - Apertura de vehículo 24/7
-- Ambulancia por Accidente (1/año, $100 USD) - Traslado médico de emergencia
-- Conductor Profesional (1/año, $60 USD) - Por enfermedad o embriaguez
-- Taxi al Aeropuerto (1/año, $60 USD) - Por viaje al extranjero
-- Asistencia Legal Telefónica (1/año, $200 USD) - Asesoría legal por accidente
-- Apoyo Económico Emergencia Hospital (1/año, $1,000 USD) - Pago directo
-- Rayos X (1/año, $300 USD) - Servicio de radiografía
-- Descuentos en Red de Proveedores (Hasta 20%)
-- Asistentes Telefónicos Incluidos (Cotización repuestos, referencias médicas)
+=== PROTEGE TU SALUD (Asistencia Médica) ===
+Precio: Q34.99/mes (Q419.88/año)
+Incluye Seguro de Muerte Accidental: Q3,000
 
-=== PLAN ASISTENCIA MÉDICA ===
+SERVICIOS (todos los límites en GTQ):
+- Orientación Médica Telefónica (Ilimitado) - Consulta 24/7
+- Conexión con Especialistas de la Red (Ilimitado)
+- Coordinación de Medicamentos a Domicilio (Ilimitado)
+- Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, Q1,170)
+- Cuidados Post Operatorios Enfermera (1/año, Q780)
+- Artículos de Aseo por Hospitalización (1/año, Q780)
+- Exámenes Lab: Heces, Orina, Hematología (2/año, Q780)
+- Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, Q780)
+- Nutricionista Video Consulta Familiar (4/año, Q1,170)
+- Psicología Video Consulta Familiar (4/año, Q1,170)
+- Mensajería por Hospitalización (2/año, Q470)
+- Taxi Familiar por Hospitalización (2/año, Q780)
+- Ambulancia por Accidente (2/año, Q1,170)
+- Taxi al Domicilio tras Alta (1/año, Q780)
+- Asistencias SegurifAI incluidas
 
-## Plan Asistencia Médica (Inclusión PAQ) - Q34.26/mes (Q411.12/año)
-Plan preferencial para usuarios de PAQ Wallet.
-Incluye seguro de Muerte Accidental: Q3,000
+IDEAL PARA: Familias, personas con condiciones de salud, quienes valoran acceso médico y bienestar.
 
-## Plan Asistencia Médica (Opcional) - Q36.31/mes (Q435.72/año)
-Plan independiente para cualquier persona.
-Incluye seguro de Muerte Accidental: Q3,000
+=== PROTEGE TU RUTA (Asistencia Vial) ===
+Precio: Q39.99/mes (Q479.88/año)
+Incluye Seguro de Muerte Accidental: Q3,000
 
-SERVICIOS DEL PLAN ASISTENCIA MÉDICA:
-- Orientación Médica Telefónica (Ilimitado) - Consulta médica 24/7
-- Conexión con Especialistas (Ilimitado) - Referencias a médicos de la red
-- Coordinación de Medicamentos (Ilimitado) - Entrega a domicilio
-- Consulta Presencial (3/año, $150 USD) - Médico general, ginecólogo o pediatra
-- Cuidados Post-Operatorios Enfermera (1/año, $100 USD) - A domicilio
-- Artículos de Aseo (1/año, $100 USD) - Por hospitalización
-- Exámenes de Laboratorio Básicos (2/año, $100 USD) - Heces, orina, hematología
-- Exámenes Especializados (2/año, $100 USD) - Papanicolau, mamografía, antígeno
-- Nutricionista Video Consulta (4/año, $150 USD) - Para grupo familiar
-- Psicología Video Consulta (4/año, $150 USD) - Para núcleo familiar
-- Mensajería Hospitalización (2/año, $60 USD) - Por emergencia
-- Taxi Familiar Hospitalización (2/año, $100 USD) - Por hospitalización del titular
-- Ambulancia por Accidente (2/año, $150 USD) - Traslado del titular
-- Taxi Post-Alta (1/año, $100 USD) - Traslado al domicilio tras hospitalización
+SERVICIOS (todos los límites en GTQ):
+- Grúa del Vehículo (3/año, Q1,170) - Por accidente o falla mecánica
+- Abasto de Combustible 1 galón (3/año, Q1,170 combinado)
+- Cambio de Neumáticos (3/año, Q1,170 combinado)
+- Paso de Corriente (3/año, Q1,170 combinado)
+- Emergencia de Cerrajería (3/año, Q1,170 combinado)
+- Ambulancia por Accidente (1/año, Q780)
+- Conductor Profesional (1/año, Q470) - Por enfermedad o embriaguez
+- Taxi al Aeropuerto (1/año, Q470) - Por viaje al extranjero
+- Asistencia Legal Telefónica (1/año, Q1,560)
+- Apoyo Económico Sala Emergencia (1/año, Q7,800) - Pago directo al hospital
+- Rayos X (1/año, Q2,340, hasta 20% descuento)
+- Descuentos en Red de Proveedores (hasta 20%)
+- Asistente Telefónico Cotización Repuestos (Incluido)
+- Asistente Telefónico Referencias Médicas por Accidente (Incluido)
+- Asistencias SegurifAI incluidas
 
-=== PLAN COMBO (VIAL + MÉDICA) ===
-
-## Plan Combo - Q65.00/mes (Q780.00/año)
-Combina TODOS los servicios de Vial y Médica con beneficios mejorados:
-- Muerte Accidental: Q6,000 (doble cobertura)
-- Ambulancia: 3/año (combinado)
-- Consultas médicas: 6/año (combinado)
-- Video consultas nutrición/psicología: 8/año (combinado)
-- Ahorro aproximado de Q6/mes vs comprar ambos por separado
+IDEAL PARA: Conductores, personas que viajan frecuentemente, dueños de vehículos.
 
 === RESUMEN DE PRECIOS ===
-| Plan                           | Mensual  | Anual     |
-|--------------------------------|----------|-----------|
-| Asistencia Vial (Inclusión)    | Q36.88   | Q442.56   |
-| Asistencia Vial (Opcional)     | Q38.93   | Q467.16   |
-| Asistencia Médica (Inclusión)  | Q34.26   | Q411.12   |
-| Asistencia Médica (Opcional)   | Q36.31   | Q435.72   |
-| Combo (Vial + Médica)          | Q65.00   | Q780.00   |
+| Plan                  | Mensual  | Anual     |
+|-----------------------|----------|-----------|
+| Protege tu Tarjeta    | Q34.99   | Q419.88   |
+| Protege tu Salud      | Q34.99   | Q419.88   |
+| Protege tu Ruta       | Q39.99   | Q479.88   |
 
-NOTA IMPORTANTE:
-- "Inclusión PAQ" = precio preferencial para usuarios de PAQ Wallet
-- "Opcional" = precio estándar para compra independiente
-- Todos los planes incluyen seguro de Muerte Accidental
-- Proveedor de servicios: SegurifAI Guatemala
-- Todos los límites en USD se aplican por evento/uso
+NOTA: Todos los planes incluyen Seguro de Muerte Accidental Q3,000 y Asistencias SegurifAI.
+Proveedor de servicios: SegurifAI Guatemala a través de PAQ Wallet.
 """
 
 
@@ -137,7 +135,7 @@ Tu trabajo es analizar las necesidades del usuario, recomendar planes Y comparar
 
 INSTRUCCIONES:
 1. Analiza la consulta del usuario
-2. Si el usuario pide COMPARAR planes (ej: "compara Vial vs Médica", "diferencia entre Inclusión y Opcional"):
+2. Si el usuario pide COMPARAR planes (ej: "compara Tarjeta vs Salud", "diferencia entre Ruta y Salud"):
    - Proporciona una comparación detallada
    - Usa el campo "is_comparison" = true
    - Incluye los planes comparados en "compared_plans"
@@ -155,9 +153,9 @@ Para COMPARACIONES:
     "is_comparison": true,
     "compared_plans": ["Plan 1", "Plan 2"],
     "comparison_details": [
-        {{"aspect": "Precio", "plan1": "Q36.88/mes", "plan2": "Q38.93/mes", "winner": "Plan 1"}},
-        {{"aspect": "Servicios", "plan1": "13 servicios", "plan2": "13 servicios", "winner": "Empate"}},
-        {{"aspect": "Requisitos", "plan1": "Usuario PAQ Wallet", "plan2": "Sin requisitos", "winner": "Depende"}}
+        {{"aspect": "Precio", "plan1": "Q34.99/mes", "plan2": "Q39.99/mes", "winner": "Plan 1"}},
+        {{"aspect": "Servicios", "plan1": "11 servicios", "plan2": "16 servicios", "winner": "Plan 2"}},
+        {{"aspect": "Enfoque", "plan1": "Protección digital", "plan2": "Asistencia vial", "winner": "Depende"}}
     ],
     "recommendation": "Plan recomendado basado en la comparación",
     "message": "Resumen de la comparación en lenguaje amigable",
@@ -167,13 +165,13 @@ Para COMPARACIONES:
 Para RECOMENDACIONES:
 {{
     "is_comparison": false,
-    "recommended_plan": "Plan Asistencia Vial" | "Plan Asistencia Médica" | "Plan Seguro Accidentes" | "Combo Vial + Médica",
+    "recommended_plan": "Protege tu Tarjeta" | "Protege tu Salud" | "Protege tu Ruta",
     "confidence": "alta" | "media" | "baja",
     "reason": "Explicación breve de por qué este plan es ideal",
     "key_services": ["Servicio 1", "Servicio 2", "Servicio 3"],
     "message": "Mensaje amigable para el usuario explicando la recomendación",
-    "price_monthly": "Q36.88",
-    "price_yearly": "Q442.56"
+    "price_monthly": "Q34.99",
+    "price_yearly": "Q419.88"
 }}"""
 
         user_message = f"Necesidades del usuario: {prompt}"
@@ -212,7 +210,7 @@ Para RECOMENDACIONES:
             return Response({
                 'success': True,
                 'recommendation': {
-                    'recommended_plan': 'Plan Asistencia Vial',
+                    'recommended_plan': 'Protege tu Ruta',
                     'confidence': 'media',
                     'reason': 'Basado en tu consulta, te recomendamos revisar nuestros planes.',
                     'key_services': [],
@@ -225,11 +223,11 @@ Para RECOMENDACIONES:
         return Response({
             'success': True,
             'recommendation': {
-                'recommended_plan': 'Plan Asistencia Vial',
+                'recommended_plan': 'Protege tu Ruta',
                 'confidence': 'baja',
                 'reason': 'Servicio de IA no disponible temporalmente.',
-                'key_services': ['Grúa del Vehículo', 'Paso de Corriente', 'Ambulancia'],
-                'message': 'Te recomendamos el Plan Asistencia Vial que incluye grúa, paso de corriente y ambulancia 24/7.'
+                'key_services': ['Grúa del Vehículo (Q1,170)', 'Paso de Corriente', 'Ambulancia por Accidente'],
+                'message': 'Te recomendamos Protege tu Ruta (Q39.99/mes) que incluye grúa, paso de corriente y ambulancia 24/7.'
             }
         })
 
@@ -238,11 +236,11 @@ Para RECOMENDACIONES:
         return Response({
             'success': True,
             'recommendation': {
-                'recommended_plan': 'Plan Asistencia Vial',
+                'recommended_plan': 'Protege tu Salud',
                 'confidence': 'baja',
                 'reason': 'Error al procesar tu consulta.',
-                'key_services': ['Grúa del Vehículo', 'Paso de Corriente', 'Ambulancia'],
-                'message': 'Te recomendamos revisar nuestros planes de asistencia vial y médica.'
+                'key_services': ['Orientación Médica 24/7', 'Consultas Presenciales', 'Ambulancia por Accidente'],
+                'message': 'Te recomendamos revisar nuestros planes: Protege tu Tarjeta, Protege tu Salud y Protege tu Ruta.'
             }
         })
 

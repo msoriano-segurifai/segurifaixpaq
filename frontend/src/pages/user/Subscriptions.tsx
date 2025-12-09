@@ -463,9 +463,13 @@ export const Subscriptions: React.FC = () => {
           const name = p.name.toLowerCase();
           const recommended = recommendation.recommended_plan.toLowerCase();
           return name.includes(recommended) ||
-                 (recommended === 'drive' && name.includes('vial')) ||
-                 (recommended === 'health' && name.includes('salud')) ||
-                 (recommended === 'combo' && (name.includes('combo') || name.includes('completo')));
+                 // Match new SegurifAI plan names
+                 (recommended.includes('tarjeta') && name.includes('tarjeta')) ||
+                 (recommended.includes('salud') && name.includes('salud')) ||
+                 (recommended.includes('ruta') && name.includes('ruta')) ||
+                 // Legacy fallback matching
+                 (recommended.includes('vial') && (name.includes('ruta') || name.includes('vial'))) ||
+                 (recommended.includes('médic') && name.includes('salud'));
         });
         if (planIndex !== -1) {
           setCurrentPlanIndex(planIndex);
