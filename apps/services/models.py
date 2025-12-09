@@ -69,6 +69,9 @@ class ServicePlan(models.Model):
     max_requests_per_month = models.IntegerField(_('max requests per month'), default=0, help_text='0 for unlimited')
     coverage_amount = models.DecimalField(_('coverage amount'), max_digits=12, decimal_places=2, null=True, blank=True)
 
+    # Terms and Conditions
+    terms_and_conditions = models.TextField(_('terms and conditions'), blank=True, default='')
+
     # Status
     is_active = models.BooleanField(_('active'), default=True)
     is_featured = models.BooleanField(_('featured'), default=False)

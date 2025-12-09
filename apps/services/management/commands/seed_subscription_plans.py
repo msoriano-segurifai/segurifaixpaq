@@ -60,9 +60,99 @@ class Command(BaseCommand):
 
             self.stdout.write('  Created service categories')
 
-            # Deactivate old optional plans - keeping only standard pricing
+            # Deactivate ALL old plans - only keep new Protege tu... plans
             ServicePlan.objects.filter(name__icontains='Opcional').update(is_active=False)
             ServicePlan.objects.filter(name__icontains='Inclusion').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Plan Asistencia').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Plan Seguro').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Drive').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Health').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='Combo').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='SegurifAI Asistencia').update(is_active=False)
+            ServicePlan.objects.filter(name__icontains='SegurifAI Seguro').update(is_active=False)
+            self.stdout.write('  Deactivated old plans')
+
+            # Terms and Conditions per PDF document
+            TARJETA_TERMS = """PROTEGE TU TARJETA - TÉRMINOS Y CONDICIONES
+
+A) TARJETAS PERDIDAS O ROBADAS:
+La Aseguradora pagará al Tarjeta habiente por débitos realizados durante el Período de cobertura que Resulten directamente del uso de alguna Tarjeta Perdida o Robada, por alguna persona no autorizada para:
+1. La obtención de Dinero o crédito ya sea con la autorización recibida del Emisor o de algún Cajero Automático.
+2. La compra o arrendamiento de bienes o servicios, incluyendo compras por Internet.
+
+Es el entendido de que los débitos fueron hechos dentro de las 48 horas Inmediatamente Anteriores a la Notificación de dicha pérdida o Robo de la Tarjeta.
+
+B) CLONACIÓN:
+• Falsificación y/o Adulteración de la tarjeta
+• Falsificación y/o Adulteración de Banda Magnética
+
+C) COBERTURA DIGITAL:
+Cobertura contra riesgos cibernéticos y compras fraudulentas por internet:
+1. Ingeniería Social
+2. Phishing
+3. Robo de identidad
+4. Suplantación de identidad (Spoofing)
+5. Vishing
+
+EXCLUSIONES:
+1. Fraudes que no se hayan realizado vía online (excepto Robo de Tarjeta física).
+2. Daños consecuenciales como moral, pérdida de beneficios, lucro cesante.
+3. Cuando el Asegurado, familiar, amigo o empleado de la Entidad Financiera sea autor o cómplice.
+4. Cuando la tarjeta permanezca bajo custodia de la Entidad Financiera.
+5. Fraudes originados después de 5 días hábiles de entrega del estado de cuenta.
+6. Incumplimiento en pago de obligaciones del Asegurado.
+7. Fraudes en situación de guerra, terrorismo, fenómenos naturales catastróficos.
+8. Pérdidas cubiertas por otro seguro.
+9. Daños en sistemas de la Entidad Financiera.
+10. Ataques de Hackers a la plataforma de la Entidad Financiera.
+11. Usurpación de identidad para adquirir nuevos productos.
+12. Compras fraudulentas por negligencia del Asegurado (compartir credenciales, etc.)."""
+
+            SALUD_TERMS = """PROTEGE TU SALUD - TÉRMINOS Y CONDICIONES
+
+MUERTE ACCIDENTAL: Q3,000.00
+Cobertura por fallecimiento accidental del titular.
+
+SERVICIOS INCLUIDOS (Opción 2 - 30% Comisión):
+• Orientación Médica Telefónica: Ilimitado
+• Conexión con Especialistas de la Red: Ilimitado
+• Consulta Presencial (Médico General, Ginecólogo o Pediatra) - Grupo Familiar: 3 al año, límite $150.00
+• Coordinación de Medicamentos al Domicilio del Titular: Ilimitado
+• Cuidados Post Operatorios de Enfermería para Titular: 1 al año, límite $100.00
+• Envío de Artículos de Aseo Personal por Hospitalización: 1 al año, límite $100.00
+• Exámenes de Laboratorio (Heces, Orina y Hematología Completa) - Grupo Familiar: 2 al año, límite $100.00
+• Exámenes de Laboratorio (Papanicoláu o Mamografía o Antígeno Prostático) Titular: 2 al año, límite $100.00
+• Nutricionista Video Consulta - Grupo Familiar: 4 al año, límite $150.00
+• Psicología por Video Consulta - Núcleo Familiar: 4 al año, límite $150.00
+• Servicio de Mensajería por Hospitalización por Emergencia: 2 al año, límite $60.00
+• Taxi para un Familiar por Hospitalización del Titular (15 km Ciudad Capital): 2 al año, límite $100.00
+• Traslado en Ambulancia por Accidente (Titular): 2 al año, límite $150.00
+• Traslado en Taxi al Domicilio tras ser dado de alta (15 km Ciudad Capital): 1 al año, límite $100.00
+
+Asistencias SegurifAI incluidas."""
+
+            RUTA_TERMS = """PROTEGE TU RUTA - TÉRMINOS Y CONDICIONES
+
+MUERTE ACCIDENTAL: Q3,000.00
+Cobertura por fallecimiento accidental del titular.
+
+SERVICIOS INCLUIDOS (Opción 2 - 30% Comisión):
+• Grúa del Vehículo (Accidente o falla mecánica): 3 al año, límite $150.00
+• Abasto de Combustible (1 galón, demostrar que no tiene suministro): 3 al año a elegir, límite $150.00
+• Cambio de Neumáticos: Incluido en límite combinado
+• Paso de Corriente: Incluido en límite combinado
+• Emergencia de Cerrajería: Incluido en límite combinado
+• Servicio de Ambulancia (por accidente): 1 al año, límite $100.00
+• Servicio de Conductor Profesional (enfermedad o embriaguez, 5 horas anticipación): 1 al año, límite $60.00
+• Taxi al Aeropuerto (por viaje del titular al extranjero): 1 al año, límite $60.00
+• Asistencia Legal Telefónica: 1 al año, límite $200.00
+• Apoyo Económico en Sala de Emergencia para Restablecimiento por Accidente Automovilístico: 1 al año, límite $1,000.00
+• Rayos X: 1 al año, límite $300.00 (hasta 20% descuento)
+• Descuentos en Red de Proveedores: Hasta 20% descuento
+• Asistente Telefónico para Cotización de Repuestos y Referencias Mecánicas: Incluido
+• Asistente Telefónico para Referencias Médicas por Motivo de Accidente Automovilístico: Incluido
+
+Asistencias SegurifAI incluidas."""
 
             # Update or create plans (SegurifAI pricing - Dec 2025)
             plans_data = [
@@ -87,6 +177,7 @@ class Command(BaseCommand):
                         'Cobertura compras fraudulentas por internet',
                         'Asistencias SegurifAI incluidas'
                     ],
+                    'terms_and_conditions': TARJETA_TERMS,
                     'max_requests_per_month': 3,
                     'coverage_amount': 3000.00,
                     'is_active': True,
@@ -119,6 +210,7 @@ class Command(BaseCommand):
                         'Taxi al Domicilio tras Alta (1/año, $100 USD)',
                         'Asistencias SegurifAI incluidas'
                     ],
+                    'terms_and_conditions': SALUD_TERMS,
                     'max_requests_per_month': 3,
                     'coverage_amount': 1360.00,
                     'is_active': True,
@@ -151,6 +243,7 @@ class Command(BaseCommand):
                         'Asistente Telefónico Referencias Médicas por Accidente',
                         'Asistencias SegurifAI incluidas'
                     ],
+                    'terms_and_conditions': RUTA_TERMS,
                     'max_requests_per_month': 3,
                     'coverage_amount': 2920.00,
                     'is_active': True,
