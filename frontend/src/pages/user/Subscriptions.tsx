@@ -1361,13 +1361,19 @@ export const Subscriptions: React.FC = () => {
                         <div>
                           <div className="flex items-start gap-4">
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
-                              aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
-                              aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' : 'bg-purple-100'
+                              aiSuggestion.is_combo ? 'bg-gradient-to-br from-blue-100 to-pink-100' :
+                              aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-100' :
+                              aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-100' :
+                              aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-100' : 'bg-purple-100'
                             }`}>
-                              {aiSuggestion.recommended_plan?.includes('Drive') ? (
+                              {aiSuggestion.is_combo ? (
+                                <Sparkles className="text-purple-600" size={24} />
+                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? (
                                 <Car className="text-blue-600" size={24} />
-                              ) : aiSuggestion.recommended_plan?.includes('Health') ? (
+                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? (
                                 <Heart className="text-pink-600" size={24} />
+                              ) : aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? (
+                                <CreditCard className="text-green-600" size={24} />
                               ) : (
                                 <Shield className="text-purple-600" size={24} />
                               )}
@@ -1389,6 +1395,24 @@ export const Subscriptions: React.FC = () => {
                                   {aiSuggestion.price_monthly}/mes
                                   {aiSuggestion.price_yearly && <span className="text-sm font-normal text-gray-500 ml-2">({aiSuggestion.price_yearly}/año)</span>}
                                 </p>
+                              )}
+                              {/* Combo: Show included plans */}
+                              {aiSuggestion.is_combo && aiSuggestion.included_plans && (
+                                <div className="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                  <p className="text-xs font-semibold text-purple-700 mb-2">Planes incluidos:</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {aiSuggestion.included_plans.map((plan: string, idx: number) => (
+                                      <span key={idx} className="bg-white text-purple-700 px-3 py-1 rounded-full text-sm font-medium border border-purple-200">
+                                        {plan}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  {aiSuggestion.individual_prices && (
+                                    <p className="text-xs text-purple-600 mt-2">
+                                      Precios individuales: {aiSuggestion.individual_prices.join(' + ')}
+                                    </p>
+                                  )}
+                                </div>
                               )}
                               <p className="text-gray-700 text-sm mb-3">{aiSuggestion.message}</p>
                               {aiSuggestion.key_services && aiSuggestion.key_services.length > 0 && (
@@ -1413,12 +1437,14 @@ export const Subscriptions: React.FC = () => {
                             <button
                               onClick={() => setShowComparisonModal(false)}
                               className={`px-5 py-2 font-semibold rounded-lg transition-all flex items-center gap-2 shadow-sm ${
-                                aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                                aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
+                                aiSuggestion.is_combo ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('ruta') || aiSuggestion.recommended_plan?.includes('Drive') ? 'bg-blue-600 hover:bg-blue-700 text-white' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('salud') || aiSuggestion.recommended_plan?.includes('Health') ? 'bg-pink-600 hover:bg-pink-700 text-white' :
+                                aiSuggestion.recommended_plan?.toLowerCase().includes('tarjeta') ? 'bg-green-600 hover:bg-green-700 text-white' :
                                 'bg-purple-600 hover:bg-purple-700 text-white'
                               }`}
                             >
-                              Ver Plan
+                              {aiSuggestion.is_combo ? 'Ver Planes' : 'Ver Plan'}
                               <ChevronRight size={16} />
                             </button>
                           </div>
@@ -1436,6 +1462,7 @@ export const Subscriptions: React.FC = () => {
                           {[
                             'Manejo mucho y mi carro es viejo',
                             'Tengo hijos pequeños',
+                            'Uso mi tarjeta en internet',
                             'Protección completa'
                           ].map((example, idx) => (
                             <button
@@ -1452,8 +1479,9 @@ export const Subscriptions: React.FC = () => {
                         <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Comparaciones</p>
                         <div className="flex flex-wrap gap-2">
                           {[
-                            'Drive vs Health',
-                            '¿Qué incluye Combo?'
+                            'Ruta vs Salud',
+                            '¿Qué incluye Combo?',
+                            'Tarjeta vs Salud'
                           ].map((example, idx) => (
                             <button
                               key={idx}
