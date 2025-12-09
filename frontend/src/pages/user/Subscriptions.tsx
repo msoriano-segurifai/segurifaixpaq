@@ -243,6 +243,7 @@ export const Subscriptions: React.FC = () => {
   const [aiSuggestion, setAiSuggestion] = useState<{
     // Common fields
     is_comparison?: boolean;
+    is_combo?: boolean;
     message: string;
     // Recommendation fields
     recommended_plan?: string;
@@ -251,6 +252,9 @@ export const Subscriptions: React.FC = () => {
     key_services?: string[];
     price_monthly?: string;
     price_yearly?: string;
+    // Combo fields
+    included_plans?: string[];
+    individual_prices?: string[];
     // Comparison fields
     compared_plans?: string[];
     comparison_details?: Array<{
