@@ -2,8 +2,8 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-08-v2 - Fix serializer + seed plans (Protege tu Tarjeta/Salud/Ruta) in GTQ
-ARG CACHEBUST=202512082
+# Cache bust: 2025-12-08-v3 - Force complete rebuild with correct SegurifAI plans
+ARG CACHEBUST=202512083
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./

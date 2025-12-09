@@ -663,6 +663,12 @@ export const Subscriptions: React.FC = () => {
         </div>
 
         {/* Plan Carousel */}
+        {plans.length === 0 && !loading && (
+          <div className="text-center py-12 bg-gray-50 rounded-xl">
+            <p className="text-gray-500">No hay planes disponibles en este momento.</p>
+            <p className="text-sm text-gray-400 mt-2">Por favor, intenta de nuevo más tarde.</p>
+          </div>
+        )}
         {plans.length > 0 && currentPlan && (
           <div className="relative">
             {/* Carousel Navigation */}
