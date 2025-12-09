@@ -2,8 +2,8 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-08-v3 - Force complete rebuild with correct SegurifAI plans
-ARG CACHEBUST=202512083
+# Cache bust: 2025-12-08-v4 - Add startup logging to verify seed command
+ARG CACHEBUST=202512084
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
@@ -49,4 +49,13 @@ RUN mkdir -p /app/staticfiles && \
 EXPOSE 8000
 
 # Start command - run migrations, seed plans, then gunicorn
-CMD python manage.py migrate --noinput && python manage.py seed_subscription_plans && gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
+# The seed command will rename existing plans and ensure only 3 SegurifAI plans are active
+CMD echo "=== Starting SegurifAI ===" && \
+    echo "Running migrations..." && \
+    python manage.py migrate --noinput && \
+    echo "Seeding subscription plans..." && \
+    python manage.py seed_subscription_plans && \
+    echo "Checking active plans..." && \
+    python manage.py shell -c "from apps.services.models import ServicePlan; plans = ServicePlan.objects.filter(is_active=True); print(f'Active plans: {plans.count()}'); [print(f'  - {p.name} (Q{p.price_monthly})') for p in plans]" && \
+    echo "=== Starting Gunicorn ===" && \
+    gunicorn segurifai_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info
