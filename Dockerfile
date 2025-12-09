@@ -2,8 +2,8 @@
 # Stage 1: Build frontend
 FROM node:18-alpine AS frontend-builder
 
-# Cache bust: 2025-12-08-v6 - Use startup script for reliable seeding
-ARG CACHEBUST=20251208v6
+# Cache bust: 2025-12-09-v1 - Force full rebuild via requirements.txt change
+ARG CACHEBUST=20251209v1
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
@@ -18,7 +18,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=segurifai_backend.settings
-ENV STARTUP_VERSION=20251208v6
+ENV STARTUP_VERSION=20251209v1
 
 WORKDIR /app
 

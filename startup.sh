@@ -2,7 +2,7 @@
 set -e
 
 echo "=== SegurifAI Startup Script ==="
-echo "Version: 2025-12-08-v6"
+echo "Version: 2025-12-09-v1"
 
 echo ""
 echo "1. Running database migrations..."
