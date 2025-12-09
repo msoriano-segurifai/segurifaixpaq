@@ -28,7 +28,7 @@ class ServicePlanSerializer(serializers.ModelSerializer):
 
 
 class ServicePlanListSerializer(serializers.ModelSerializer):
-    """Simplified serializer for Service Plan list view"""
+    """Serializer for Service Plan list view - includes all fields frontend needs"""
 
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_type = serializers.CharField(source='category.category_type', read_only=True)
@@ -36,8 +36,9 @@ class ServicePlanListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServicePlan
         fields = (
-            'id', 'category_type', 'category_name', 'name', 'price_monthly',
-            'price_yearly', 'is_active', 'is_featured'
+            'id', 'category_type', 'category_name', 'name', 'description',
+            'price_monthly', 'price_yearly', 'features', 'is_active', 'is_featured',
+            'terms_and_conditions', 'max_requests_per_month', 'coverage_amount'
         )
 
 
