@@ -6,5 +6,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
+# Explicit start command ensures seed runs even if Docker CMD is cached
+startCommand = "bash /app/startup.sh"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
