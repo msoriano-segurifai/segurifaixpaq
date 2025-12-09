@@ -1133,8 +1133,8 @@ export const UserProfile: React.FC = () => {
             <div className={`p-4 rounded-xl mb-4 ${
               selectedSubscription.plan_category === 'ROADSIDE'
                 ? 'bg-blue-50 border border-blue-200'
-                : selectedSubscription.plan_category === 'INSURANCE'
-                ? 'bg-purple-50 border border-purple-200'
+                : selectedSubscription.plan_category === 'CARD_INSURANCE'
+                ? 'bg-emerald-50 border border-emerald-200'
                 : 'bg-pink-50 border border-pink-200'
             }`}>
               <div className="flex items-center gap-3">

@@ -748,11 +748,6 @@ export const Subscriptions: React.FC = () => {
                       </span>
                       <span className="text-gray-500 text-lg">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
                     </div>
-                    {billingCycle === 'yearly' && (
-                      <p className="text-sm text-green-600 mt-2 font-medium">
-                        Q{(parseFloat(String(currentPlan.price_yearly)) / 12).toFixed(2)}/mes · Ahorras Q{(parseFloat(String(currentPlan.price_monthly)) * 12 - parseFloat(String(currentPlan.price_yearly))).toFixed(0)} al año
-                      </p>
-                    )}
                   </div>
 
                   {/* Coverage Stats - Hide KM for Card plans */}
