@@ -54,6 +54,7 @@ class AssistanceRequestSerializer(serializers.ModelSerializer):
             'location_state', 'location_latitude', 'location_longitude',
             'vehicle_make', 'vehicle_model', 'vehicle_year', 'vehicle_plate',
             'patient_name', 'patient_age', 'symptoms', 'card_last_four', 'incident_type',
+            'phone', 'vehicle_info', 'health_info', 'card_claim_info', 'service_metadata',
             'status', 'estimated_arrival_time', 'actual_arrival_time', 'completion_time',
             'estimated_cost', 'actual_cost', 'admin_notes', 'cancellation_reason',
             'updates', 'documents', 'created_at', 'updated_at'
@@ -81,7 +82,14 @@ class AssistanceRequestListSerializer(serializers.ModelSerializer):
 
 
 class AssistanceRequestCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating Assistance Request"""
+    """Serializer for creating Assistance Request - SegurifAI Dec 2025"""
+
+    # Accept JSON fields from frontend for complex service data
+    vehicle_info = serializers.JSONField(required=False, allow_null=True)
+    health_info = serializers.JSONField(required=False, allow_null=True)
+    card_claim_info = serializers.JSONField(required=False, allow_null=True)
+    mawdy_service = serializers.JSONField(required=False, allow_null=True, write_only=True)
+    service_validation = serializers.JSONField(required=False, allow_null=True, write_only=True)
 
     class Meta:
         model = AssistanceRequest
@@ -89,7 +97,9 @@ class AssistanceRequestCreateSerializer(serializers.ModelSerializer):
             'user_service', 'service_category', 'title', 'description', 'priority',
             'location_address', 'location_city', 'location_state', 'location_latitude', 'location_longitude',
             'vehicle_make', 'vehicle_model', 'vehicle_year', 'vehicle_plate',
-            'patient_name', 'patient_age', 'symptoms', 'card_last_four', 'incident_type'
+            'patient_name', 'patient_age', 'symptoms', 'card_last_four', 'incident_type',
+            'phone', 'vehicle_info', 'health_info', 'card_claim_info',
+            'mawdy_service', 'service_validation'
         )
 
     def validate(self, attrs):
@@ -153,6 +163,15 @@ class AssistanceRequestCreateSerializer(serializers.ModelSerializer):
             return km
 
         validated_data['user'] = self.context['request'].user
+
+        # Extract and store service metadata (mawdy_service, service_validation) in JSON field
+        mawdy_service = validated_data.pop('mawdy_service', None)
+        service_validation = validated_data.pop('service_validation', None)
+        if mawdy_service or service_validation:
+            validated_data['service_metadata'] = {
+                'mawdy_service': mawdy_service,
+                'service_validation': service_validation,
+            }
 
         with transaction.atomic():
             # Create the assistance request

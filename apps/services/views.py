@@ -214,10 +214,10 @@ Para COMBOS (múltiples planes):
 
         user_message = f"Necesidades del usuario: {prompt}"
 
-        # Call Anthropic API
+        # Call Anthropic API - Using Haiku for fast responses
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1024,
+            model="claude-3-5-haiku-20241022",
+            max_tokens=600,
             messages=[
                 {"role": "user", "content": user_message}
             ],

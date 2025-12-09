@@ -107,6 +107,15 @@ class AssistanceRequest(models.Model):
     card_last_four = models.CharField(_('card last 4 digits'), max_length=4, blank=True)
     incident_type = models.CharField(_('incident type'), max_length=100, blank=True, help_text='Fraud, theft, etc.')
 
+    # Contact information
+    phone = models.CharField(_('contact phone'), max_length=20, blank=True)
+
+    # Additional metadata for complex service data (JSON)
+    vehicle_info = models.JSONField(_('vehicle info'), default=dict, blank=True, help_text='Full vehicle details')
+    health_info = models.JSONField(_('health info'), default=dict, blank=True, help_text='SAMPLE questionnaire data')
+    card_claim_info = models.JSONField(_('card claim info'), default=dict, blank=True, help_text='Card fraud claim details')
+    service_metadata = models.JSONField(_('service metadata'), default=dict, blank=True, help_text='SegurifAI service info')
+
     # Status and tracking
     status = models.CharField(
         _('status'),
