@@ -244,15 +244,29 @@ Asistencias SegurifAI incluidas."""
                 }
             ]
 
-            # Create or update plans
+            # Create or update plans - use CATEGORY as the key to rename old plans
+            # This ensures existing subscriptions get updated to new plan names
             for plan_data in plans_data:
-                plan, created = ServicePlan.objects.update_or_create(
-                    category=plan_data['category'],
-                    name=plan_data['name'],
-                    defaults={k: v for k, v in plan_data.items() if k not in ['category', 'name']}
-                )
-                action = 'Created' if created else 'Updated'
-                self.stdout.write(f'  {action} plan: {plan.name} - Q{plan.price_monthly}/mes')
+                category = plan_data['category']
+                # First, try to get the FIRST active or inactive plan in this category
+                existing_plan = ServicePlan.objects.filter(category=category).first()
+
+                if existing_plan:
+                    # Update the existing plan (this preserves subscription references)
+                    for key, value in plan_data.items():
+                        if key != 'category':
+                            setattr(existing_plan, key, value)
+                    existing_plan.save()
+                    self.stdout.write(f'  Updated plan: {existing_plan.name} - Q{existing_plan.price_monthly}/mes')
+                else:
+                    # Create new plan if none exists for this category
+                    plan = ServicePlan.objects.create(**plan_data)
+                    self.stdout.write(f'  Created plan: {plan.name} - Q{plan.price_monthly}/mes')
+
+                # Deactivate any OTHER plans in the same category
+                ServicePlan.objects.filter(category=category).exclude(
+                    name=plan_data['name']
+                ).update(is_active=False)
 
         total_plans = ServicePlan.objects.count()
         self.stdout.write(self.style.SUCCESS(

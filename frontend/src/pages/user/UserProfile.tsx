@@ -51,6 +51,7 @@ interface Subscription {
   end_date: string;
   days_remaining?: number;
   plan_price?: number;
+  plan_features?: string[];
 }
 
 // Plan benefits data for the details modal - SegurifAI Dec 2025 - All limits in GTQ
@@ -1043,12 +1044,12 @@ export const UserProfile: React.FC = () => {
               </div>
             </div>
 
-            {/* Price */}
+            {/* Price - use API price when available */}
             <div className="bg-gray-50 rounded-xl p-4 mb-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">Costo Mensual:</span>
                 <span className="text-2xl font-bold text-blue-600">
-                  Q{PLAN_BENEFITS[selectedSubscription.plan_name]?.price.toFixed(2) || selectedSubscription.plan_price?.toFixed(2) || '0.00'}
+                  Q{selectedSubscription.plan_price?.toFixed(2) || PLAN_BENEFITS[selectedSubscription.plan_name]?.price.toFixed(2) || '0.00'}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-2 text-sm">
@@ -1059,14 +1060,14 @@ export const UserProfile: React.FC = () => {
               </div>
             </div>
 
-            {/* Benefits List */}
+            {/* Benefits List - use API features when available, fallback to local constant */}
             <div className="mb-4">
               <h5 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Shield size={16} className="text-blue-600" />
                 Servicios y Beneficios Incluidos
               </h5>
               <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                {(PLAN_BENEFITS[selectedSubscription.plan_name]?.benefits || []).map((benefit, idx) => (
+                {(selectedSubscription.plan_features || PLAN_BENEFITS[selectedSubscription.plan_name]?.benefits || []).map((benefit, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-sm">
                     <Check className="text-green-500 flex-shrink-0 mt-0.5" size={16} />
                     <span className="text-gray-700">{benefit}</span>

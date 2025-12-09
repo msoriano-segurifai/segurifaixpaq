@@ -49,12 +49,15 @@ class UserServiceSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.get_full_name', read_only=True)
     plan_name = serializers.CharField(source='plan.name', read_only=True)
     plan_category = serializers.CharField(source='plan.category.category_type', read_only=True)
+    plan_price = serializers.DecimalField(source='plan.price_monthly', max_digits=10, decimal_places=2, read_only=True)
+    plan_features = serializers.JSONField(source='plan.features', read_only=True)
     can_request = serializers.BooleanField(source='can_request_service', read_only=True)
 
     class Meta:
         model = UserService
         fields = (
             'id', 'user', 'user_email', 'user_name', 'plan', 'plan_name', 'plan_category',
+            'plan_price', 'plan_features',
             'status', 'start_date', 'end_date', 'last_renewal_date', 'next_renewal_date',
             'requests_this_month', 'total_requests', 'can_request', 'notes',
             'created_at', 'updated_at'
