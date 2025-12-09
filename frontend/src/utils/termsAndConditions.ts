@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 
-// Plan types
-type PlanType = 'DRIVE' | 'HEALTH' | 'COMBO';
+// Plan types - Updated for SegurifAI Dec 2025
+type PlanType = 'RUTA' | 'SALUD' | 'TARJETA' | 'COMBO';
 
 interface PlanInfo {
   name: string;
@@ -30,7 +30,7 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('Asistencia Vial y Médica en Guatemala', margin, 30);
+    doc.text('Asistencia Vial, Médica y Protección Digital en Guatemala', margin, 30);
 
     yPos = 50;
   };
@@ -95,10 +95,20 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   yPos += 8;
 
   doc.setFontSize(12);
-  doc.text(`Plan ${plan.name}`, pageWidth / 2, yPos, { align: 'center' });
-  yPos += 15;
+  doc.text(`${plan.name}`, pageWidth / 2, yPos, { align: 'center' });
+  yPos += 6;
+
+  // Price if available
+  if (plan.price_monthly) {
+    doc.setFontSize(11);
+    doc.setTextColor(0, 128, 0);
+    doc.text(`Q${plan.price_monthly}/mes`, pageWidth / 2, yPos, { align: 'center' });
+    yPos += 5;
+  }
+  yPos += 10;
 
   // Date
+  doc.setTextColor(50, 50, 50);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   const today = new Date();
@@ -106,70 +116,133 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   yPos += 15;
 
   // Introduction
-  addParagraph('Agradecemos la confianza en SegurifAI Guatemala, S.A., para adquirir el Plan de Asistencia para la cuenta en referencia, cuyos términos y condiciones se presentan a continuación.');
+  addParagraph('Agradecemos la confianza en SegurifAI Guatemala a través de PAQ Wallet, para adquirir el Plan de Asistencia para la cuenta en referencia, cuyos términos y condiciones se presentan a continuación.');
   yPos += 5;
 
-  addParagraph('SegurifAI Guatemala, S.A., forma parte de un grupo líder en servicios de asistencia que desarrolla principalmente actividades de asistencia vial, médica y servicios relacionados. Tenemos cobertura en toda Guatemala y somos la empresa de referencia en el mercado guatemalteco. Los más de 50,000 clientes que confían en nosotros lo confirman.');
+  addParagraph('SegurifAI Guatemala forma parte de un grupo líder en servicios de asistencia que desarrolla principalmente actividades de asistencia vial, médica y protección digital. Tenemos cobertura en toda Guatemala y somos la empresa de referencia en el mercado guatemalteco.');
   yPos += 10;
 
   addSeparator();
 
-  // Plan-specific benefits
-  if (plan.type === 'DRIVE' || plan.type === 'COMBO') {
+  // === PROTEGE TU RUTA (Asistencia Vial) ===
+  if (plan.type === 'RUTA' || plan.type === 'COMBO') {
     checkPageBreak(50);
-    addSubtitle('BENEFICIOS DE ASISTENCIA VIAL');
+    addSubtitle('PROTEGE TU RUTA - SERVICIOS DE ASISTENCIA VIAL');
+    addParagraph('Precio: Q39.99/mes (Q479.88/año)');
     yPos += 5;
 
-    const vialBenefits = [
+    const rutaBenefits = [
       { name: 'Seguro Muerte Accidental', limit: 'Q3,000.00' },
-      { name: 'Grúa del Vehículo (Accidente o falla mecánica)', limit: '3 al año, límite económico Q1,175.00' },
-      { name: 'Abasto de Combustible (1 galón)', limit: '3 al año a elegir, límite económico Q1,175.00' },
-      { name: 'Cambio de Neumáticos', limit: '3 al año a elegir, límite económico Q1,175.00' },
-      { name: 'Paso de Corriente', limit: '3 al año a elegir, límite económico Q1,175.00' },
-      { name: 'Emergencia de Cerrajería', limit: '3 al año a elegir, límite económico Q1,175.00' },
-      { name: 'Servicio de Ambulancia (por accidente)', limit: '1 al año, límite económico Q785.00' },
-      { name: 'Servicio de Conductor Profesional', limit: '1 al año, límite económico Q470.00' },
-      { name: 'Taxi al Aeropuerto (por viaje al extranjero)', limit: '1 al año, límite económico Q470.00' },
-      { name: 'Asistencia Legal Telefónica', limit: '1 al año, límite económico Q1,570.00' },
-      { name: 'Apoyo Económico en Emergencia por Accidente', limit: '1 al año, límite económico Q7,850.00' },
-      { name: 'Rayos X', limit: '1 al año, límite económico Q2,355.00' },
-      { name: 'Descuentos en Red de Proveedores', limit: 'Incluido, hasta 20% de descuento' },
-      { name: 'Asistente Telefónico (cotizaciones y referencias)', limit: 'Incluido' },
+      { name: 'Grúa del Vehículo (Accidente o falla mecánica)', limit: '3 al año, límite Q1,170.00' },
+      { name: 'Abasto de Combustible (1 galón)', limit: '3 al año, límite combinado Q1,170.00' },
+      { name: 'Cambio de Neumáticos', limit: '3 al año, límite combinado Q1,170.00' },
+      { name: 'Paso de Corriente', limit: '3 al año, límite combinado Q1,170.00' },
+      { name: 'Emergencia de Cerrajería', limit: '3 al año, límite combinado Q1,170.00' },
+      { name: 'Servicio de Ambulancia (por accidente)', limit: '1 al año, límite Q780.00' },
+      { name: 'Servicio de Conductor Profesional', limit: '1 al año, límite Q470.00 (5hrs anticipación)' },
+      { name: 'Taxi al Aeropuerto (por viaje al extranjero)', limit: '1 al año, límite Q470.00' },
+      { name: 'Asistencia Legal Telefónica', limit: '1 al año, límite Q1,560.00' },
+      { name: 'Apoyo Económico Sala de Emergencia', limit: '1 al año, límite Q7,800.00' },
+      { name: 'Rayos X', limit: '1 al año, límite Q2,340.00 (hasta 20% descuento)' },
+      { name: 'Descuentos en Red de Proveedores', limit: 'Hasta 20% de descuento' },
+      { name: 'Asistente Telefónico Cotización Repuestos', limit: 'Incluido' },
+      { name: 'Asistente Telefónico Referencias Médicas', limit: 'Incluido' },
     ];
 
-    vialBenefits.forEach(benefit => {
+    rutaBenefits.forEach(benefit => {
       checkPageBreak(15);
       addBulletPoint(`${benefit.name}: ${benefit.limit}`);
     });
     yPos += 5;
   }
 
-  if (plan.type === 'HEALTH' || plan.type === 'COMBO') {
+  // === PROTEGE TU SALUD (Asistencia Médica) ===
+  if (plan.type === 'SALUD' || plan.type === 'COMBO') {
     checkPageBreak(50);
-    addSubtitle('BENEFICIOS DE ASISTENCIA MÉDICA');
+    addSubtitle('PROTEGE TU SALUD - SERVICIOS DE ASISTENCIA MÉDICA');
+    addParagraph('Precio: Q34.99/mes (Q419.88/año)');
     yPos += 5;
 
-    const healthBenefits = [
+    const saludBenefits = [
       { name: 'Seguro Muerte Accidental', limit: 'Q3,000.00' },
-      { name: 'Orientación Médica Telefónica 24/7', limit: 'Incluido' },
-      { name: 'Conexión con Especialistas de la Red', limit: 'Incluido' },
-      { name: 'Consulta Presencial (Médico General, Ginecólogo o Pediatra)', limit: '3 al año, límite económico Q1,175.00' },
-      { name: 'Coordinación de Medicamentos a Domicilio', limit: 'Incluido' },
-      { name: 'Cuidados Post Operatorios de Enfermera', limit: '1 al año, límite económico Q785.00' },
-      { name: 'Envío de Artículos de Aseo por Hospitalización', limit: '1 al año, límite económico Q785.00' },
-      { name: 'Exámenes de Laboratorio Básicos', limit: '2 al año, límite económico Q785.00' },
-      { name: 'Exámenes Especializados (Papanicoláu/Mamografía/Antígeno)', limit: '2 al año, límite económico Q785.00' },
-      { name: 'Nutricionista Video Consulta (Grupo Familiar)', limit: '4 al año, límite económico Q1,175.00' },
-      { name: 'Psicología Video Consulta (Núcleo Familiar)', limit: '4 al año, límite económico Q1,175.00' },
-      { name: 'Servicio de Mensajería por Hospitalización', limit: '2 al año, límite económico Q470.00' },
-      { name: 'Taxi para Familiar por Hospitalización', limit: '2 al año, límite económico Q785.00' },
-      { name: 'Traslado en Ambulancia por Accidente', limit: '2 al año, límite económico Q1,175.00' },
-      { name: 'Taxi Post-Alta al Domicilio', limit: '1 al año, límite económico Q785.00' },
+      { name: 'Orientación Médica Telefónica 24/7', limit: 'Ilimitado' },
+      { name: 'Conexión con Especialistas de la Red', limit: 'Ilimitado' },
+      { name: 'Coordinación de Medicamentos a Domicilio', limit: 'Ilimitado' },
+      { name: 'Consulta Presencial (Médico General, Ginecólogo o Pediatra)', limit: '3 al año, límite Q1,170.00' },
+      { name: 'Cuidados Post Operatorios de Enfermera', limit: '1 al año, límite Q780.00' },
+      { name: 'Envío de Artículos de Aseo por Hospitalización', limit: '1 al año, límite Q780.00' },
+      { name: 'Exámenes Lab: Heces, Orina, Hematología (Grupo Familiar)', limit: '2 al año, límite Q780.00' },
+      { name: 'Exámenes: Papanicoláu/Mamografía/Antígeno Prostático', limit: '2 al año, límite Q780.00' },
+      { name: 'Nutricionista Video Consulta (Grupo Familiar)', limit: '4 al año, límite Q1,170.00' },
+      { name: 'Psicología Video Consulta (Núcleo Familiar)', limit: '4 al año, límite Q1,170.00' },
+      { name: 'Servicio de Mensajería por Hospitalización', limit: '2 al año, límite Q470.00' },
+      { name: 'Taxi para Familiar por Hospitalización (15km)', limit: '2 al año, límite Q780.00' },
+      { name: 'Traslado en Ambulancia por Accidente', limit: '2 al año, límite Q1,170.00' },
+      { name: 'Taxi al Domicilio tras Alta (15km)', limit: '1 al año, límite Q780.00' },
     ];
 
-    healthBenefits.forEach(benefit => {
+    saludBenefits.forEach(benefit => {
       checkPageBreak(15);
       addBulletPoint(`${benefit.name}: ${benefit.limit}`);
+    });
+    yPos += 5;
+  }
+
+  // === PROTEGE TU TARJETA (Protección Digital) ===
+  if (plan.type === 'TARJETA' || plan.type === 'COMBO') {
+    checkPageBreak(50);
+    addSubtitle('PROTEGE TU TARJETA - PROTECCIÓN CONTRA FRAUDE DIGITAL');
+    addParagraph('Precio: Q34.99/mes (Q419.88/año)');
+    yPos += 5;
+
+    addParagraph('A) TARJETAS PERDIDAS O ROBADAS:');
+    addParagraph('La Aseguradora pagará al Tarjetahabiente por débitos realizados durante el período de cobertura que resulten directamente del uso de alguna Tarjeta Perdida o Robada, por alguna persona no autorizada para: (1) La obtención de dinero o crédito con autorización del Emisor o Cajero Automático, (2) La compra o arrendamiento de bienes o servicios, incluyendo compras por Internet.');
+    addParagraph('Los débitos deben haber sido hechos dentro de las 48 horas inmediatamente anteriores a la notificación de la pérdida o robo.');
+    yPos += 5;
+
+    addParagraph('B) CLONACIÓN:');
+    addBulletPoint('Falsificación y/o Adulteración de la tarjeta');
+    addBulletPoint('Falsificación y/o Adulteración de Banda Magnética');
+    yPos += 5;
+
+    addParagraph('C) COBERTURA DIGITAL:');
+    const digitalCoverage = [
+      'Ingeniería Social',
+      'Phishing',
+      'Robo de Identidad',
+      'Suplantación de Identidad (Spoofing)',
+      'Vishing (Fraude Telefónico)',
+      'Compras Fraudulentas por Internet',
+    ];
+    digitalCoverage.forEach(coverage => {
+      checkPageBreak(15);
+      addBulletPoint(coverage);
+    });
+    yPos += 5;
+
+    addBulletPoint('Seguro Muerte Accidental: Q3,000.00');
+    yPos += 10;
+
+    // Exclusions for Card Protection
+    checkPageBreak(60);
+    addSubtitle('EXCLUSIONES PROTEGE TU TARJETA');
+    const cardExclusions = [
+      'Fraudes que no se hayan realizado vía online (excepto Robo de Tarjeta física).',
+      'Daños consecuenciales como daño moral, pérdida de beneficios, lucro cesante.',
+      'Cuando el Asegurado, familiar, amigo o empleado de la Entidad Financiera sea autor o cómplice.',
+      'Cuando la tarjeta permanezca bajo custodia de la Entidad Financiera.',
+      'Fraudes originados después de 5 días hábiles de entrega del estado de cuenta.',
+      'Incumplimiento en pago de obligaciones del Asegurado.',
+      'Fraudes en situación de guerra, terrorismo, fenómenos naturales catastróficos.',
+      'Pérdidas cubiertas por otro seguro.',
+      'Daños en sistemas de la Entidad Financiera.',
+      'Ataques de Hackers a la plataforma de la Entidad Financiera.',
+      'Usurpación de identidad para adquirir nuevos productos.',
+      'Compras fraudulentas por negligencia del Asegurado (compartir credenciales, etc.).',
+    ];
+    cardExclusions.forEach((exclusion, index) => {
+      checkPageBreak(15);
+      addBulletPoint(`${index + 1}. ${exclusion}`);
     });
     yPos += 5;
   }
@@ -183,38 +256,42 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   addBulletPoint('Límite de Edad de Ingreso: 18 años a 61 años inclusive');
   addBulletPoint('Límite de Edad de Terminación: 70 años');
   addBulletPoint('Reembolso convencional');
-  addBulletPoint('Esta propuesta no contempla la cobertura de uso de motocicleta como medio de transporte.');
+  if (plan.type === 'RUTA' || plan.type === 'COMBO') {
+    addBulletPoint('Esta propuesta no contempla la cobertura de uso de motocicleta como medio de transporte.');
+  }
   yPos += 10;
 
   addSeparator();
 
-  // Definition of accident
-  checkPageBreak(60);
-  addSubtitle('DEFINICIÓN DE ACCIDENTE');
-  addParagraph('Se entiende por accidente para los efectos de este seguro, toda lesión corporal sufrida por el Asegurado independientemente de su voluntad y debida a una causa fortuita, momentánea, violenta y externa que le haya producido directamente la muerte, invalidez, pérdida de miembros o incapacidad temporal.');
-  yPos += 5;
+  // Definition of accident (for RUTA and SALUD)
+  if (plan.type !== 'TARJETA') {
+    checkPageBreak(60);
+    addSubtitle('DEFINICIÓN DE ACCIDENTE');
+    addParagraph('Se entiende por accidente para los efectos de este seguro, toda lesión corporal sufrida por el Asegurado independientemente de su voluntad y debida a una causa fortuita, momentánea, violenta y externa que le haya producido directamente la muerte, invalidez, pérdida de miembros o incapacidad temporal.');
+    yPos += 5;
 
-  addSubtitle('SERÁN CONSIDERADOS TAMBIÉN COMO ACCIDENTES');
-  const accidentTypes = [
-    'Los causados por explosiones, descargas eléctricas o atmosféricas.',
-    'Las quemaduras causadas por fuego, escapes de vapor imprevistos o contacto accidental con ácido y corrosivos.',
-    'La asfixia accidental producida por agua, gas, humo o vapores.',
-    'Las infecciones respecto a las cuales quede probado que el virus ha penetrado por una lesión producida por un accidente cubierto.',
-    'Las mordeduras de animales o picaduras de insectos y sus consecuencias.',
-    'Los casos de legítima defensa o tentativas de salvar personas o bienes en peligro.',
-    'Los que se produzcan como consecuencia de fenómenos de la naturaleza.',
-    'La intoxicación o envenenamiento por ingestión de sustancias tóxicas o alimentos en mal estado.',
-  ];
-  accidentTypes.forEach(type => {
-    checkPageBreak(15);
-    addBulletPoint(type);
-  });
-  yPos += 10;
+    addSubtitle('SERÁN CONSIDERADOS TAMBIÉN COMO ACCIDENTES');
+    const accidentTypes = [
+      'Los causados por explosiones, descargas eléctricas o atmosféricas.',
+      'Las quemaduras causadas por fuego, escapes de vapor imprevistos o contacto accidental con ácido y corrosivos.',
+      'La asfixia accidental producida por agua, gas, humo o vapores.',
+      'Las infecciones respecto a las cuales quede probado que el virus ha penetrado por una lesión producida por un accidente cubierto.',
+      'Las mordeduras de animales o picaduras de insectos y sus consecuencias.',
+      'Los casos de legítima defensa o tentativas de salvar personas o bienes en peligro.',
+      'Los que se produzcan como consecuencia de fenómenos de la naturaleza.',
+      'La intoxicación o envenenamiento por ingestión de sustancias tóxicas o alimentos en mal estado.',
+    ];
+    accidentTypes.forEach(type => {
+      checkPageBreak(15);
+      addBulletPoint(type);
+    });
+    yPos += 10;
+  }
 
-  // Exclusions
+  // General Exclusions
   doc.addPage();
   yPos = 20;
-  addTitle('EXCLUSIONES');
+  addTitle('EXCLUSIONES GENERALES');
   addParagraph('El seguro a que se refiere esta Póliza no cubre la muerte, incapacidad, lesiones o cualquier otra pérdida causada directa o indirectamente, en todo o en parte por:');
   yPos += 5;
 
@@ -245,16 +322,36 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   // Procedure in case of accident
   doc.addPage();
   yPos = 20;
-  addTitle('AVISO Y PROCEDIMIENTO EN CASO DE ACCIDENTE');
-  addParagraph('El asegurado y/o El Contratante deberán dar aviso por escrito a la Compañía dentro de los cinco días siguientes a la fecha del accidente, de cualquier lesión cubierta por la presente Póliza. En caso de muerte accidental, se deberá dar aviso inmediato de la misma a la Compañía.');
-  yPos += 5;
-  addParagraph('La falta de aviso dentro del término estipulado en esta Póliza no afectará la validez de la reclamación si se demuestra que no fue posible, dentro de lo razonable, dar tal aviso y que se informó del acontecimiento a la Compañía inmediatamente que fue posible.');
+  addTitle('AVISO Y PROCEDIMIENTO EN CASO DE SINIESTRO');
+
+  if (plan.type === 'TARJETA') {
+    addParagraph('Para reportar un fraude o uso no autorizado de su tarjeta:');
+    addBulletPoint('Notifique inmediatamente a SegurifAI a través de la app PAQ Wallet o línea de atención.');
+    addBulletPoint('Bloquee su tarjeta con su banco emisor.');
+    addBulletPoint('Para tarjetas perdidas o robadas, tiene 48 horas desde el incidente para notificar.');
+    addBulletPoint('Proporcione evidencia del fraude (estados de cuenta, capturas de pantalla, etc.).');
+    addBulletPoint('En caso de robo, presente denuncia policial (recomendado).');
+  } else {
+    addParagraph('El asegurado y/o El Contratante deberán dar aviso por escrito a la Compañía dentro de los cinco días siguientes a la fecha del accidente, de cualquier lesión cubierta por la presente Póliza. En caso de muerte accidental, se deberá dar aviso inmediato de la misma a la Compañía.');
+    yPos += 5;
+    addParagraph('La falta de aviso dentro del término estipulado en esta Póliza no afectará la validez de la reclamación si se demuestra que no fue posible, dentro de lo razonable, dar tal aviso y que se informó del acontecimiento a la Compañía inmediatamente que fue posible.');
+  }
+  yPos += 10;
+
+  // Contact Information
+  addSeparator();
+  addSubtitle('CONTACTO');
+  addParagraph('Para solicitar asistencia o reportar un siniestro:');
+  addBulletPoint('App PAQ Wallet: Sección "Solicitar Asistencia"');
+  addBulletPoint('Línea de Atención 24/7: Disponible en la app');
+  addBulletPoint('Correo: soporte@segurifai.gt');
   yPos += 10;
 
   // Footer on last page
   doc.setFontSize(8);
   doc.setTextColor(128, 128, 128);
-  doc.text('Este documento es generado automáticamente y forma parte de los términos y condiciones de su plan SegurifAI.', pageWidth / 2, doc.internal.pageSize.getHeight() - 15, { align: 'center' });
+  doc.text('Este documento es generado automáticamente y forma parte de los términos y condiciones de su plan SegurifAI.', pageWidth / 2, doc.internal.pageSize.getHeight() - 20, { align: 'center' });
+  doc.text('Proveedor: SegurifAI Guatemala a través de PAQ Wallet', pageWidth / 2, doc.internal.pageSize.getHeight() - 15, { align: 'center' });
   doc.text(`Documento generado el ${today.toLocaleDateString('es-GT')}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
 
   // Save the PDF
@@ -262,10 +359,30 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   doc.save(fileName);
 };
 
-// Determine plan type from name
+// Determine plan type from name - Updated for SegurifAI Dec 2025
 export const getPlanTypeFromName = (planName: string): PlanType => {
   const name = planName.toLowerCase();
-  if (name.includes('combo') || name.includes('completo')) return 'COMBO';
-  if (name.includes('health') || name.includes('salud') || name.includes('medic')) return 'HEALTH';
-  return 'DRIVE';
+
+  // Check for combo first
+  if (name.includes('combo') || name.includes('completo') || name.includes('total')) {
+    return 'COMBO';
+  }
+
+  // Protege tu Tarjeta / Card protection
+  if (name.includes('tarjeta') || name.includes('card') || name.includes('prf') || name.includes('card_insurance')) {
+    return 'TARJETA';
+  }
+
+  // Protege tu Salud / Health
+  if (name.includes('salud') || name.includes('health') || name.includes('medic') || name.includes('médic')) {
+    return 'SALUD';
+  }
+
+  // Protege tu Ruta / Drive / Roadside (default for vial)
+  if (name.includes('ruta') || name.includes('drive') || name.includes('vial') || name.includes('roadside') || name.includes('auto')) {
+    return 'RUTA';
+  }
+
+  // Default to RUTA if unknown
+  return 'RUTA';
 };
