@@ -53,12 +53,12 @@ interface Subscription {
   plan_price?: number;
 }
 
-// Plan benefits data for the details modal - SegurifAI Dec 2025
+// Plan benefits data for the details modal - SegurifAI Dec 2025 - All limits in GTQ
 const PLAN_BENEFITS: Record<string, { price: number; benefits: string[] }> = {
   'Protege tu Tarjeta': {
     price: 34.99,
     benefits: [
-      'Seguro Muerte Accidental Q3,000.00',
+      'Seguro Muerte Accidental Q3,000',
       'Tarjetas Perdidas o Robadas (48hrs para notificar)',
       'Protección contra Clonación de Tarjeta',
       'Protección contra Falsificación de Banda Magnética',
@@ -74,39 +74,39 @@ const PLAN_BENEFITS: Record<string, { price: number; benefits: string[] }> = {
   'Protege tu Salud': {
     price: 34.99,
     benefits: [
-      'Seguro Muerte Accidental Q3,000.00',
+      'Seguro Muerte Accidental Q3,000',
       'Orientación Médica Telefónica (Ilimitado)',
       'Conexión con Especialistas de la Red (Ilimitado)',
-      'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, $150 USD)',
+      'Consulta Presencial Médico/Ginecólogo/Pediatra (3/año, Q1,170)',
       'Coordinación de Medicamentos a Domicilio (Ilimitado)',
-      'Cuidados Post Operatorios Enfermera (1/año, $100 USD)',
-      'Envío Artículos Aseo por Hospitalización (1/año, $100 USD)',
-      'Exámenes Lab: Heces, Orina, Hematología (2/año, $100 USD)',
-      'Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, $100 USD)',
-      'Nutricionista Video Consulta Familiar (4/año, $150 USD)',
-      'Psicología Video Consulta Familiar (4/año, $150 USD)',
-      'Servicio de Mensajería por Hospitalización (2/año, $60 USD)',
-      'Taxi Familiar por Hospitalización (2/año, $100 USD)',
-      'Traslado en Ambulancia por Accidente (2/año, $150 USD)',
-      'Taxi al Domicilio tras Alta (1/año, $100 USD)',
+      'Cuidados Post Operatorios Enfermera (1/año, Q780)',
+      'Envío Artículos Aseo por Hospitalización (1/año, Q780)',
+      'Exámenes Lab: Heces, Orina, Hematología (2/año, Q780)',
+      'Exámenes: Papanicoláu/Mamografía/Antígeno (2/año, Q780)',
+      'Nutricionista Video Consulta Familiar (4/año, Q1,170)',
+      'Psicología Video Consulta Familiar (4/año, Q1,170)',
+      'Servicio de Mensajería por Hospitalización (2/año, Q470)',
+      'Taxi Familiar por Hospitalización (2/año, Q780)',
+      'Traslado en Ambulancia por Accidente (2/año, Q1,170)',
+      'Taxi al Domicilio tras Alta (1/año, Q780)',
       'Asistencias SegurifAI incluidas'
     ]
   },
   'Protege tu Ruta': {
     price: 39.99,
     benefits: [
-      'Seguro Muerte Accidental Q3,000.00',
-      'Grúa del Vehículo (3/año, $150 USD)',
-      'Abasto de Combustible 1 galón (3/año, $150 USD combinado)',
-      'Cambio de Neumáticos (3/año, $150 USD combinado)',
-      'Paso de Corriente (3/año, $150 USD combinado)',
-      'Emergencia de Cerrajería (3/año, $150 USD combinado)',
-      'Servicio de Ambulancia por Accidente (1/año, $100 USD)',
-      'Servicio de Conductor Profesional (1/año, $60 USD)',
-      'Taxi al Aeropuerto (1/año, $60 USD)',
-      'Asistencia Legal Telefónica (1/año, $200 USD)',
-      'Apoyo Económico Sala Emergencia (1/año, $1,000 USD)',
-      'Rayos X (1/año, $300 USD, hasta 20% descuento)',
+      'Seguro Muerte Accidental Q3,000',
+      'Grúa del Vehículo (3/año, Q1,170)',
+      'Abasto de Combustible 1 galón (3/año, Q1,170 combinado)',
+      'Cambio de Neumáticos (3/año, Q1,170 combinado)',
+      'Paso de Corriente (3/año, Q1,170 combinado)',
+      'Emergencia de Cerrajería (3/año, Q1,170 combinado)',
+      'Servicio de Ambulancia por Accidente (1/año, Q780)',
+      'Servicio de Conductor Profesional (1/año, Q470)',
+      'Taxi al Aeropuerto (1/año, Q470)',
+      'Asistencia Legal Telefónica (1/año, Q1,560)',
+      'Apoyo Económico Sala Emergencia (1/año, Q7,800)',
+      'Rayos X (1/año, Q2,340, hasta 20% descuento)',
       'Descuentos en Red de Proveedores (hasta 20%)',
       'Asistente Telefónico Cotización Repuestos',
       'Asistente Telefónico Referencias Médicas por Accidente',
