@@ -58,6 +58,7 @@ export const ELearning: React.FC = () => {
   const [loadingModule, setLoadingModule] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [credits, setCredits] = useState<number>(0);
   const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: string }>({});
   const [quizResult, setQuizResult] = useState<any>(null);
   const [contentSlide, setContentSlide] = useState(0);
@@ -69,16 +70,19 @@ export const ELearning: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [modulesRes, progressRes, pointsRes] = await Promise.all([
+      const [modulesRes, progressRes, pointsRes, creditsRes] = await Promise.all([
         elearningAPI.getModules(),
         elearningAPI.getMyProgress(),
-        elearningAPI.getMyPoints()
+        elearningAPI.getMyPoints(),
+        elearningAPI.getDiscountCredits()
       ]);
       const modulesData = modulesRes.data.modules || modulesRes.data;
       const progressData = progressRes.data.progress || progressRes.data;
       setModules(Array.isArray(modulesData) ? modulesData : []);
       setProgress(Array.isArray(progressData) ? progressData : []);
       setPoints(pointsRes.data);
+      // Use actual credits from API (saldo_disponible) - same as UserDashboard
+      setCredits(creditsRes.data?.saldo_disponible || 0);
     } catch (error) {
       console.error('Failed to load data:', error);
       setModules([]);
@@ -240,7 +244,8 @@ export const ELearning: React.FC = () => {
 
   const completedCount = progress.filter(p => p.estado === 'COMPLETADO').length;
   const totalPoints = points?.puntos?.puntos_totales || 0;
-  const estimatedCredits = totalPoints * 0.05;
+  // Use actual credits from API instead of local calculation
+  const actualCredits = credits;
   const progressPercentage = modules.length > 0 ? (completedCount / modules.length) * 100 : 0;
 
   return (
@@ -275,7 +280,7 @@ export const ELearning: React.FC = () => {
                   <Gift className="text-green-300" size={20} />
                   <Sparkles className="text-yellow-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1">Q{estimatedCredits.toFixed(2)}</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1">Q{actualCredits.toFixed(2)}</p>
                 <p className="text-xs sm:text-sm text-blue-100">Créditos</p>
               </div>
 

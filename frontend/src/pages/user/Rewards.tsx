@@ -64,6 +64,7 @@ export const Rewards: React.FC = () => {
   const [modules, setModules] = useState<any[]>([]);
   const [progress, setProgress] = useState<any[]>([]);
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  const [actualCredits, setActualCredits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'achievements' | 'rewards' | 'codes' | 'leaderboard'>('achievements');
   const [redeeming, setRedeeming] = useState<number | null>(null);
@@ -75,15 +76,19 @@ export const Rewards: React.FC = () => {
 
   const loadData = async () => {
     try {
-      // Fetch actual data from multiple endpoints
-      const [pointsRes, progressRes, modulesRes, achievementsRes, leaderboardRes, promoCodesRes] = await Promise.all([
+      // Fetch actual data from multiple endpoints including credits
+      const [pointsRes, progressRes, modulesRes, achievementsRes, leaderboardRes, promoCodesRes, creditsRes] = await Promise.all([
         elearningAPI.getMyPoints(),
         elearningAPI.getMyProgress(),
         elearningAPI.getModules(),
         elearningAPI.getMyAchievements().catch(() => ({ data: [] })),
         elearningAPI.getLeaderboard().catch(() => ({ data: [] })),
-        promoCodesAPI.getAvailableCodes().catch(() => ({ data: [] }))
+        promoCodesAPI.getAvailableCodes().catch(() => ({ data: [] })),
+        elearningAPI.getDiscountCredits().catch(() => ({ data: { saldo_disponible: 0 } }))
       ]);
+
+      // Set actual credits from API (same as UserDashboard)
+      setActualCredits(creditsRes.data?.saldo_disponible || 0);
 
       // Set promo codes (backend returns { codes: [...], count: N })
       const promoData = promoCodesRes.data?.codes || promoCodesRes.data?.codigos || promoCodesRes.data || [];
@@ -97,16 +102,33 @@ export const Rewards: React.FC = () => {
       setProgress(Array.isArray(progressData) ? progressData : []);
       setModules(Array.isArray(modulesData) ? modulesData : []);
 
-      // Calculate level based on points (20 points = 1 level increase)
+      // Use level from API (same as UserDashboard) instead of calculating locally
       const totalPoints = pointsData?.puntos_totales || 0;
-      const calculatedLevel = Math.floor(totalPoints / 100) + 1;
-      const levelNames = ['Novato', 'Aprendiz', 'Intermedio', 'Avanzado', 'Experto', 'Maestro', 'Elite', 'Legendario'];
+      const apiLevel = pointsData?.nivel || 'NOVATO';
+      // Level display mapping - matches backend UserPoints model
+      const levelDisplayMap: Record<string, string> = {
+        'NOVATO': 'Novato', 'PRINCIPIANTE': 'Novato',
+        'APRENDIZ': 'Aprendiz',
+        'CONOCEDOR': 'Conocedor', 'INTERMEDIO': 'Intermedio',
+        'EXPERTO': 'Experto', 'AVANZADO': 'Avanzado',
+        'MAESTRO': 'Maestro'
+      };
+      const levelName = levelDisplayMap[apiLevel] || 'Novato';
+      // Level thresholds from backend
+      const levelThresholds: Record<string, number> = {
+        'NOVATO': 100, 'PRINCIPIANTE': 100,
+        'APRENDIZ': 250,
+        'CONOCEDOR': 500, 'INTERMEDIO': 500,
+        'EXPERTO': 1000, 'AVANZADO': 1000,
+        'MAESTRO': 2000
+      };
+      const nextLevelPoints = levelThresholds[apiLevel] || 100;
 
       setData({
         total_points: totalPoints,
-        level: calculatedLevel,
-        level_name: levelNames[Math.min(calculatedLevel - 1, levelNames.length - 1)],
-        next_level_points: calculatedLevel * 100,
+        level: Object.keys(levelThresholds).indexOf(apiLevel) + 1,
+        level_name: levelName,
+        next_level_points: nextLevelPoints,
         achievements: achievementsRes.data?.length > 0 ? achievementsRes.data : generateAchievements(progressData, modulesData, totalPoints),
         available_rewards: mockRewards,
         redeemed_rewards: [],
@@ -235,7 +257,8 @@ export const Rewards: React.FC = () => {
   }
 
   const progressPercent = data ? (data.total_points / data.next_level_points) * 100 : 0;
-  const creditsEarned = data ? (data.total_points * 0.05).toFixed(2) : '0.00';
+  // Use actual credits from API instead of local calculation (same as UserDashboard)
+  const creditsEarned = actualCredits.toFixed(2);
   const completedModulesCount = progress.filter(p => p.estado === 'COMPLETADO').length;
   const unlockedAchievements = data?.achievements.filter(a => a.is_unlocked).length || 0;
 
@@ -660,7 +683,7 @@ export const Rewards: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-blue-600 font-medium">
-                    Q{((data?.total_points || 0) * 0.05).toFixed(2)}
+                    Q{creditsEarned}
                   </p>
                   <p className="text-xs text-gray-500">en créditos</p>
                 </div>
