@@ -102,7 +102,6 @@ const SEGURIFAI_BENEFITS: Record<string, {
   beneficiosPremium: Array<{ icon: React.ReactNode; title: string; description: string }>;
   coberturaKm: number;
   eventosAnuales: number | string;
-  tiempoRespuesta: string;
   planType: 'vial' | 'salud' | 'tarjeta';
 }> = {
   // Protege tu Tarjeta (Q34.99/mes) - Card Protection
@@ -127,8 +126,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 999,
-    eventosAnuales: 'Ilimitado',
-    tiempoRespuesta: '48hrs'
+    eventosAnuales: 'Ilimitado'
   },
   // Protege tu Salud (Q34.99/mes) - Health Assistance - All limits in GTQ
   'Salud': {
@@ -157,8 +155,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 15,
-    eventosAnuales: '15+',
-    tiempoRespuesta: '24hrs'
+    eventosAnuales: '15+'
   },
   // Protege tu Ruta (Q39.99/mes) - Roadside Assistance - All limits in GTQ
   'Ruta': {
@@ -184,8 +181,7 @@ const SEGURIFAI_BENEFITS: Record<string, {
       { icon: <Shield size={20} />, title: 'Respaldo SegurifAI', description: 'Respaldado por SegurifAI Guatemala' },
     ],
     coberturaKm: 150,
-    eventosAnuales: '14+',
-    tiempoRespuesta: '30 min'
+    eventosAnuales: '14+'
   },
 };
 
@@ -761,10 +757,6 @@ export const Subscriptions: React.FC = () => {
                     <div className="text-center p-3 bg-gray-50 rounded-lg">
                       <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.eventosAnuales}</div>
                       <div className="text-xs text-gray-500">Eventos/Año</div>
-                    </div>
-                    <div className="text-center p-3 bg-gray-50 rounded-lg">
-                      <div className={`text-2xl font-bold ${colors.accent}`}>{currentBenefits.tiempoRespuesta}</div>
-                      <div className="text-xs text-gray-500">Respuesta</div>
                     </div>
                   </div>
 
