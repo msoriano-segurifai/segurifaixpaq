@@ -301,7 +301,10 @@ export const UserProfile: React.FC = () => {
         name: transformedProfile.name,
         phone: transformedProfile.phone,
         address: transformedProfile.address || '',
-        city: transformedProfile.city || ''
+        city: transformedProfile.city || '',
+        state: transformedProfile.state || '',
+        home_latitude: transformedProfile.home_latitude || null,
+        home_longitude: transformedProfile.home_longitude || null
       });
 
       // Try to load full profile for additional data
@@ -349,7 +352,10 @@ export const UserProfile: React.FC = () => {
         name: fallbackProfile.name,
         phone: fallbackProfile.phone,
         address: '',
-        city: ''
+        city: '',
+        state: '',
+        home_latitude: null,
+        home_longitude: null
       });
     } finally {
       setLoading(false);
