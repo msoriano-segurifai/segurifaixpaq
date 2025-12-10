@@ -472,10 +472,7 @@ export const Rewards: React.FC = () => {
                   <p className="text-purple-700 text-xs sm:text-sm mb-2 sm:mb-3">
                     Completa módulos y quizzes para ganar puntos y descuentos exclusivos.
                   </p>
-                  <div className="grid grid-cols-4 gap-1 sm:gap-2 text-[10px] sm:text-sm">
-                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 100 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong className="block">100</strong>2%
-                    </div>
+                  <div className="grid grid-cols-3 gap-1 sm:gap-2 text-[10px] sm:text-sm">
                     <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 250 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
                       <strong className="block">250</strong>3%
                     </div>
