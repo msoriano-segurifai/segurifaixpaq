@@ -45,7 +45,7 @@ interface SegurifAIService {
 }
 
 const SEGURIFAI_SERVICES: SegurifAIService[] = [
-  // === PLAN ASISTENCIA VIAL (SegurifAI) - Q36.88-38.93/mes ===
+  // === PLAN ASISTENCIA VIAL (Protege tu Ruta) - Q39.99/mes - All limits in GTQ ===
   // IMMEDIATE SERVICES - Real-time tracking (food delivery style)
   {
     id: 'tow_truck',
@@ -54,7 +54,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Truck className="text-red-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 3,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'IMMEDIATE',
@@ -63,11 +63,11 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   {
     id: 'fuel_delivery',
     name: 'Abasto de Combustible',
-    description: 'Entrega de combustible de emergencia cuando te quedas sin gasolina',
+    description: 'Entrega de 1 galón de combustible de emergencia cuando te quedas sin gasolina',
     icon: <Fuel className="text-orange-500" size={24} />,
     planType: 'DRIVE',
-    limitPerYear: null,
-    coverageAmount: 50,
+    limitPerYear: 3,
+    coverageAmount: 1170, // Q1,170 combinado
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'IMMEDIATE',
@@ -80,7 +80,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Car className="text-gray-600" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 3,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170 combinado
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'IMMEDIATE',
@@ -92,8 +92,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Servicio de arranque con cables cuando la batería está descargada',
     icon: <Zap className="text-yellow-500" size={24} />,
     planType: 'DRIVE',
-    limitPerYear: null,
-    coverageAmount: 50,
+    limitPerYear: 3,
+    coverageAmount: 1170, // Q1,170 combinado
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'IMMEDIATE',
@@ -105,8 +105,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Servicio de cerrajero para abrir tu vehículo o hacer llaves',
     icon: <Key className="text-amber-600" size={24} />,
     planType: 'DRIVE',
-    limitPerYear: null,
-    coverageAmount: 75,
+    limitPerYear: 3,
+    coverageAmount: 1170, // Q1,170 combinado
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'IMMEDIATE',
@@ -119,7 +119,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Ambulance className="text-red-600" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780
     requiresHealthInfo: true,
     formType: 'health',
     serviceFlow: 'IMMEDIATE',
@@ -129,11 +129,11 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   {
     id: 'professional_driver',
     name: 'Conductor Profesional',
-    description: 'Conductor designado para llevarte a ti y tu vehículo a casa',
+    description: 'Conductor designado para llevarte a ti y tu vehículo a casa (por enfermedad o embriaguez)',
     icon: <User className="text-blue-600" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 60,
+    coverageAmount: 470, // Q470
     requiresVehicleInfo: true,
     formType: 'vehicle',
     serviceFlow: 'SCHEDULED',
@@ -142,11 +142,11 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   {
     id: 'airport_taxi',
     name: 'Taxi al Aeropuerto',
-    description: 'Servicio de taxi para llevarte al aeropuerto',
+    description: 'Servicio de taxi para llevarte al aeropuerto (por viaje del titular al extranjero)',
     icon: <Plane className="text-sky-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 60,
+    coverageAmount: 470, // Q470
     formType: 'taxi',
     serviceFlow: 'SCHEDULED',
     followUpQuestions: ['¿Fecha y hora del vuelo?', '¿Terminal de salida?', '¿Cuánto equipaje lleva?']
@@ -154,12 +154,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // CALLBACK SERVICES
   {
     id: 'legal_assistance',
-    name: 'Asistencia Legal',
-    description: 'Orientación legal telefónica y referencias a abogados',
+    name: 'Asistencia Legal Telefónica',
+    description: 'Asesoría legal telefónica por accidente',
     icon: <Scale className="text-purple-600" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 200,
+    coverageAmount: 1560, // Q1,560
     formType: 'legal',
     serviceFlow: 'CALLBACK',
     followUpQuestions: ['¿Es relacionado a un accidente reciente?', '¿Ya presentó denuncia?', '¿Necesita representación legal?']
@@ -167,12 +167,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // CLAIM SERVICES
   {
     id: 'emergency_support',
-    name: 'Apoyo Económico Emergencia',
-    description: 'Apoyo económico en caso de accidente grave o fallecimiento',
+    name: 'Apoyo Económico Sala Emergencia',
+    description: 'Pago directo al hospital por accidente (emergencia hospitalaria)',
     icon: <LifeBuoy className="text-red-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 1000,
+    coverageAmount: 7800, // Q7,800
     formType: 'generic',
     serviceFlow: 'CLAIM',
     followUpQuestions: ['¿Tiene documentación del accidente?', '¿Fue atendido en hospital?']
@@ -180,14 +180,14 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   {
     id: 'xray_service',
     name: 'Rayos X',
-    description: 'Reembolso por servicio de rayos X en caso de lesión por accidente',
+    description: 'Servicio de radiografía por lesión en accidente',
     icon: <Activity className="text-cyan-500" size={24} />,
     planType: 'DRIVE',
     limitPerYear: 1,
-    coverageAmount: 300,
+    coverageAmount: 2340, // Q2,340
     requiresHealthInfo: true,
     formType: 'lab_exam',
-    serviceFlow: 'CLAIM',  // Reembolso - user pays first, then claims reimbursement
+    serviceFlow: 'CLAIM',
     followUpQuestions: ['¿Qué parte del cuerpo se radiografió?', '¿Tiene la factura del servicio?', '¿Tiene orden médica?']
   },
   {
@@ -226,15 +226,15 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
   },
 
-  // === PLAN ASISTENCIA MEDICA (SegurifAI) - Q34.99/mes ===
+  // === PLAN ASISTENCIA MEDICA (Protege tu Salud) - Q34.99/mes - All limits in GTQ ===
   // CALLBACK SERVICES
   {
     id: 'medical_orientation',
-    name: 'Orientación Médica Telefónica',
+    name: 'Orientación Médica Telefónica 24/7',
     description: 'Consulta médica telefónica 24/7 con profesionales de salud',
     icon: <Phone className="text-green-500" size={24} />,
     planType: 'HEALTH',
-    limitPerYear: null,
+    limitPerYear: null, // Ilimitado
     coverageAmount: 0,
     formType: 'health',
     serviceFlow: 'CALLBACK',
@@ -246,7 +246,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Referencias y citas con médicos especialistas',
     icon: <Stethoscope className="text-blue-500" size={24} />,
     planType: 'HEALTH',
-    limitPerYear: null,
+    limitPerYear: null, // Ilimitado
     coverageAmount: 0,
     formType: 'consultation',
     serviceFlow: 'SCHEDULED',
@@ -255,12 +255,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // SCHEDULED SERVICES - Consultations
   {
     id: 'in_person_consultation',
-    name: 'Consulta Médica Presencial',
+    name: 'Consulta Presencial',
     description: 'Consulta presencial con médico general, ginecólogo o pediatra',
     icon: <HeartPulse className="text-pink-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 3,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170 (3/año)
     requiresHealthInfo: true,
     formType: 'consultation',
     serviceFlow: 'SCHEDULED',
@@ -274,7 +274,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Pill className="text-purple-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: null,
-    coverageAmount: 50,
+    coverageAmount: 0,
     formType: 'delivery',
     serviceFlow: 'IMMEDIATE',
     followUpQuestions: ['¿Tiene receta médica?', '¿Qué medicamentos necesita?', '¿Dirección de entrega?']
@@ -282,12 +282,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // CLAIM/SCHEDULED SERVICES - Post hospitalization
   {
     id: 'post_op_care',
-    name: 'Cuidados Post-Operatorios',
+    name: 'Cuidados Post-Op Enfermera',
     description: 'Enfermera a domicilio para el titular después de cirugía',
     icon: <Activity className="text-red-400" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 1,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780
     requiresHealthInfo: true,
     formType: 'health',
     serviceFlow: 'SCHEDULED',
@@ -295,12 +295,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   },
   {
     id: 'hygiene_supplies',
-    name: 'Artículos de Aseo',
+    name: 'Artículos de Aseo por Hospitalización',
     description: 'Kit de artículos de higiene personal por hospitalización',
     icon: <Package className="text-cyan-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 1,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780
     formType: 'delivery',
     serviceFlow: 'CLAIM',
     followUpQuestions: ['¿En qué hospital está hospitalizado?', '¿Qué artículos necesita específicamente?']
@@ -308,12 +308,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // LAB EXAM SERVICES
   {
     id: 'lab_exams',
-    name: 'Exámenes de Laboratorio',
-    description: 'Análisis clínicos: heces, orina y hematología (grupo familiar)',
+    name: 'Exámenes Lab (Heces, Orina, Hematología)',
+    description: 'Análisis clínicos básicos: heces, orina y hematología (grupo familiar)',
     icon: <TestTube className="text-indigo-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 2,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780 (2/año)
     requiresHealthInfo: true,
     formType: 'lab_exam',
     serviceFlow: 'SCHEDULED',
@@ -321,12 +321,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   },
   {
     id: 'pap_mammogram',
-    name: 'Papanicolau/Mamografía/Antígeno',
+    name: 'Exámenes (Papanicoláu/Mamografía/Antígeno)',
     description: 'Exámenes especializados: PAP, mamografía o antígeno prostático',
     icon: <Heart className="text-pink-400" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 2,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780 (2/año)
     requiresHealthInfo: true,
     formType: 'lab_exam',
     serviceFlow: 'SCHEDULED',
@@ -335,24 +335,24 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // VIDEO CONSULTATION SERVICES
   {
     id: 'nutritionist',
-    name: 'Nutricionista (Video)',
+    name: 'Nutricionista Video Consulta',
     description: 'Video consulta con nutricionista (grupo familiar)',
     icon: <Apple className="text-green-400" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 4,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170 (4/año)
     formType: 'video_consultation',
     serviceFlow: 'SCHEDULED',
     followUpQuestions: ['¿Cuál es su objetivo (bajar peso, dieta especial, diabetes)?', '¿Tiene condiciones médicas?']
   },
   {
     id: 'psychology',
-    name: 'Psicología (Video)',
+    name: 'Psicología Video Consulta',
     description: 'Video consulta con psicólogo (núcleo familiar)',
     icon: <Brain className="text-violet-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 4,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170 (4/año)
     formType: 'video_consultation',
     serviceFlow: 'SCHEDULED',
     followUpQuestions: ['¿Es primera vez o seguimiento?', '¿Motivo principal de consulta?', '¿Para quién es la consulta?']
@@ -360,12 +360,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // DELIVERY/IMMEDIATE SERVICES
   {
     id: 'courier_service',
-    name: 'Mensajería Hospitalización',
+    name: 'Mensajería por Hospitalización',
     description: 'Mensajería para documentos o artículos por emergencia hospitalaria',
     icon: <Package className="text-amber-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 2,
-    coverageAmount: 60,
+    coverageAmount: 470, // Q470 (2/año)
     formType: 'delivery',
     serviceFlow: 'IMMEDIATE',
     followUpQuestions: ['¿Qué necesita enviar/recibir?', '¿Dirección de recogida y entrega?']
@@ -373,12 +373,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // TAXI SERVICES
   {
     id: 'family_taxi',
-    name: 'Taxi para Familiar',
-    description: 'Transporte para familiar que acompaña al hospital (15km)',
+    name: 'Taxi Familiar por Hospitalización',
+    description: 'Transporte para familiar que acompaña al hospital',
     icon: <Taxi className="text-yellow-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 2,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780 (2/año)
     formType: 'taxi',
     serviceFlow: 'IMMEDIATE',
     followUpQuestions: ['¿A qué hospital van?', '¿Cuántos familiares?']
@@ -386,12 +386,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   // AMBULANCE SERVICES
   {
     id: 'ambulance_health',
-    name: 'Ambulancia (Plan Salud)',
-    description: 'Traslado de emergencia en ambulancia',
+    name: 'Traslado en Ambulancia por Accidente',
+    description: 'Traslado de emergencia en ambulancia del titular',
     icon: <Ambulance className="text-red-600" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 2,
-    coverageAmount: 150,
+    coverageAmount: 1170, // Q1,170 (2/año)
     requiresHealthInfo: true,
     formType: 'health',
     serviceFlow: 'IMMEDIATE',
@@ -399,12 +399,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   },
   {
     id: 'post_discharge_taxi',
-    name: 'Taxi Post-Alta',
+    name: 'Taxi al Domicilio tras Alta',
     description: 'Transporte a casa después del alta hospitalaria',
     icon: <Taxi className="text-green-500" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 1,
-    coverageAmount: 100,
+    coverageAmount: 780, // Q780
     formType: 'taxi',
     serviceFlow: 'SCHEDULED',
     followUpQuestions: ['¿De qué hospital?', '¿Fecha y hora de alta?', '¿Necesita silla de ruedas?']
@@ -416,22 +416,23 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Shield className="text-gray-600" size={24} />,
     planType: 'HEALTH',
     limitPerYear: 1,
-    coverageAmount: 3000,
+    coverageAmount: 3000, // Q3,000
     formType: 'generic',
     serviceFlow: 'CLAIM',
     followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
   },
 
-  // === PLAN PROTEGE TU TARJETA (SegurifAI) - Q34.99/mes ===
+  // === PLAN PROTEGE TU TARJETA - Q34.99/mes - All limits in GTQ ===
   // CLAIM SERVICES - Card fraud protection and digital security
+  // Cobertura contra fraude: Q3,000 por evento (48hrs para notificar)
   {
     id: 'card_lost_stolen',
-    name: 'Tarjeta Perdida o Robada',
+    name: 'Tarjetas Perdidas o Robadas',
     description: 'Reporte y protección por tarjeta perdida o robada (48hrs para notificar)',
     icon: <CreditCard className="text-red-500" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -439,12 +440,12 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
   },
   {
     id: 'card_cloning',
-    name: 'Clonación de Tarjeta',
+    name: 'Protección contra Clonación de Tarjeta',
     description: 'Reclamo por transacciones fraudulentas debido a clonación de tarjeta',
     icon: <Shield className="text-orange-500" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -456,8 +457,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Protección contra adulteración o falsificación de banda magnética',
     icon: <Shield className="text-amber-500" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -469,8 +470,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Cobertura contra fraude por manipulación o engaño (llamadas, mensajes falsos)',
     icon: <Users className="text-purple-500" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -482,8 +483,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Protección contra sitios web o correos falsos que roban datos',
     icon: <AlertTriangle className="text-red-600" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -495,8 +496,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Cobertura por suplantación de identidad y uso fraudulento de datos personales',
     icon: <Lock className="text-gray-700" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -508,8 +509,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Fraude por suplantación de identidad de instituciones o empresas',
     icon: <AlertCircle className="text-orange-600" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -521,8 +522,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Protección contra estafas telefónicas que solicitan datos de tarjeta',
     icon: <Phone className="text-red-500" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -534,8 +535,8 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     description: 'Cobertura por compras no autorizadas realizadas en línea con su tarjeta',
     icon: <CreditCard className="text-blue-600" size={24} />,
     planType: 'CARD',
-    limitPerYear: 3,
-    coverageAmount: 3000,
+    limitPerYear: null, // Según evento
+    coverageAmount: 3000, // Q3,000 por evento
     requiresCardInfo: true,
     formType: 'card_claim',
     serviceFlow: 'CLAIM',
@@ -548,7 +549,7 @@ const SEGURIFAI_SERVICES: SegurifAIService[] = [
     icon: <Shield className="text-gray-600" size={24} />,
     planType: 'CARD',
     limitPerYear: 1,
-    coverageAmount: 3000,
+    coverageAmount: 3000, // Q3,000
     formType: 'generic',
     serviceFlow: 'CLAIM',
     followUpQuestions: ['¿Quién es el beneficiario?', '¿Tiene documentación del incidente?']
@@ -1693,7 +1694,7 @@ export const RequestAssistance: React.FC = () => {
                           </span>
                         )}
                         {service.coverageAmount > 0 && (
-                          <span className="text-xs text-gray-500">${service.coverageAmount}</span>
+                          <span className="text-xs text-gray-500">Q{service.coverageAmount.toLocaleString()}</span>
                         )}
                       </div>
                     </button>
@@ -3172,7 +3173,7 @@ export const RequestAssistance: React.FC = () => {
                         ? `Este servicio tiene un límite de ${selectedService.limitPerYear} uso(s) por año.`
                         : 'Este servicio está disponible de forma ilimitada.'}
                       {selectedService.coverageAmount > 0 && (
-                        <span className="block mt-1">Cobertura máxima: ${selectedService.coverageAmount} USD</span>
+                        <span className="block mt-1">Cobertura máxima: Q{selectedService.coverageAmount.toLocaleString()}</span>
                       )}
                     </p>
                   </div>
@@ -4706,7 +4707,7 @@ export const RequestAssistance: React.FC = () => {
                     <p className="text-xs text-gray-500">Incluido en plan</p>
                     <p className="text-2xl font-bold text-green-700">Q0</p>
                     {selectedService?.coverageAmount && selectedService.coverageAmount > 0 && (
-                      <p className="text-xs text-gray-500">Cobertura: ${selectedService.coverageAmount}</p>
+                      <p className="text-xs text-gray-500">Cobertura: Q{selectedService.coverageAmount.toLocaleString()}</p>
                     )}
                   </div>
                 </div>
