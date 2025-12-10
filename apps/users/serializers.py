@@ -74,6 +74,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'email', 'first_name', 'last_name', 'phone_number', 'role',
             'address', 'city', 'state', 'postal_code', 'country',
+            'home_latitude', 'home_longitude',
             'emergency_contact_name', 'emergency_contact_phone',
             'paq_wallet_id', 'profile_image', 'is_active', 'is_verified',
             'date_joined', 'updated_at'
@@ -118,6 +119,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'email', 'first_name', 'last_name', 'full_name', 'phone_number',
             'date_of_birth', 'gender', 'address', 'city', 'state', 'postal_code', 'country',
+            'home_latitude', 'home_longitude',
             'emergency_contact_name', 'emergency_contact_phone',
             'paq_wallet_id', 'profile_image', 'role', 'date_joined'
         )

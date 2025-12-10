@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/shared/Layout';
-import { userAPI, servicesAPI, assistanceAPI } from '../../services/api';
+import { userAPI, servicesAPI, assistanceAPI, mapsAPI } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   User, Mail, Phone, MapPin, Calendar, Shield, Star, Edit2,
   Camera, CheckCircle, Clock, Award, RefreshCw, Bell, Lock, X, Plus, Navigation, Loader2,
-  CreditCard, XCircle, ChevronRight, Car, Heart, Download, FileText, Check
+  CreditCard, XCircle, ChevronRight, Car, Heart, Download, FileText, Check, Home, Search
 } from 'lucide-react';
 import { generateTermsAndConditionsPDF, getPlanTypeFromName } from '../../utils/termsAndConditions';
 
@@ -18,6 +18,9 @@ interface UserProfileData {
   profile_picture?: string;
   address?: string;
   city?: string;
+  state?: string;
+  home_latitude?: number;
+  home_longitude?: number;
   member_since: string;
   active_subscriptions: number;
   completed_requests: number;
@@ -136,11 +139,25 @@ export const UserProfile: React.FC = () => {
     name: '',
     phone: '',
     address: '',
-    city: ''
+    city: '',
+    state: '',
+    home_latitude: null as number | null,
+    home_longitude: null as number | null
   });
 
   // Modal states
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showHomeAddressModal, setShowHomeAddressModal] = useState(false);
+  const [addressSearch, setAddressSearch] = useState('');
+  const [searchingAddress, setSearchingAddress] = useState(false);
+  const [savingHomeAddress, setSavingHomeAddress] = useState(false);
+  const [homeAddressForm, setHomeAddressForm] = useState({
+    address: '',
+    city: '',
+    state: '',
+    latitude: null as number | null,
+    longitude: null as number | null
+  });
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [newContact, setNewContact] = useState({ name: '', phone: '', relationship: '' });
   const [passwordForm, setPasswordForm] = useState({ current: '', new_password: '', confirm: '' });
@@ -358,6 +375,96 @@ export const UserProfile: React.FC = () => {
       alert('Perfil actualizado exitosamente!');
     } catch (error: any) {
       alert(error.response?.data?.error || 'Error al actualizar perfil');
+    }
+  };
+
+  // Search address using Google Maps API
+  const handleSearchAddress = async () => {
+    if (!addressSearch.trim()) return;
+
+    setSearchingAddress(true);
+    try {
+      const response = await mapsAPI.geocode(addressSearch);
+      const result = response.data;
+
+      if (result && result.formatted_address) {
+        setHomeAddressForm({
+          address: result.formatted_address,
+          city: result.city || '',
+          state: result.state || '',
+          latitude: result.latitude,
+          longitude: result.longitude
+        });
+      } else {
+        alert('No se encontró la dirección. Intenta con una dirección más específica.');
+      }
+    } catch (error: any) {
+      console.error('Geocode error:', error);
+      alert('Error al buscar la dirección. Intenta de nuevo.');
+    } finally {
+      setSearchingAddress(false);
+    }
+  };
+
+  // Get current location
+  const handleGetCurrentLocation = async () => {
+    setSearchingAddress(true);
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      const response = await mapsAPI.reverseGeocode(latitude, longitude);
+      const result = response.data;
+
+      if (result && result.formatted_address) {
+        setHomeAddressForm({
+          address: result.formatted_address,
+          city: result.city || '',
+          state: result.state || '',
+          latitude: latitude,
+          longitude: longitude
+        });
+        setAddressSearch(result.formatted_address);
+      }
+    } catch (error: any) {
+      console.error('Location error:', error);
+      alert('No se pudo obtener tu ubicación. Verifica los permisos de ubicación.');
+    } finally {
+      setSearchingAddress(false);
+    }
+  };
+
+  // Save home address
+  const handleSaveHomeAddress = async () => {
+    if (!homeAddressForm.address || !homeAddressForm.latitude) {
+      alert('Por favor busca y selecciona una dirección válida.');
+      return;
+    }
+
+    setSavingHomeAddress(true);
+    try {
+      await userAPI.updateProfile({
+        address: homeAddressForm.address,
+        city: homeAddressForm.city,
+        state: homeAddressForm.state,
+        home_latitude: homeAddressForm.latitude,
+        home_longitude: homeAddressForm.longitude
+      });
+      await loadProfile();
+      setShowHomeAddressModal(false);
+      setAddressSearch('');
+      setHomeAddressForm({ address: '', city: '', state: '', latitude: null, longitude: null });
+      alert('Dirección guardada exitosamente!');
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Error al guardar la dirección');
+    } finally {
+      setSavingHomeAddress(false);
     }
   };
 
@@ -852,6 +959,72 @@ export const UserProfile: React.FC = () => {
           )}
         </div>
 
+        {/* Home Address Section */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2">
+              <Home size={18} />
+              Dirección de Casa
+            </h3>
+            <button
+              onClick={() => {
+                setShowHomeAddressModal(true);
+                if (profile?.address) {
+                  setAddressSearch(profile.address);
+                  setHomeAddressForm({
+                    address: profile.address || '',
+                    city: profile.city || '',
+                    state: profile.state || '',
+                    latitude: profile.home_latitude || null,
+                    longitude: profile.home_longitude || null
+                  });
+                }
+              }}
+              className="btn btn-outline btn-sm flex items-center gap-1"
+            >
+              <Edit2 size={14} />
+              {profile?.address ? 'Editar' : 'Agregar'}
+            </button>
+          </div>
+
+          {profile?.address ? (
+            <div className="space-y-3">
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <MapPin className="text-blue-600" size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">{profile.address}</p>
+                    {(profile.city || profile.state) && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {[profile.city, profile.state].filter(Boolean).join(', ')}
+                      </p>
+                    )}
+                    {profile.home_latitude && profile.home_longitude && (
+                      <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                        <CheckCircle size={12} />
+                        Ubicación exacta guardada
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <Home className="mx-auto text-gray-300 mb-3" size={48} />
+              <p className="text-gray-500 mb-4">No has guardado tu dirección de casa</p>
+              <button
+                onClick={() => setShowHomeAddressModal(true)}
+                className="btn btn-primary"
+              >
+                Agregar Dirección
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Emergency Contacts */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
@@ -1240,6 +1413,123 @@ export const UserProfile: React.FC = () => {
             >
               Cerrar
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Home Address Modal */}
+      {showHomeAddressModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Home className="text-blue-600" size={24} />
+                Dirección de Casa
+              </h3>
+              <button
+                onClick={() => {
+                  setShowHomeAddressModal(false);
+                  setAddressSearch('');
+                  setHomeAddressForm({ address: '', city: '', state: '', latitude: null, longitude: null });
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              Busca tu dirección usando Google Maps para guardar tu ubicación exacta.
+            </p>
+
+            {/* Address Search */}
+            <div className="space-y-4">
+              <div>
+                <label className="label">Buscar Dirección</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      value={addressSearch}
+                      onChange={(e) => setAddressSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearchAddress()}
+                      className="input pr-10"
+                      placeholder="Ej: 6a Avenida 12-34, Zona 10, Guatemala"
+                    />
+                    {searchingAddress && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" size={18} />
+                    )}
+                  </div>
+                  <button
+                    onClick={handleSearchAddress}
+                    disabled={searchingAddress || !addressSearch.trim()}
+                    className="btn btn-primary px-4"
+                  >
+                    <Search size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Use Current Location Button */}
+              <button
+                onClick={handleGetCurrentLocation}
+                disabled={searchingAddress}
+                className="w-full py-3 border-2 border-dashed border-blue-300 rounded-xl text-blue-600 font-medium flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors"
+              >
+                <Navigation size={18} />
+                Usar Mi Ubicación Actual
+              </button>
+
+              {/* Selected Address Preview */}
+              {homeAddressForm.address && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
+                    <div className="flex-1">
+                      <p className="font-medium text-green-900">{homeAddressForm.address}</p>
+                      {(homeAddressForm.city || homeAddressForm.state) && (
+                        <p className="text-sm text-green-700 mt-1">
+                          {[homeAddressForm.city, homeAddressForm.state].filter(Boolean).join(', ')}
+                        </p>
+                      )}
+                      {homeAddressForm.latitude && homeAddressForm.longitude && (
+                        <p className="text-xs text-green-600 mt-2">
+                          Coordenadas: {homeAddressForm.latitude.toFixed(6)}, {homeAddressForm.longitude.toFixed(6)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowHomeAddressModal(false);
+                  setAddressSearch('');
+                  setHomeAddressForm({ address: '', city: '', state: '', latitude: null, longitude: null });
+                }}
+                className="btn btn-outline flex-1"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveHomeAddress}
+                disabled={savingHomeAddress || !homeAddressForm.address}
+                className="btn btn-primary flex-1 flex items-center justify-center gap-2"
+              >
+                {savingHomeAddress ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Guardando...
+                  </>
+                ) : (
+                  'Guardar Dirección'
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

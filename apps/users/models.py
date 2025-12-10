@@ -69,12 +69,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=Role.USER
     )
 
-    # Additional Information
+    # Additional Information - Home Address
     address = models.TextField(_('address'), blank=True)
     city = models.CharField(_('city'), max_length=100, blank=True)
     state = models.CharField(_('state'), max_length=100, blank=True)
     postal_code = models.CharField(_('postal code'), max_length=20, blank=True)
-    country = models.CharField(_('country'), max_length=100, default='Mexico')
+    country = models.CharField(_('country'), max_length=100, default='Guatemala')
+    home_latitude = models.DecimalField(_('home latitude'), max_digits=9, decimal_places=6, null=True, blank=True)
+    home_longitude = models.DecimalField(_('home longitude'), max_digits=9, decimal_places=6, null=True, blank=True)
 
     # Emergency Contact
     emergency_contact_name = models.CharField(_('emergency contact name'), max_length=150, blank=True)
