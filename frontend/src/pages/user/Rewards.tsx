@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Layout } from '../../components/shared/Layout';
 import { elearningAPI, promoCodesAPI } from '../../services/api';
 import {
@@ -364,14 +365,14 @@ export const Rewards: React.FC = () => {
                 Por cada <strong>módulo completado</strong> ganas <strong>Q1.50</strong>.
                 Tienes <strong className="text-green-900 text-base sm:text-lg">Q{creditsEarned}</strong> en créditos ({completedModulesCount} módulos).
               </p>
-              <a
-                href="/user/elearning"
+              <Link
+                to="/app/learning"
                 className="inline-flex items-center gap-2 mt-2 sm:mt-3 text-green-700 hover:text-green-900 font-semibold transition-colors text-sm"
               >
                 <BookOpen size={16} />
                 Centro de Aprendizaje
                 <ArrowRight size={14} />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -500,14 +501,14 @@ export const Rewards: React.FC = () => {
                 <p className="text-gray-500 mb-4">
                   Completa módulos de aprendizaje y quizzes para ganar códigos de descuento
                 </p>
-                <a
-                  href="/user/elearning"
+                <Link
+                  to="/app/learning"
                   className="inline-flex items-center gap-2 btn btn-primary"
                 >
                   <BookOpen size={18} />
                   Ir al Centro de Aprendizaje
                   <ArrowRight size={16} />
-                </a>
+                </Link>
               </div>
             ) : (
               <>
