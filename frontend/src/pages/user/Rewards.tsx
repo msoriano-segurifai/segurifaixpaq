@@ -258,9 +258,9 @@ export const Rewards: React.FC = () => {
   }
 
   const progressPercent = data ? (data.total_points / data.next_level_points) * 100 : 0;
-  // Use actual credits from API instead of local calculation (same as UserDashboard)
-  const creditsEarned = actualCredits.toFixed(2);
   const completedModulesCount = progress.filter(p => p.estado === 'COMPLETADO').length;
+  // New rewards logic: Q1.50 per completed module
+  const creditsEarned = (completedModulesCount * 1.50).toFixed(2);
   const unlockedAchievements = data?.achievements.filter(a => a.is_unlocked).length || 0;
 
   return (
@@ -361,8 +361,8 @@ export const Rewards: React.FC = () => {
             <div className="flex-1">
               <h3 className="font-bold text-green-900 text-base sm:text-lg mb-1">Sistema de Créditos</h3>
               <p className="text-green-700 text-xs sm:text-sm leading-relaxed">
-                Por cada <strong>20 puntos</strong> ganas <strong>Q1.00</strong>.
-                Tienes <strong className="text-green-900 text-base sm:text-lg">Q{creditsEarned}</strong> en créditos.
+                Por cada <strong>módulo completado</strong> ganas <strong>Q1.50</strong>.
+                Tienes <strong className="text-green-900 text-base sm:text-lg">Q{creditsEarned}</strong> en créditos ({completedModulesCount} módulos).
               </p>
               <a
                 href="/user/elearning"
@@ -472,7 +472,10 @@ export const Rewards: React.FC = () => {
                   <p className="text-purple-700 text-xs sm:text-sm mb-2 sm:mb-3">
                     Completa módulos y quizzes para ganar puntos y descuentos exclusivos.
                   </p>
-                  <div className="grid grid-cols-3 gap-1 sm:gap-2 text-[10px] sm:text-sm">
+                  <div className="grid grid-cols-4 gap-1 sm:gap-2 text-[10px] sm:text-sm">
+                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 100 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
+                      <strong className="block">100</strong>2%
+                    </div>
                     <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 250 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
                       <strong className="block">250</strong>3%
                     </div>

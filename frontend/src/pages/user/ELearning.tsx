@@ -246,8 +246,8 @@ export const ELearning: React.FC = () => {
 
   const completedCount = progress.filter(p => p.estado === 'COMPLETADO').length;
   const totalPoints = points?.puntos?.puntos_totales || 0;
-  // Use actual credits from API instead of local calculation
-  const actualCredits = credits;
+  // New rewards logic: Q1.50 per completed module
+  const actualCredits = completedCount * 1.50;
   const progressPercentage = modules.length > 0 ? (completedCount / modules.length) * 100 : 0;
 
   return (
@@ -333,7 +333,7 @@ export const ELearning: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">💰 Sistema de Recompensas</h3>
                   <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
-                    Por cada <strong>20 puntos</strong> ganas <strong>Q1.00</strong>.
+                    Por cada <strong>módulo completado</strong> ganas <strong>Q1.50</strong>.
                     <span className="hidden sm:inline"> Estos créditos se aplican automáticamente como descuento en tu próxima suscripción.</span>
                     <span className="sm:hidden"> ¡Se aplican automáticamente!</span>
                   </p>

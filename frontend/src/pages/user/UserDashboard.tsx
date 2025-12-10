@@ -135,8 +135,8 @@ export const UserDashboard: React.FC = () => {
               <Gift size={24} className="opacity-80" />
               <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Créditos</span>
             </div>
-            <p className="text-3xl font-bold">Q{elearning?.credits?.available_balance || 0}</p>
-            <p className="text-green-100 text-sm">Por aprendizaje</p>
+            <p className="text-3xl font-bold">Q{((elearning?.modules?.completed || 0) * 1.50).toFixed(2)}</p>
+            <p className="text-green-100 text-sm">Q1.50 por módulo</p>
             <Link to="/app/learning" className="mt-3 text-xs text-white/80 hover:text-white flex items-center gap-1">
               Aprender más <ChevronRight size={14} />
             </Link>
@@ -235,9 +235,9 @@ export const UserDashboard: React.FC = () => {
             <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
               <Gift className="mx-auto text-purple-500 mb-2" size={28} />
               <p className="text-2xl font-bold text-purple-700">
-                Q{elearning?.credits?.available_balance || 0}
+                Q{((elearning?.modules?.completed || 0) * 1.50).toFixed(2)}
               </p>
-              <p className="text-sm text-purple-600">Créditos disponibles</p>
+              <p className="text-sm text-purple-600">Q1.50 por módulo</p>
             </div>
           </div>
 

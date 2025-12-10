@@ -872,10 +872,21 @@ export const UserProfile: React.FC = () => {
 
         {/* Personal Info */}
         <div className="card">
-          <h3 className="font-bold mb-4 flex items-center gap-2">
-            <User size={18} />
-            Informacion Personal
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2">
+              <User size={18} />
+              Información Personal
+            </h3>
+            {!editing && (
+              <button
+                onClick={() => setEditing(true)}
+                className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800"
+              >
+                <Edit2 size={14} />
+                Editar
+              </button>
+            )}
+          </div>
 
           {editing ? (
             <div className="space-y-4">
@@ -886,72 +897,68 @@ export const UserProfile: React.FC = () => {
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                   className="input"
+                  placeholder="Tu nombre completo"
                 />
               </div>
               <div>
-                <label className="label">Telefono</label>
+                <label className="label">Teléfono</label>
                 <input
                   type="tel"
                   value={editForm.phone}
                   onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                   className="input"
+                  placeholder="+502 5555-1234"
                 />
               </div>
-              <div>
-                <label className="label">Direccion</label>
-                <input
-                  type="text"
-                  value={editForm.address}
-                  onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
-                  className="input"
-                />
-              </div>
-              <div>
-                <label className="label">Ciudad</label>
-                <input
-                  type="text"
-                  value={editForm.city}
-                  onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
-                  className="input"
-                />
-              </div>
+              <p className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
+                Para cambiar tu dirección, utiliza la sección "Dirección de Casa" más abajo.
+              </p>
               <div className="flex gap-3">
                 <button onClick={() => setEditing(false)} className="btn btn-outline flex-1">
                   Cancelar
                 </button>
                 <button onClick={handleSaveProfile} className="btn btn-primary flex-1">
-                  Guardar
+                  Guardar Cambios
                 </button>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <Mail className="text-gray-400" size={18} />
-                <div>
-                  <p className="text-xs text-gray-500">Email</p>
-                  <p className="font-medium">{profile?.email}</p>
+              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <User className="text-blue-600" size={16} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Nombre Completo</p>
+                  <p className="font-medium text-gray-900">{profile?.name || 'No especificado'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <Phone className="text-gray-400" size={18} />
-                <div>
-                  <p className="text-xs text-gray-500">Telefono</p>
-                  <p className="font-medium">{profile?.phone || 'No especificado'}</p>
+              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Mail className="text-green-600" size={16} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Correo Electrónico</p>
+                  <p className="font-medium text-gray-900">{profile?.email}</p>
+                </div>
+                <CheckCircle className="text-green-500" size={16} />
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Phone className="text-purple-600" size={16} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Teléfono</p>
+                  <p className="font-medium text-gray-900">{profile?.phone || 'No especificado'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <MapPin className="text-gray-400" size={18} />
-                <div>
-                  <p className="text-xs text-gray-500">Direccion</p>
-                  <p className="font-medium">{profile?.address || 'No especificada'}</p>
+              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                <div className="p-2 bg-amber-100 rounded-lg">
+                  <Calendar className="text-amber-600" size={16} />
                 </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <Calendar className="text-gray-400" size={18} />
-                <div>
+                <div className="flex-1">
                   <p className="text-xs text-gray-500">Miembro desde</p>
-                  <p className="font-medium">
+                  <p className="font-medium text-gray-900">
                     {profile?.member_since
                       ? new Date(profile.member_since).toLocaleDateString('es-GT', {
                           year: 'numeric',
