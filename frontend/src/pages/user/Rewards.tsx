@@ -95,7 +95,8 @@ export const Rewards: React.FC = () => {
       setPromoCodes(Array.isArray(promoData) ? promoData : []);
 
       const pointsData = pointsRes.data?.puntos || pointsRes.data;
-      const progressData = progressRes.data?.progress || progressRes.data || [];
+      // API returns 'progresos' not 'progress'
+      const progressData = progressRes.data?.progresos || progressRes.data?.progress || progressRes.data || [];
       const modulesData = modulesRes.data?.modules || modulesRes.data || [];
 
       setPoints(pointsData);

@@ -44,7 +44,7 @@ interface QuizQuestion {
 }
 
 interface Progress {
-  modulo?: { id: number };
+  modulo: number;  // Module ID from API
   estado: string;
   puntos_obtenidos?: number;
 }
@@ -77,7 +77,8 @@ export const ELearning: React.FC = () => {
         elearningAPI.getDiscountCredits()
       ]);
       const modulesData = modulesRes.data.modules || modulesRes.data;
-      const progressData = progressRes.data.progress || progressRes.data;
+      // API returns 'progresos' not 'progress'
+      const progressData = progressRes.data.progresos || progressRes.data.progress || progressRes.data;
       setModules(Array.isArray(modulesData) ? modulesData : []);
       setProgress(Array.isArray(progressData) ? progressData : []);
       setPoints(pointsRes.data);
@@ -93,7 +94,8 @@ export const ELearning: React.FC = () => {
   };
 
   const getModuleStatus = (moduleId: number) => {
-    const p = progress.find(pr => pr.modulo?.id === moduleId);
+    // API returns modulo as ID directly, not as object
+    const p = progress.find(pr => pr.modulo === moduleId);
     return p?.estado || 'NOT_STARTED';
   };
 
