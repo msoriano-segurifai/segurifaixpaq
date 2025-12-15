@@ -459,37 +459,37 @@ export const Rewards: React.FC = () => {
         {activeTab === 'codes' && (() => {
           // Filter to only show e-learning earned codes
           const elearningCodes = promoCodes.filter(c => c.source === 'E-Learning');
-          const totalPoints = data?.total_points || 0;
           return (
           <div className="space-y-3 sm:space-y-4">
-            {/* Progress info - how to unlock codes - Mobile optimized */}
-            <div className="card bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 p-3 sm:p-6">
+            {/* Credits info - Q1.50 per module - Mobile optimized */}
+            <div className="card bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 p-3 sm:p-6">
               <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                <div className="p-2 sm:p-3 bg-purple-100 rounded-lg sm:rounded-xl">
-                  <Target className="text-purple-600" size={24} />
+                <div className="p-2 sm:p-3 bg-green-100 rounded-lg sm:rounded-xl">
+                  <Gift className="text-green-600" size={24} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-purple-900 text-base sm:text-lg mb-1 sm:mb-2">Desbloquea Códigos</h3>
-                  <p className="text-purple-700 text-xs sm:text-sm mb-2 sm:mb-3">
-                    Completa módulos y quizzes para ganar puntos y descuentos exclusivos.
+                  <h3 className="font-bold text-green-900 text-base sm:text-lg mb-1 sm:mb-2">Tus Créditos de Descuento</h3>
+                  <p className="text-green-700 text-xs sm:text-sm mb-2 sm:mb-3">
+                    Por cada <strong>módulo completado</strong> ganas <strong>Q1.50</strong> en créditos. Se aplican automáticamente como descuento en tu próxima suscripción.
                   </p>
-                  <div className="grid grid-cols-4 gap-1 sm:gap-2 text-[10px] sm:text-sm">
-                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 100 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong className="block">100</strong>2%
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                    <div className="p-3 sm:p-4 bg-white rounded-xl border border-green-200 text-center">
+                      <p className="text-2xl sm:text-3xl font-bold text-green-700">{completedModulesCount}</p>
+                      <p className="text-xs sm:text-sm text-green-600">Módulos Completados</p>
                     </div>
-                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 250 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong className="block">250</strong>3%
-                    </div>
-                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 500 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong className="block">500</strong>5%
-                    </div>
-                    <div className={`p-1.5 sm:p-2 rounded-lg text-center ${totalPoints >= 1000 ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-gray-100 text-gray-500'}`}>
-                      <strong className="block">1000</strong>7%
+                    <div className="p-3 sm:p-4 bg-white rounded-xl border border-green-200 text-center">
+                      <p className="text-2xl sm:text-3xl font-bold text-green-700">Q{creditsEarned}</p>
+                      <p className="text-xs sm:text-sm text-green-600">Créditos Disponibles</p>
                     </div>
                   </div>
-                  <p className="text-purple-600 text-xs mt-2">
-                    Tus puntos: <strong className="text-sm sm:text-lg">{totalPoints}</strong>
-                  </p>
+                  <Link
+                    to="/app/learning"
+                    className="inline-flex items-center gap-2 mt-3 text-green-700 hover:text-green-900 font-semibold transition-colors text-sm"
+                  >
+                    <BookOpen size={16} />
+                    Completar más módulos
+                    <ArrowRight size={14} />
+                  </Link>
                 </div>
               </div>
             </div>
