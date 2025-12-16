@@ -61,18 +61,6 @@ const LEVEL_DISPLAY_MAP: Record<string, string> = {
   'MAESTRO': 'Maestro'
 };
 
-// Level thresholds from backend (points needed to reach next level)
-const LEVEL_THRESHOLDS: Record<string, { next: number; current: number }> = {
-  'NOVATO': { current: 0, next: 100 },
-  'PRINCIPIANTE': { current: 0, next: 100 },
-  'APRENDIZ': { current: 100, next: 250 },
-  'CONOCEDOR': { current: 250, next: 500 },
-  'INTERMEDIO': { current: 250, next: 500 },
-  'EXPERTO': { current: 500, next: 1000 },
-  'AVANZADO': { current: 500, next: 1000 },
-  'MAESTRO': { current: 1000, next: 2000 }
-};
-
 export const ELearning: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<ModuleDetail | null>(null);
@@ -82,7 +70,6 @@ export const ELearning: React.FC = () => {
   const [loadingModule, setLoadingModule] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [credits, setCredits] = useState<number>(0);
   const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: string }>({});
   const [quizResult, setQuizResult] = useState<any>(null);
   const [contentSlide, setContentSlide] = useState(0);
@@ -94,20 +81,19 @@ export const ELearning: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [modulesRes, progressRes, pointsRes, creditsRes] = await Promise.all([
+      const [modulesRes, progressRes, pointsRes] = await Promise.all([
         elearningAPI.getModules(),
         elearningAPI.getMyProgress(),
-        elearningAPI.getMyPoints(),
-        elearningAPI.getDiscountCredits()
+        elearningAPI.getMyPoints()
       ]);
       const modulesData = modulesRes.data.modules || modulesRes.data;
       // API returns 'progresos' not 'progress'
       const progressData = progressRes.data.progresos || progressRes.data.progress || progressRes.data;
+      // Extract points data - API returns { puntos: { puntos_totales, nivel, ... } }
+      const pointsData = pointsRes.data?.puntos || pointsRes.data;
       setModules(Array.isArray(modulesData) ? modulesData : []);
       setProgress(Array.isArray(progressData) ? progressData : []);
-      setPoints(pointsRes.data);
-      // Use actual credits from API (saldo_disponible) - same as UserDashboard
-      setCredits(creditsRes.data?.saldo_disponible || 0);
+      setPoints(pointsData);
     } catch (error) {
       console.error('Failed to load data:', error);
       setModules([]);
@@ -269,7 +255,7 @@ export const ELearning: React.FC = () => {
   }
 
   const completedCount = progress.filter(p => p.estado === 'COMPLETADO').length;
-  const totalPoints = points?.puntos?.puntos_totales || 0;
+  const totalPoints = points?.puntos_totales || 0;
   // New rewards logic: Q1.50 per completed module
   const actualCredits = completedCount * 1.50;
   const progressPercentage = modules.length > 0 ? (completedCount / modules.length) * 100 : 0;
@@ -324,7 +310,7 @@ export const ELearning: React.FC = () => {
                   <Brain className="text-purple-300" size={20} />
                   <Award className="text-pink-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate">{LEVEL_DISPLAY_MAP[points?.puntos?.nivel] || 'Novato'}</p>
+                <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate">{LEVEL_DISPLAY_MAP[points?.nivel] || 'Novato'}</p>
                 <p className="text-xs sm:text-sm text-blue-100">Nivel</p>
               </div>
             </div>
