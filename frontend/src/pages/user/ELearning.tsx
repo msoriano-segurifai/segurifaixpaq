@@ -49,6 +49,30 @@ interface Progress {
   puntos_obtenidos?: number;
 }
 
+// Level display mapping - matches backend UserPoints model
+const LEVEL_DISPLAY_MAP: Record<string, string> = {
+  'NOVATO': 'Novato',
+  'PRINCIPIANTE': 'Novato',
+  'APRENDIZ': 'Aprendiz',
+  'CONOCEDOR': 'Conocedor',
+  'INTERMEDIO': 'Intermedio',
+  'EXPERTO': 'Experto',
+  'AVANZADO': 'Avanzado',
+  'MAESTRO': 'Maestro'
+};
+
+// Level thresholds from backend (points needed to reach next level)
+const LEVEL_THRESHOLDS: Record<string, { next: number; current: number }> = {
+  'NOVATO': { current: 0, next: 100 },
+  'PRINCIPIANTE': { current: 0, next: 100 },
+  'APRENDIZ': { current: 100, next: 250 },
+  'CONOCEDOR': { current: 250, next: 500 },
+  'INTERMEDIO': { current: 250, next: 500 },
+  'EXPERTO': { current: 500, next: 1000 },
+  'AVANZADO': { current: 500, next: 1000 },
+  'MAESTRO': { current: 1000, next: 2000 }
+};
+
 export const ELearning: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<ModuleDetail | null>(null);
@@ -300,7 +324,7 @@ export const ELearning: React.FC = () => {
                   <Brain className="text-purple-300" size={20} />
                   <Award className="text-pink-300 hidden sm:block" size={16} />
                 </div>
-                <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate">{points?.puntos?.nivel || 'NOVATO'}</p>
+                <p className="text-lg sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate">{LEVEL_DISPLAY_MAP[points?.puntos?.nivel] || 'Novato'}</p>
                 <p className="text-xs sm:text-sm text-blue-100">Nivel</p>
               </div>
             </div>
