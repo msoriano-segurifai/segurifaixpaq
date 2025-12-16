@@ -438,7 +438,7 @@ export const ELearning: React.FC = () => {
                           <div className="flex items-start gap-2 text-xs sm:text-sm">
                             <Gift className="text-green-600 flex-shrink-0 mt-0.5" size={14} />
                             <p className="text-yellow-800">
-                              <span className="hidden sm:inline">Gana hasta </span><strong className="text-green-700">Q{(module.puntos_completar * 0.05).toFixed(2)}</strong>
+                              <span className="hidden sm:inline">Gana </span><strong className="text-green-700">Q1.50</strong>
                             </p>
                           </div>
                         )}
