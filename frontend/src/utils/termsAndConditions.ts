@@ -104,6 +104,10 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
     doc.setTextColor(0, 128, 0);
     doc.text(`Q${plan.price_monthly}/mes`, pageWidth / 2, yPos, { align: 'center' });
     yPos += 5;
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Facturación mensual • Compromiso 12 meses', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 5;
   }
   yPos += 10;
 
@@ -259,6 +263,47 @@ export const generateTermsAndConditionsPDF = (plan: PlanInfo): void => {
   if (plan.type === 'RUTA' || plan.type === 'COMBO') {
     addBulletPoint('Esta propuesta no contempla la cobertura de uso de motocicleta como medio de transporte.');
   }
+  yPos += 10;
+
+  // BILLING TERMS SECTION - IMPORTANT
+  addSeparator();
+  checkPageBreak(80);
+  addSubtitle('TÉRMINOS DE FACTURACIÓN Y COMPROMISO');
+  yPos += 5;
+
+  // Highlighted billing box
+  doc.setFillColor(255, 248, 220); // Light yellow background
+  doc.rect(margin, yPos - 2, maxWidth, 45, 'F');
+  doc.setDrawColor(200, 150, 0);
+  doc.rect(margin, yPos - 2, maxWidth, 45, 'S');
+  yPos += 5;
+
+  doc.setTextColor(150, 100, 0);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('IMPORTANTE - LÉASE CUIDADOSAMENTE:', margin + 5, yPos);
+  yPos += 8;
+
+  doc.setTextColor(50, 50, 50);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  const billingText1 = 'Este plan tiene un COMPROMISO OBLIGATORIO DE 12 MESES con facturación mensual automática.';
+  const lines1 = doc.splitTextToSize(billingText1, maxWidth - 10);
+  doc.text(lines1, margin + 5, yPos);
+  yPos += lines1.length * 5 + 3;
+
+  doc.setFont('helvetica', 'bold');
+  const billingText2 = 'NO ES CANCELABLE antes de completar los 12 meses de compromiso.';
+  doc.text(billingText2, margin + 5, yPos);
+  yPos += 12;
+
+  doc.setFont('helvetica', 'normal');
+  addBulletPoint('Modalidad de pago: Facturación mensual automática durante 12 meses consecutivos.');
+  addBulletPoint('Compromiso mínimo: 12 meses desde la fecha de activación del plan.');
+  addBulletPoint('Cancelación anticipada: No está permitida la cancelación antes de cumplir los 12 meses de compromiso.');
+  addBulletPoint('En caso de impago: El plan se suspenderá temporalmente hasta regularizar el pago. Los meses pendientes deberán ser pagados para completar el ciclo de 12 meses.');
+  addBulletPoint('Renovación: Al finalizar los 12 meses, el plan se renovará automáticamente mes a mes, pudiendo cancelar con 30 días de anticipación.');
+  addBulletPoint('El costo mensual indicado será debitado automáticamente de su método de pago registrado en PAQ Wallet.');
   yPos += 10;
 
   addSeparator();

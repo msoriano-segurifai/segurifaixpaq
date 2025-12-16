@@ -744,6 +744,12 @@ export const Subscriptions: React.FC = () => {
                       </span>
                       <span className="text-gray-500 text-lg">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
                     </div>
+                    <p className="text-xs text-gray-600 mt-2 font-medium">
+                      Facturación mensual por 12 meses
+                    </p>
+                    <p className="text-[10px] text-gray-500 mt-1">
+                      Compromiso de 12 meses • No cancelable
+                    </p>
                   </div>
 
                   {/* Coverage Stats - Hide KM for Card plans */}
@@ -1718,6 +1724,7 @@ export const Subscriptions: React.FC = () => {
                                 <div className="flex flex-col items-center">
                                   <span className={`text-xl font-bold ${priceColor}`}>Q{price}</span>
                                   <span className="text-[10px] text-gray-500">/{billingCycle === 'monthly' ? 'mes' : 'año'}</span>
+                                  <span className="text-[9px] text-gray-400 mt-1">12 meses • No cancelable</span>
                                 </div>
                               </td>
                             );
@@ -1726,7 +1733,7 @@ export const Subscriptions: React.FC = () => {
                         {/* CTA Buttons Row */}
                         <tr className="bg-white">
                           <td className="p-4 sticky left-0 bg-white border-t border-gray-200">
-                            <span className="text-xs text-gray-500">Selecciona un plan</span>
+                            <span className="text-xs text-gray-500">Facturación mensual</span>
                           </td>
                           {plans.map((plan) => {
                             const colors = getPlanColors(plan.category_type);
